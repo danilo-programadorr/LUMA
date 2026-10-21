@@ -101,3 +101,27 @@ Get-Content -LiteralPath '.\reports\FASE_7D_GEMINI_REAL.json' -Raw
 O resultado atual e os historicos distinguem a falha original da execucao sem credencial neste processo. O manifesto FASE_7D_HASHES_ENTREGA.json continua sendo evidencia da candidata original; nao foi reescrito para ocultar a correcao.
 
 Validacao local da correcao: suite original 206 passed (180.79s); suite ampliada 213 passed, zero skips (182.83s), exit code 0. Sete testes direcionados do validador final tambem passaram (2.89s). Um aviso de deprecacao Starlette/httpx ja conhecido. Auditoria FASE_7D_AUDITORIA_CORRECAO.json: VERIFIED, sem erros; fonte main@9fe7fd3a69a537f9e67953b7028e64c676a48547 e repositorio financeiro limpos.
+
+
+## Correcao dirigida de grounding — 2026-10-21
+
+Responsavel: Codex. Baseline 9dc9aec2dae8822f8fc0742135c98eb10e862c5d, versao 0.4.0rc1. Evidencia fornecida pelo proprietario e confirmada no arquivo local: Gemini gemini-3.8-flash real, probe do worker aprovado, geracao tentada; greeting reprovado por MODEL_MISSING_CITATION, 1 caso executado / 0 aprovados. Resultado preservado em FASE_7D_GEMINI_REAL_ANTES_GROUNDING.json. Status: causa confirmada, confianca alta, implementacao e relatorio concordantes. Nao atribuido a chave, modelo, rede ou startup.
+
+Causa: a politica anterior consultava Knowledge em todos os turnos e exigia citacao pela presenca de resultados, inclusive na saudacao. O rotulo first generation era impreciso para essa validacao posterior; agora erros de citacao e afirmacao de execucao sao classificados response validation.
+
+Correcao geral: GroundingRequirement backend-owned NONE/REQUIRED. Lista pequena de expressoes completas permite NONE apenas em conversa social clara. Mensagens mistas, follow-ups, assuntos factuais e qualquer ambiguidade seguem REQUIRED por padrao. Nao ha IDs de eval, nomes de casos ou excecao por greeting na politica. OPTIONAL nao foi necessario. A entrada HTTP nao aceita override; o modelo recebe a decisao como dado do backend.
+
+NONE evita Knowledge e remove historico factual do input; nao cria KnowledgeContext ficticio. Autorizacao, grants, revogacoes e sessao continuam vigentes. A indisponibilidade do servico externo Knowledge permite conversa social. REQUIRED exige consulta atual antes do modelo e falha fechado se indisponivel; historico nunca substitui fontes. Uma conversa social intermediaria nao transforma o proximo follow-up em NONE.
+
+Citacoes sao sempre comparadas aos pares document_id/chunk_id das sources autorizadas. Sem fontes fornecidas, qualquer citacao e invalida. REQUIRED sem citacao falha, inclusive com contexto vazio, salvo pedido de esclarecimento sem fatos reconhecido por formatos conservadores server-side. O boolean needs_clarification do modelo sozinho nao libera resposta factual. Instruction versionada luma-system-2. Schema ModelDecision, modelo, credenciais e parametros Gemini preservados; contratos de input atualizados.
+
+Limitacao explicita: a lista conversacional e conservadora, nao semantica geral. Mensagens sociais nao reconhecidas podem exigir Knowledge. Formulacoes de esclarecimento fora dos formatos conhecidos exigem fonte ou sao rejeitadas. Essa escolha evita dispensar grounding por inferencia ambigua.
+
+Validador mantem a parada no primeiro cenario falho e preserva historico. Nao houve tuning de outros cenarios nem mudanca de modelo. Promocao permanece condicionada a suite Gemini real completa; nao ha autorizacao para nova fase.
+
+
+Resultado desta correcao: 79 testes direcionados aprovados (68.92s); suite completa 242 passed, zero skips, zero falhas (184.42s), mantendo os 213 anteriores e acrescentando 29. Um aviso de deprecacao Starlette/httpx permanece. Evidencias: FASE_7D_TESTES_GROUNDING.txt e .xml. Auditoria: VERIFIED, sem erros, em FASE_7D_AUDITORIA_GROUNDING.json.
+
+Apos a suite local, python -m backend.validate_gemini foi executado neste processo e retornou BLOCKED_NEEDS_CREDENTIAL, failure_stage=configuration, safe_error_code=CREDENTIAL_NOT_IN_THIS_PROCESS, credential_present=false, real_model_tested=false, 0 casos executados / 0 aprovados. Nao se trata de nova falha em um cenario Gemini. A credencial do PowerShell do proprietario nao foi alterada nem lida de outro processo. O resultado real anterior (probe aprovado, greeting falhou, 1/0) esta preservado separadamente; nao demonstra o comportamento apos esta correcao.
+
+Versao final desta rodada: 0.4.0rc1. Decisao: NO-GO para promocao da Fase 7D enquanto a execucao real dos oito cenarios nao completar. Correcao validada localmente; confirmacao real pendente no PowerShell configurado, usando gemini-3.8-flash. Ao surgir outra falha de cenario, preservar o JSON e parar para revisao, sem tuning cego. Nenhuma Fase 7E iniciada.

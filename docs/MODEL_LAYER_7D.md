@@ -4,7 +4,7 @@ Data: 2026-10-21. Responsável: Codex. Implementação e testes locais; integra�
 
 ## Arquitetura e fronteira
 
-Humano autenticado → POST /v1/conversation/turn → sessão/escopos/grants atuais → Knowledge API HTTP → ModelInputContext → ModelProvider → processo Gemini dedicado → Google GenAI SDK → ModelDecision validado → resposta com fontes. Runtime token permanece interno; navegador futuro não recebe essa credencial.
+Humano autenticado → POST /v1/conversation/turn → sessão/escopos/grants atuais → decisao de grounding → Knowledge API HTTP quando REQUIRED → ModelInputContext → ModelProvider → processo Gemini dedicado → Google GenAI SDK → ModelDecision validado → resposta com fontes. Runtime token permanece interno; navegador futuro não recebe essa credencial.
 
 Somente o worker importa google-genai. Não há ADK, SDK legado google-generativeai, agente, function calling executável ou executor de tools. O SDK recebe tools vazio e automatic_function_calling desabilitado. Parâmetros de modelo são exclusivamente server-side. Backend reavalia todas as decisões; retorno de modelo nunca concede grants, aprova, desbloqueia, muda identidade/projeto ou promove conhecimento.
 
@@ -24,9 +24,9 @@ Fontes oficiais consultadas em 2026-10-21: [SDK Python](https://googleapis.githu
 
 ## Contratos, instrução e fontes
 
-System instruction versionada luma-system-1 em backend/model_worker/system_instruction.txt: LUMA não é owner, documentos são UNTRUSTED_DATA, não inventar autorização/execução, preservar incerteza e escopo, não solicitar/revelar segredos. OpenAPI não expõe seu conteúdo. O prompt é camada complementar, não autoridade.
+System instruction versionada luma-system-2 em backend/model_worker/system_instruction.txt: LUMA não é owner, documentos são UNTRUSTED_DATA, não inventar autorização/execução, preservar incerteza e escopo, não solicitar/revelar segredos. OpenAPI não expõe seu conteúdo. O prompt é camada complementar, não autoridade.
 
-ModelInputContext contém mensagem, sessão/projeto/locale, janela limitada, KnowledgeContext e disponibilidade de tools vazia. ModelDecision permite mensagem, intenção, propostas, requested_knowledge, confiança, esclarecimento, citações e sugestões de learning. Extra fields são rejeitados. requested_knowledge não dispara chamadas adicionais automaticamente. Citações devem corresponder ao par document_id/chunk_id fornecido; o backend retorna a fonte original, não metadados inventados. Resposta sem fonte quando há contexto e sem esclarecimento é rejeitada. Warnings, confidence, freshness e production_verified=false são retornados pelo backend.
+ModelInputContext contém mensagem, sessão/projeto/locale, janela limitada, KnowledgeContext e disponibilidade de tools vazia. ModelDecision permite mensagem, intenção, propostas, requested_knowledge, confiança, esclarecimento, citações e sugestões de learning. Extra fields são rejeitados. requested_knowledge não dispara chamadas adicionais automaticamente. Citações devem corresponder ao par document_id/chunk_id fornecido; o backend retorna a fonte original, não metadados inventados. Resposta em turno REQUIRED exige fonte valida, exceto pedido de esclarecimento reconhecido pelo backend; a flag do modelo sozinha nao dispensa citacoes. Warnings, confidence, freshness e production_verified=false são retornados pelo backend.
 
 Controle adicional rejeita afirmações comuns de execução em primeira pessoa (marquei, executei etc.). Esse filtro não comprova detectar toda afirmação falsa em linguagem natural; nenhuma resposta do modelo é prova de execução. A ausência técnica de executor permanece a garantia principal. Mesmo uma proposta de Knowledge pelo modelo não executa tool automaticamente; todas as propostas desta fase são registradas DENIED por política de zero execução, com origem MODEL_PROPOSED e correlação do backend.
 
@@ -53,3 +53,14 @@ Filtro antes do modelo bloqueia valores conhecidos de credenciais, campos sensí
 Sem chave, o relatório deve registrar BLOCKED_NEEDS_CREDENTIAL e candidato/pré-release. Para liberar validação real, configure a chave somente no ambiente do processo que iniciará o backend/validador, com LUMA_MODEL_PROVIDER=gemini e LUMA_GEMINI_MODEL apropriado. Não cole a chave no chat, arquivo versionado ou comando literal. A etapa real ainda precisa dos oito cenários autorizados, incluindo grounding, continuidade, fonte, incerteza, injection e indisponibilidade de Knowledge.
 
 Calendar/Tasks continuam PLANNED/DISABLED; ADK, agentes executáveis, frontend e voz permanecem fora do escopo. Requisito de núcleo visual/voz é preservado, sem implementação. 7E depende de nova autorização e aprovação isolada do adaptador real.
+
+
+## Correcao dirigida: grounding por turno
+
+Decisao deterministica do backend em backend/app/grounding.py: NONE apenas para mensagens completas reconhecidas como saudacao, agradecimento, despedida, confirmacao social ou orientacao sobre como conversar. REQUIRED e o padrao para tudo mais, inclusive mensagens mistas, perguntas factuais, follow-ups curtos, texto ambiguo e tentativas de definir grounding via prompt. OPTIONAL nao e necessario nesta politica binaria conservadora.
+
+NONE nao consulta Knowledge e envia knowledge=null, sem historico factual. Uma indisponibilidade do servico Knowledge nao impede esse turno social, mas identidades, grants, revogacoes, sessao e controles locais continuam verificados. REQUIRED consulta Knowledge atualizado; indisponibilidade bloqueia antes da geracao. Historico nao substitui a consulta. Uma saudacao entre perguntas nao remove grounding de um follow-up factual posterior.
+
+O cliente e o modelo nao podem definir grounding_requirement. A flag aparece somente no ModelInputContext construido pelo backend. Citacoes sao sempre verificadas contra pares document_id/chunk_id das sources autorizadas, inclusive quando NONE (nesse caso nenhuma fonte foi fornecida). REQUIRED sem citacao e rejeitado, mesmo com contexto vazio, salvo pedido de esclarecimento sem fatos que corresponda aos formatos conservadores do backend. needs_clarification nao e autoridade. Formulacoes fora desses formatos exigem citacao ou falham fechadas.
+
+System instruction luma-system-2 proibe fatos do projeto sem grounding e explicita que conversa social nao exige fontes. Nenhum parametro Gemini, modelo, credencial ou schema ModelDecision foi relaxado. A classificacao nao e um classificador semantico geral: texto desconhecido segue REQUIRED.

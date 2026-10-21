@@ -8,7 +8,7 @@ from backend.app.model_contracts import ModelDecision
 from backend.app.generation import ModelResult,ModelUsage
 from backend.app.errors import Fault
 
-INSTRUCTION_VERSION='luma-system-1'
+INSTRUCTION_VERSION='luma-system-2'
 SYSTEM_INSTRUCTION=Path(__file__).with_name('system_instruction.txt').read_text(encoding='utf8')
 
 class GeminiAdapter:

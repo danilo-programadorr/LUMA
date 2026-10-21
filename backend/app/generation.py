@@ -10,7 +10,7 @@ class ModelResult(Contract):
     decision:ModelDecision
     usage:ModelUsage=Field(default_factory=ModelUsage)
     model_name:str=Field(max_length=100)
-    instruction_version:str='luma-system-1'
+    instruction_version:str='luma-system-2'
 class ModelProvider(Protocol):
     def generate(self,context:ModelInputContext,correlation_id:str)->ModelResult: ...
     def status(self)->dict: ...

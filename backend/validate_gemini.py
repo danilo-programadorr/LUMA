@@ -46,7 +46,7 @@ def run():
         if not config.configured: raise ValueError('MODEL_CONFIGURATION_REQUIRED')
         model=config.model
         generation_config=dict(temperature=config.temperature,max_output_tokens=config.max_output_tokens,timeout=config.timeout,
-            response_mime_type='application/json',tools=[],automatic_function_calling=False,instruction_version='luma-system-1',
+            response_mime_type='application/json',tools=[],automatic_function_calling=False,instruction_version='luma-system-2',
             schema_sha256=hashlib.sha256(json.dumps(ModelDecision.model_json_schema(),sort_keys=True).encode()).hexdigest())
         enter('ModelProvider startup')
         provider=GeminiModelProvider(config)
@@ -81,6 +81,7 @@ def run():
                     body=response.json()
                     code=body.get('error',{}).get('code') if isinstance(body.get('error'),dict) else body.get('error')
                     allowed={'MODEL_TIMEOUT','MODEL_UNAVAILABLE','MODEL_AUTH_ERROR','MODEL_RATE_LIMIT','MODEL_INVALID_RESPONSE','MODEL_ERROR','MODEL_SAFETY_REJECTION','MODEL_INVALID_CITATION','MODEL_MISSING_CITATION','MODEL_EXECUTION_CLAIM','MODEL_INPUT_TOO_LARGE','KNOWLEDGE_UNAVAILABLE'}
+                    if code in {'MODEL_MISSING_CITATION','MODEL_INVALID_CITATION','MODEL_EXECUTION_CLAIM'}:enter('response validation')
                     raise Fault(code if code in allowed else 'CONVERSATION_REQUEST_FAILED',503)
                 enter('response validation')
                 answer=response.json()

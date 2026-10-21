@@ -1,0 +1,45 @@
+{
+  "status": "FAILED",
+  "failure_stage": "first generation",
+  "safe_error_code": "MODEL_MISSING_CITATION",
+  "safe_error_type": "Fault",
+  "credential_present": true,
+  "real_model_tested": true,
+  "model_used": "gemini-3.8-flash",
+  "generation_config": {
+    "temperature": 0.2,
+    "max_output_tokens": 2048,
+    "timeout": 30.0,
+    "response_mime_type": "application/json",
+    "tools": [],
+    "automatic_function_calling": false,
+    "instruction_version": "luma-system-1",
+    "schema_sha256": "3156b15269d4ceab7901ff1fc5c1074656db7a1b7e070d161f601cb0f58d099e"
+  },
+  "directed_worker_probe_passed": true,
+  "worker_diagnostic": {
+    "failure_stage": null,
+    "generation_attempted": true,
+    "credential_present": true
+  },
+  "stages_reached": [
+    "Knowledge startup",
+    "database/migration",
+    "configuration",
+    "ModelProvider startup",
+    "model worker startup",
+    "LUMA startup",
+    "session bootstrap",
+    "first generation",
+    "cleanup"
+  ],
+  "cases": [
+    {
+      "case": "greeting",
+      "passed": false
+    }
+  ],
+  "cases_executed": 1,
+  "cases_passed": 0,
+  "servers_stopped": true
+}

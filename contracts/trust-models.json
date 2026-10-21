@@ -255,6 +255,15 @@
     },
     "additionalProperties": false,
     "properties": {
+      "grounding_requirement": {
+        "default": "REQUIRED",
+        "enum": [
+          "NONE",
+          "REQUIRED"
+        ],
+        "title": "Grounding Requirement",
+        "type": "string"
+      },
       "user_message": {
         "maxLength": 2000,
         "title": "User Message",

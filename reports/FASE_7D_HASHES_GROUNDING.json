@@ -1,0 +1,17 @@
+{
+  "baseline": "9dc9aec2dae8822f8fc0742135c98eb10e862c5d",
+  "files": {
+    "backend/app/grounding.py": "55112aa411a2a3ad8a996b71ec4975c6a1cbd63319432a5284a7335938cbe368",
+    "backend/app/conversation.py": "ebbb78aff0839a01f07258d2ab9a1d472fbfdc636bc3d2e9ccf3ac1b3eb47dd1",
+    "backend/app/model_contracts.py": "eeff3a3b5972370054f7074f3f9da88dc721982c6fbcb124d24f53b116f57591",
+    "backend/app/generation.py": "cca48a1dcd8c71da7432ab1791c0755a558f45a34c2a5939c47387658dbf9ea2",
+    "backend/app/model_provider.py": "04e288d798c9c9b76e12aa73a3f38924c82126c450486d3374b2e64ae6fb9a4e",
+    "backend/model_worker/adapter.py": "523c4e2a361811ed3d294381634d97a68bf81331cc42b280592b8a4489793dcc",
+    "backend/model_worker/system_instruction.txt": "3ee04797454e6ea1127fcebd9ea8e8e2094b06ea3fc9c0c942c8d4b9bd3aef8d",
+    "backend/validate_gemini.py": "83e15de35b440bbce32866862157c57cff36a583ac9ad5b6066fb21019659b60",
+    "backend/tests/test_grounding.py": "7acd5a86170989daafc52b046309ccf16072d1337f5a8c4ca1a8eb6a691e4344",
+    "backend/tests/test_conversation.py": "3729a1b53e280a60f0686040ab7a1bf4b65f3c70b444e00409ccef1b9d3f5fef",
+    "contracts/trust-models.json": "451110237533c304147b63519a5560b8baf40b77d9d00a0fe35876de75174921",
+    "contracts/conversation-models.json": "134a6352b823ac47204b0f8197a3d649d6554f2adc41e31ae0485bbdbb650b63"
+  }
+}

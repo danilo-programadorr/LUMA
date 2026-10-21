@@ -204,6 +204,15 @@
     },
     "additionalProperties": false,
     "properties": {
+      "grounding_requirement": {
+        "default": "REQUIRED",
+        "enum": [
+          "NONE",
+          "REQUIRED"
+        ],
+        "title": "Grounding Requirement",
+        "type": "string"
+      },
       "user_message": {
         "maxLength": 2000,
         "title": "User Message",
@@ -635,7 +644,7 @@
         "type": "string"
       },
       "instruction_version": {
-        "default": "luma-system-1",
+        "default": "luma-system-2",
         "title": "Instruction Version",
         "type": "string"
       }

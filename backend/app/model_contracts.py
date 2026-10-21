@@ -2,6 +2,7 @@
 from typing import Literal
 from pydantic import Field,field_validator
 from .models import Contract,KnowledgeContext
+from .grounding import GroundingRequirement
 
 class SecretRef(Contract):
     secret_id:str=Field(pattern=r'^[a-z][a-z0-9_.-]{2,63}$')
@@ -21,6 +22,7 @@ class ToolCallProposal(Contract):
         return value
 
 class ModelInputContext(Contract):
+    grounding_requirement:GroundingRequirement="REQUIRED"
     user_message:str=Field(max_length=2000)
     session_summary:str=Field(default='',max_length=2000)
     project_id:str=Field(max_length=64)

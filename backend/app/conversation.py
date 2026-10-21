@@ -10,6 +10,7 @@ from .generation import ModelResult
 from .control import digest,stamp,date,action_scope
 from .trust_data import append
 from .errors import Fault
+from .grounding import grounding_requirement,clarification_only
 
 class ConversationTurn(Contract):
     session_id:str=Field(min_length=1,max_length=64)
@@ -52,7 +53,7 @@ class ConversationService:
     def event(self,repo,p,sid,project,correlation,result,latency,usage=None):
         append(repo,dict(event_id=ident(),timestamp=stamp(),principal_id=p.principal_id,session_id=sid,project_id=project,
             runtime_principal='luma-runtime',event_type='MODEL_GENERATION',result=result,correlation_id=correlation,
-            model_provider=self.config.provider,model_name=self.config.model,system_instruction_version='luma-system-1',
+            model_provider=self.config.provider,model_name=self.config.model,system_instruction_version='luma-system-2',
             latency_ms=max(0,int(latency*1000)),usage=usage or {}))
     def turn(self,p,body,key,correlation):
         start=time.monotonic();rid=None;project=None;verified_sid=None
@@ -75,26 +76,31 @@ class ConversationService:
                 (repo.put if window else repo.add)('conversation_windows',body.session_id,data)
                 repo.add('conversation_requests',rid,dict(principal_id=p.principal_id,project_id=project,session_id=body.session_id,
                     fingerprint=fingerprint,status='RUNNING',correlation_id=correlation,created_at=stamp()))
-            # Conservative policy: every active Meu Gestor turn is grounded before generation.
-            knowledge=self.control.runtime_knowledge(runtime,body.session_id,KnowledgeRequest(project_id=project,query=body.user_message,
-                limits=Limits(max_chars=min(16000,max(256,self.config.max_knowledge_chars//2)))),correlation,self.knowledge)
-            if len(knowledge.model_dump_json())>self.config.max_knowledge_chars: raise Fault('MODEL_INPUT_TOO_LARGE',413)
+            requirement=grounding_requirement(body.user_message)
+            knowledge=None
+            if requirement=='REQUIRED':
+                knowledge=self.control.runtime_knowledge(runtime,body.session_id,KnowledgeRequest(project_id=project,query=body.user_message,
+                    limits=Limits(max_chars=min(16000,max(256,self.config.max_knowledge_chars//2)))),correlation,self.knowledge)
+                if len(knowledge.model_dump_json())>self.config.max_knowledge_chars: raise Fault('MODEL_INPUT_TOO_LARGE',413)
+            else:
+                # Do not supply factual history as a substitute for fresh authorized Knowledge.
+                summary='[]'
             context=ModelInputContext(user_message=body.user_message,session_summary=summary,project_id=project,session_id=body.session_id,
-                locale=body.locale,knowledge=knowledge,available_tools=(),pending_action_ids=())
+                locale=body.locale,grounding_requirement=requirement,knowledge=knowledge,available_tools=(),pending_action_ids=())
             self.control.safe(context.model_dump(mode='json'),max_chars=65536)
             result=self.provider.generate(context,correlation)
             if not isinstance(result,ModelResult): raise Fault('MODEL_INVALID_RESPONSE',503)
             result=ModelResult.model_validate_json(result.model_dump_json())
             self.control.safe(result.model_dump(mode='json',exclude={'usage'}),max_chars=131072)
             decision=result.decision
-            sources={(s['document_id'],s['chunk_id']):s for s in knowledge.sources}
+            sources={(s['document_id'],s['chunk_id']):s for s in knowledge.sources} if knowledge else {}
             citations=[]
             for c in decision.citations:
                 source=sources.get((c.document_id,c.chunk_id))
                 if not source: raise Fault('MODEL_INVALID_CITATION',503)
                 citations.append(source)
-            if knowledge.results and not citations and not decision.needs_clarification: raise Fault('MODEL_MISSING_CITATION',503)
-            allowed={s['document_id'] for s in knowledge.sources}
+            if requirement=='REQUIRED' and not citations and not (decision.needs_clarification and clarification_only(decision.assistant_message)): raise Fault('MODEL_MISSING_CITATION',503)
+            allowed={document_id for document_id,chunk_id in sources}
             if any(x not in allowed for x in re.findall(r'\bMG-[A-Z0-9_-]+',decision.assistant_message)): raise Fault('MODEL_INVALID_CITATION',503)
             if re.search(r'\b(marquei|desmarquei|concluí|executei|enviei|agendei|implantei|I scheduled|I executed|I deployed)\b',decision.assistant_message,re.I):
                 raise Fault('MODEL_EXECUTION_CLAIM',503)
@@ -130,8 +136,8 @@ class ConversationService:
                 record=repo.get('conversation_requests',rid);record['status']='COMPLETED';repo.put('conversation_requests',rid,record)
                 self.event(repo,p,body.session_id,project,correlation,'OK',time.monotonic()-start,result.usage.model_dump())
             return ConversationAnswer(session_id=body.session_id,project_id=project,correlation_id=correlation,
-                assistant_message=decision.assistant_message,citations=citations,warnings=list(dict.fromkeys(knowledge.warnings+['NO_TOOL_EXECUTION','PRODUCTION_NOT_VERIFIED'])),
-                confidence=knowledge.confidence,model_confidence=decision.confidence,freshness=sorted({r.get('freshness','UNKNOWN') for r in knowledge.results}),
+                assistant_message=decision.assistant_message,citations=citations,warnings=list(dict.fromkeys((knowledge.warnings if knowledge else [])+['NO_TOOL_EXECUTION','PRODUCTION_NOT_VERIFIED'])),
+                confidence=knowledge.confidence if knowledge else 'NOT_APPLICABLE',model_confidence=decision.confidence,freshness=sorted({r.get('freshness','UNKNOWN') for r in (knowledge.results if knowledge else [])}),
                 proposed_actions=actions,learning_candidates=candidates,needs_clarification=decision.needs_clarification,
                 model_status='READY',model_name=result.model_name,system_instruction_version=result.instruction_version,usage=result.usage.model_dump())
         except Exception as exc:

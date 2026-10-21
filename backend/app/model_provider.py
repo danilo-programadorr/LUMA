@@ -70,7 +70,7 @@ class GeminiModelProvider:
                 raise Fault(code,504 if code=='MODEL_TIMEOUT' else 503)
             if set(response)!={'correlation_id','result'}: raise Fault('MODEL_INVALID_RESPONSE',503)
             result=ModelResult.model_validate_json(json.dumps(response['result']))
-            if result.model_name!=self.config.model or result.instruction_version!='luma-system-1': raise Fault('MODEL_INVALID_RESPONSE',503)
+            if result.model_name!=self.config.model or result.instruction_version!='luma-system-2': raise Fault('MODEL_INVALID_RESPONSE',503)
             self.diagnostic=dict(failure_stage=None,generation_attempted=True,credential_present=True)
             self.last='READY'
             return result
