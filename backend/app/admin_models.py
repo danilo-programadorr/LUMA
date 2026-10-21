@@ -46,3 +46,10 @@ class LearningCreate(Contract):
 
 class LearningChange(Contract):
     status:Literal['VALIDATED','REJECTED']
+
+class GrantCreate(Contract):
+    principal_id:str=Field(min_length=1,max_length=64)
+    capability:str=Field(min_length=1,max_length=100)
+    project_id:str | None=Field(default=None,max_length=64)
+    tool_id:str | None=Field(default=None,max_length=64)
+    expires_at:str | None=Field(default=None,max_length=40)

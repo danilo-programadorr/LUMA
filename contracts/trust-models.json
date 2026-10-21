@@ -1,0 +1,706 @@
+{
+  "KnowledgeContext": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "title": "Project Id",
+        "type": "string"
+      },
+      "brain_version": {
+        "title": "Brain Version",
+        "type": "string"
+      },
+      "engine_version": {
+        "title": "Engine Version",
+        "type": "string"
+      },
+      "query": {
+        "title": "Query",
+        "type": "string"
+      },
+      "results": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Results",
+        "type": "array"
+      },
+      "sources": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Sources",
+        "type": "array"
+      },
+      "warnings": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Warnings",
+        "type": "array"
+      },
+      "permission_status": {
+        "const": "NOT_DETERMINED_BY_RETRIEVAL",
+        "title": "Permission Status",
+        "type": "string"
+      },
+      "retrieved_at": {
+        "format": "date-time",
+        "title": "Retrieved At",
+        "type": "string"
+      },
+      "request_id": {
+        "title": "Request Id",
+        "type": "string"
+      },
+      "correlation_id": {
+        "title": "Correlation Id",
+        "type": "string"
+      },
+      "mode": {
+        "const": "lexical",
+        "default": "lexical",
+        "title": "Mode",
+        "type": "string"
+      },
+      "status": {
+        "title": "Status",
+        "type": "string"
+      },
+      "confidence": {
+        "title": "Confidence",
+        "type": "string"
+      },
+      "content_trust": {
+        "const": "UNTRUSTED_DATA",
+        "default": "UNTRUSTED_DATA",
+        "title": "Content Trust",
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id",
+      "brain_version",
+      "engine_version",
+      "query",
+      "results",
+      "sources",
+      "warnings",
+      "permission_status",
+      "request_id",
+      "correlation_id",
+      "status",
+      "confidence"
+    ],
+    "title": "KnowledgeContext",
+    "type": "object"
+  },
+  "SecretRef": {
+    "additionalProperties": false,
+    "properties": {
+      "secret_id": {
+        "pattern": "^[a-z][a-z0-9_.-]{2,63}$",
+        "title": "Secret Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "secret_id"
+    ],
+    "title": "SecretRef",
+    "type": "object"
+  },
+  "ToolCallProposal": {
+    "additionalProperties": false,
+    "properties": {
+      "tool_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "capability": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Capability",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      },
+      "reason": {
+        "maxLength": 1000,
+        "title": "Reason",
+        "type": "string"
+      },
+      "correlation_id": {
+        "maxLength": 64,
+        "title": "Correlation Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "tool_id",
+      "capability",
+      "reason",
+      "correlation_id"
+    ],
+    "title": "ToolCallProposal",
+    "type": "object"
+  },
+  "ModelInputContext": {
+    "$defs": {
+      "KnowledgeContext": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "brain_version": {
+            "title": "Brain Version",
+            "type": "string"
+          },
+          "engine_version": {
+            "title": "Engine Version",
+            "type": "string"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "results": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          },
+          "permission_status": {
+            "const": "NOT_DETERMINED_BY_RETRIEVAL",
+            "title": "Permission Status",
+            "type": "string"
+          },
+          "retrieved_at": {
+            "format": "date-time",
+            "title": "Retrieved At",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "correlation_id": {
+            "title": "Correlation Id",
+            "type": "string"
+          },
+          "mode": {
+            "const": "lexical",
+            "default": "lexical",
+            "title": "Mode",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "string"
+          },
+          "content_trust": {
+            "const": "UNTRUSTED_DATA",
+            "default": "UNTRUSTED_DATA",
+            "title": "Content Trust",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "brain_version",
+          "engine_version",
+          "query",
+          "results",
+          "sources",
+          "warnings",
+          "permission_status",
+          "request_id",
+          "correlation_id",
+          "status",
+          "confidence"
+        ],
+        "title": "KnowledgeContext",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "user_message": {
+        "maxLength": 2000,
+        "title": "User Message",
+        "type": "string"
+      },
+      "session_summary": {
+        "default": "",
+        "maxLength": 2000,
+        "title": "Session Summary",
+        "type": "string"
+      },
+      "project_id": {
+        "maxLength": 64,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "knowledge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/KnowledgeContext"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "available_tools": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Available Tools",
+        "type": "array"
+      },
+      "pending_action_ids": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Pending Action Ids",
+        "type": "array"
+      }
+    },
+    "required": [
+      "user_message",
+      "project_id"
+    ],
+    "title": "ModelInputContext",
+    "type": "object"
+  },
+  "ModelDecision": {
+    "$defs": {
+      "ToolCallProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "capability": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Capability",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "correlation_id": {
+            "maxLength": 64,
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool_id",
+          "capability",
+          "reason",
+          "correlation_id"
+        ],
+        "title": "ToolCallProposal",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "assistant_message": {
+        "maxLength": 4000,
+        "title": "Assistant Message",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "title": "Intent",
+        "type": "string"
+      },
+      "proposed_actions": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/ToolCallProposal"
+        },
+        "title": "Proposed Actions",
+        "type": "array"
+      },
+      "requested_knowledge": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Requested Knowledge",
+        "type": "array"
+      },
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Confidence",
+        "type": "number"
+      },
+      "needs_clarification": {
+        "default": false,
+        "title": "Needs Clarification",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "assistant_message",
+      "intent",
+      "confidence"
+    ],
+    "title": "ModelDecision",
+    "type": "object"
+  },
+  "AgentExecutionContext": {
+    "additionalProperties": false,
+    "properties": {
+      "agent_id": {
+        "maxLength": 64,
+        "title": "Agent Id",
+        "type": "string"
+      },
+      "runtime_principal": {
+        "const": "luma-runtime",
+        "title": "Runtime Principal",
+        "type": "string"
+      },
+      "project_id": {
+        "maxLength": 64,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "allowed_capabilities": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Allowed Capabilities",
+        "type": "array"
+      },
+      "session_id": {
+        "maxLength": 64,
+        "title": "Session Id",
+        "type": "string"
+      },
+      "correlation_id": {
+        "maxLength": 64,
+        "title": "Correlation Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "agent_id",
+      "runtime_principal",
+      "project_id",
+      "allowed_capabilities",
+      "session_id",
+      "correlation_id"
+    ],
+    "title": "AgentExecutionContext",
+    "type": "object"
+  },
+  "KnowledgeRequest": {
+    "$defs": {
+      "Limits": {
+        "additionalProperties": false,
+        "properties": {
+          "max_documents": {
+            "default": 5,
+            "maximum": 5,
+            "minimum": 1,
+            "title": "Max Documents",
+            "type": "integer"
+          },
+          "max_chunks": {
+            "default": 12,
+            "maximum": 12,
+            "minimum": 1,
+            "title": "Max Chunks",
+            "type": "integer"
+          },
+          "max_chars": {
+            "default": 16000,
+            "maximum": 16000,
+            "minimum": 256,
+            "title": "Max Chars",
+            "type": "integer"
+          }
+        },
+        "title": "Limits",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "query": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Query",
+        "type": "string"
+      },
+      "package": {
+        "anyOf": [
+          {
+            "pattern": "^PACKAGE_[A-Z_]+$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Package"
+      },
+      "include_history": {
+        "default": false,
+        "title": "Include History",
+        "type": "boolean"
+      },
+      "limits": {
+        "$ref": "#/$defs/Limits"
+      }
+    },
+    "required": [
+      "project_id",
+      "query"
+    ],
+    "title": "KnowledgeRequest",
+    "type": "object"
+  },
+  "RuntimeKnowledge": {
+    "$defs": {
+      "Limits": {
+        "additionalProperties": false,
+        "properties": {
+          "max_documents": {
+            "default": 5,
+            "maximum": 5,
+            "minimum": 1,
+            "title": "Max Documents",
+            "type": "integer"
+          },
+          "max_chunks": {
+            "default": 12,
+            "maximum": 12,
+            "minimum": 1,
+            "title": "Max Chunks",
+            "type": "integer"
+          },
+          "max_chars": {
+            "default": 16000,
+            "maximum": 16000,
+            "minimum": 256,
+            "title": "Max Chars",
+            "type": "integer"
+          }
+        },
+        "title": "Limits",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "query": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Query",
+        "type": "string"
+      },
+      "package": {
+        "anyOf": [
+          {
+            "pattern": "^PACKAGE_[A-Z_]+$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Package"
+      },
+      "include_history": {
+        "default": false,
+        "title": "Include History",
+        "type": "boolean"
+      },
+      "limits": {
+        "$ref": "#/$defs/Limits"
+      },
+      "session_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Session Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id",
+      "query",
+      "session_id"
+    ],
+    "title": "RuntimeKnowledge",
+    "type": "object"
+  },
+  "RuntimeProposal": {
+    "additionalProperties": false,
+    "properties": {
+      "session_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Session Id",
+        "type": "string"
+      },
+      "tool_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "capability": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Capability",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "title": "Intent",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      }
+    },
+    "required": [
+      "session_id",
+      "tool_id",
+      "capability",
+      "intent"
+    ],
+    "title": "RuntimeProposal",
+    "type": "object"
+  },
+  "RuntimeLearning": {
+    "additionalProperties": false,
+    "properties": {
+      "session_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Session Id",
+        "type": "string"
+      },
+      "source": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Source",
+        "type": "string"
+      },
+      "claim": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Claim",
+        "type": "string"
+      },
+      "evidence": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 10,
+        "minItems": 1,
+        "title": "Evidence",
+        "type": "array"
+      },
+      "confidence": {
+        "pattern": "^(LOW|MEDIUM|HIGH)$",
+        "title": "Confidence",
+        "type": "string"
+      }
+    },
+    "required": [
+      "session_id",
+      "source",
+      "claim",
+      "evidence",
+      "confidence"
+    ],
+    "title": "RuntimeLearning",
+    "type": "object"
+  },
+  "Touch": {
+    "additionalProperties": false,
+    "properties": {
+      "session_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Session Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "session_id"
+    ],
+    "title": "Touch",
+    "type": "object"
+  }
+}

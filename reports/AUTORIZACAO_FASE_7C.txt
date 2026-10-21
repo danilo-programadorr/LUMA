@@ -1,0 +1,1288 @@
+AUTORIZAÇÃO DO PROPRIETÁRIO — FASE 7C
+
+FRONTEIRA DE CONFIANÇA,
+IDENTIDADES DE RUNTIME,
+GRANTS E RETENÇÃO DA LUMA
+
+Workspace:
+
+D:\projetos\luma
+
+==================================================
+BASELINE OFICIAL
+==================================================
+
+LUMA Backend:
+0.2.0
+
+Knowledge API:
+0.1.0
+
+Cérebro Meu Gestor:
+0.6.0
+
+Knowledge Engine:
+1.4.0
+
+Commit baseline Fase 7A:
+cb06235a3e7b53d097d4851d7cae34130e3c5b38
+
+Commit Fase 7B:
+ada01cc344b9307f115069b580a52f1c55022145
+
+Testes Fase 7B:
+108 aprovados
+
+Estado atual:
+
+- SQLite + SQLAlchemy;
+- persistência durável;
+- control plane administrativo;
+- revogações;
+- approvals;
+- actions;
+- sessions;
+- learning candidates;
+- audit;
+- kill switch;
+- Knowledge funcionando.
+
+Ainda NÃO existem:
+
+- Gemini;
+- Google ADK;
+- agentes executáveis;
+- Calendar;
+- Tasks;
+- OAuth;
+- frontend.
+
+==================================================
+PREPARAÇÃO GIT
+==================================================
+
+1. confirmar:
+
+git status
+
+2. confirmar HEAD:
+
+ada01cc344b9307f115069b580a52f1c55022145
+
+3. confirmar worktree limpa;
+
+4. executar auditoria existente;
+
+5. criar branch local:
+
+codex/fase-7c-trust-boundary
+
+NÃO criar remote.
+NÃO fazer push.
+
+==================================================
+OBJETIVO
+==================================================
+
+Criar uma fronteira de segurança clara entre:
+
+HUMANO / OWNER
+CONTROL PLANE
+RUNTIME DA LUMA
+MODELO FUTURO
+AGENTES FUTUROS
+TOOLS FUTURAS
+
+Antes de integrar Gemini ou Google ADK.
+
+A regra fundamental é:
+
+A FUTURA IA NÃO É ADMINISTRADORA DA LUMA.
+
+O modelo pode:
+
+- interpretar;
+- conversar;
+- consultar contexto permitido;
+- propor ações.
+
+O modelo NÃO pode:
+
+- conceder capability;
+- alterar grants;
+- autoaprovar ação;
+- desbloquear kill switch;
+- acessar segredo administrativo;
+- alterar identidade;
+- promover conhecimento;
+- habilitar ferramenta;
+- mudar política.
+
+==================================================
+ETAPA 1 — TIPOS DE PRINCIPAL
+==================================================
+
+Formalizar tipos de identidade.
+
+No mínimo:
+
+HUMAN_OWNER
+SERVICE_RUNTIME
+AGENT_SERVICE
+TOOL_SERVICE
+
+Nesta fase:
+
+HUMAN_OWNER
+→ operacional
+
+SERVICE_RUNTIME
+→ criar identidade durável para futura execução da LUMA
+
+AGENT_SERVICE
+→ apenas contrato/modelo futuro
+
+TOOL_SERVICE
+→ apenas contrato/modelo futuro
+
+Não criar agentes executáveis.
+
+==================================================
+ETAPA 2 — PRINCIPAL HUMANO
+==================================================
+
+Preservar:
+
+local-owner
+
+Como:
+
+principal_type = HUMAN_OWNER
+
+Somente identidade humana pode possuir capabilities administrativas
+sensíveis nesta fase.
+
+OWNER textual sozinho NÃO significa acesso universal.
+
+Capability continua sendo autoridade.
+
+==================================================
+ETAPA 3 — RUNTIME PRINCIPAL
+==================================================
+
+Criar principal separado:
+
+luma-runtime
+
+Tipo:
+
+SERVICE_RUNTIME
+
+Esse principal representará futuramente:
+
+Gemini
+ADK
+orquestração
+agentes
+
+mas NÃO contém Gemini ainda.
+
+Conceder SOMENTE capacidades mínimas necessárias.
+
+Inicialmente:
+
+knowledge.read
+runtime.session.read
+runtime.session.write
+runtime.actions.propose
+
+ou equivalentes melhor estruturados.
+
+NÃO conceder:
+
+admin.*
+grants.manage
+state.unlock
+tools.manage
+approvals.manage
+audit.manage
+identity.manage
+
+DEFAULT DENY.
+
+==================================================
+ETAPA 4 — CONTROL PLANE VS RUNTIME PLANE
+==================================================
+
+Separar conceitualmente e no código:
+
+CONTROL PLANE
+
+/v1/admin/...
+
+Somente principal humano administrativo autorizado.
+
+RUNTIME PLANE
+
+/v1/runtime/...
+
+Somente principal runtime autorizado.
+
+Knowledge pode continuar acessível por fluxo interno apropriado.
+
+Não permitir que runtime chame endpoints admin.
+
+==================================================
+ETAPA 5 — CREDENCIAIS SEPARADAS
+==================================================
+
+Criar autenticação separada para:
+
+HUMAN_OWNER
+SERVICE_RUNTIME
+
+Exemplo:
+
+LUMA_OWNER_TOKEN
+LUMA_RUNTIME_TOKEN
+LUMA_ADMIN_CONFIRM_TOKEN
+
+Nunca reutilizar token.
+
+Nunca expor OWNER_TOKEN ou ADMIN_CONFIRM_TOKEN ao runtime.
+
+Nunca disponibilizar esses segredos a:
+
+ModelProvider
+ADK futuro
+agent context
+tool parameters
+KnowledgeContext
+
+==================================================
+ETAPA 6 — SECRET BOUNDARY
+==================================================
+
+Criar abstração:
+
+SecretRef
+
+O runtime pode conhecer:
+
+secret_id / reference
+
+mas não necessariamente o valor.
+
+Segredos reais continuam fora do banco quando possível.
+
+Nunca incluir segredo em:
+
+prompt
+context
+audit
+action params
+learning candidate
+agent state
+
+Adicionar testes específicos.
+
+==================================================
+ETAPA 7 — ENVIRONMENT SANITIZATION
+==================================================
+
+Preparar função/utilitário para futura execução de workers/modelos com
+ambiente sanitizado.
+
+Future model/agent worker NÃO deve herdar automaticamente:
+
+LUMA_OWNER_TOKEN
+LUMA_ADMIN_CONFIRM_TOKEN
+database admin secrets
+Knowledge admin credentials
+tokens de ferramentas
+
+Pode receber somente credencial própria e mínima quando necessário.
+
+Não iniciar worker Gemini nesta fase.
+
+==================================================
+ETAPA 8 — GRANTS NORMALIZADOS
+==================================================
+
+Hoje grants estão associados ao bootstrap/principal.
+
+Criar modelo durável explícito para:
+
+Grant
+
+Campos conceituais:
+
+grant_id
+principal_id
+capability
+project_id opcional
+tool_id opcional
+scope
+granted_by
+created_at
+expires_at opcional
+status
+
+Status:
+
+ACTIVE
+REVOKED
+EXPIRED
+
+Não depender somente de array JSON para autoridade futura.
+
+==================================================
+ETAPA 9 — MIGRAÇÃO V0002
+==================================================
+
+Criar nova migração:
+
+v0002
+
+para:
+
+grants
+eventuais campos de principal necessários
+retention policies
+campos adicionais de audit
+
+Não alterar v0001 retroativamente.
+
+Upgrade:
+
+0001 → 0002
+
+deve funcionar.
+
+Banco 7B existente deve migrar preservando estado.
+
+==================================================
+ETAPA 10 — DEFAULT DENY
+==================================================
+
+Toda capability deve seguir:
+
+sem grant válido
+↓
+DENY
+
+Grant expirado:
+DENY
+
+Grant revogado:
+DENY
+
+Tool desabilitada:
+DENY
+
+Projeto suspenso:
+DENY
+
+Sistema LOCKED:
+DENY conforme política
+
+Nenhuma inferência baseada em:
+
+nome
+role textual
+modelo
+agent_id
+
+==================================================
+ETAPA 11 — DENY PRECEDENCE
+==================================================
+
+Formalizar precedência.
+
+Sugestão:
+
+SYSTEM LOCK
+>
+EXPLICIT REVOCATION
+>
+TOOL DISABLED
+>
+PROJECT DISABLED
+>
+CAPABILITY GRANT
+>
+DEFAULT DENY
+
+Documentar e testar.
+
+==================================================
+ETAPA 12 — GRANT MANAGEMENT
+==================================================
+
+Criar administração de grants SOMENTE para principal humano com capability:
+
+admin.grants.read
+admin.grants.manage
+
+Endpoints possíveis:
+
+GET /v1/admin/grants
+
+POST /v1/admin/grants
+
+POST /v1/admin/grants/{grant_id}/revoke
+
+Não permitir runtime criar ou revogar grant.
+
+==================================================
+ETAPA 13 — PROTEÇÃO DE GRANTS CRÍTICOS
+==================================================
+
+Capacidades críticas:
+
+admin.*
+state.unlock
+grants.manage
+approvals.manage
+tools.manage
+
+devem exigir:
+
+principal humano
++
+capability apropriada
++
+confirmação administrativa adicional quando houver elevação sensível.
+
+Nunca permitir autoatribuição.
+
+==================================================
+ETAPA 14 — PROIBIÇÃO DE PRIVILEGE ESCALATION
+==================================================
+
+Teste obrigatório:
+
+luma-runtime tenta:
+
+- grant para si;
+- admin.state.manage;
+- admin.tools.manage;
+- approval.manage;
+- state.unlock;
+- mudar principal;
+- acessar audit sensível.
+
+Resultado:
+
+403 / fail-closed.
+
+==================================================
+ETAPA 15 — ACTION PROPOSAL DO RUNTIME
+==================================================
+
+Criar fluxo explícito:
+
+runtime
+↓
+propõe ActionRequest
+↓
+backend calcula risco/policy
+↓
+se AUTO e capability válida:
+fica elegível para execução FUTURA
+
+se CONFIRM:
+WAITING_APPROVAL
+
+se DENY:
+DENIED
+
+IMPORTANTE:
+
+nesta fase NÃO executar tool externa.
+
+==================================================
+ETAPA 16 — RUNTIME NÃO APROVA
+==================================================
+
+luma-runtime pode propor.
+
+Nunca decidir:
+
+APPROVE
+DENY administrativo
+UNLOCK
+GRANT
+
+Approval deve continuar vindo do plano humano autenticado.
+
+==================================================
+ETAPA 17 — ACTION ORIGIN
+==================================================
+
+Adicionar proveniência a ActionRequest:
+
+origin_type
+
+exemplos:
+
+HUMAN_DIRECT
+MODEL_PROPOSED
+AGENT_PROPOSED
+SYSTEM
+
+E:
+
+origin_id
+session_id
+correlation_id
+
+O fato de ser HUMAN_DIRECT pode influenciar policy,
+mas NÃO substituir capability.
+
+==================================================
+ETAPA 18 — CONSENT MODEL
+==================================================
+
+Criar distinção clara entre:
+
+USER_INTENT
+AUTHORIZATION
+APPROVAL
+
+Exemplo:
+
+Usuário escreve:
+
+"marque uma reunião amanhã"
+
+Isso representa:
+
+USER_INTENT
+
+Não significa automaticamente:
+
+acesso eterno ao Calendar.
+
+A capability é AUTHORIZATION.
+
+A policy decide se precisa APPROVAL.
+
+Documentar.
+
+==================================================
+ETAPA 19 — HUMAN DIRECT
+==================================================
+
+Preparar conceito para ações explicitamente solicitadas pelo usuário.
+
+Exemplos futuros:
+
+calendar.create
+tasks.create
+
+podem ter:
+
+approval_requirement=AUTO
+
+quando:
+
+- HUMAN_DIRECT;
+- capability válida;
+- parâmetros dentro do pedido;
+- tool ativa;
+- risco permitido.
+
+Mas ainda NÃO implementar Calendar/Tasks.
+
+==================================================
+ETAPA 20 — MODELO NÃO É HUMANO
+==================================================
+
+Uma frase gerada pelo modelo como:
+
+"O usuário aprovou"
+
+NÃO deve produzir HUMAN_DIRECT.
+
+Somente entrada autenticada da camada humana pode definir origem humana.
+
+Teste.
+
+==================================================
+ETAPA 21 — RETENTION POLICY
+==================================================
+
+Formalizar política de retenção.
+
+Criar tabela/configuração durável:
+
+retention_policies
+
+Categorias:
+
+sessions
+actions
+approvals
+learning_candidates
+audit
+
+Não executar exclusão automática agressiva nesta fase.
+
+==================================================
+ETAPA 22 — RETENTION DEFAULTS
+==================================================
+
+Definir defaults conservadores e documentados.
+
+Se não houver decisão de negócio suficiente:
+
+marcar:
+
+NO_AUTO_DELETE
+
+para audit e registros críticos.
+
+Para objetos temporários, pode existir:
+
+expires_at
+
+sem apagar automaticamente.
+
+Não inventar política regulatória.
+
+==================================================
+ETAPA 23 — RETENTION DRY RUN
+==================================================
+
+Criar ferramenta administrativa:
+
+retention preview
+
+que mostra:
+
+quantos registros seriam elegíveis
+
+sem apagar.
+
+Se implementar purge:
+
+deve estar DESABILITADO por padrão nesta fase.
+
+==================================================
+ETAPA 24 — AUDIT TAMPER EVIDENCE
+==================================================
+
+Melhorar audit log com evidência básica de integridade.
+
+Pode usar cadeia hash:
+
+previous_hash
+event_hash
+
+por ordem determinística.
+
+Isso é:
+
+TAMPER-EVIDENT
+
+não:
+
+TAMPER-PROOF.
+
+Administrador do SO continua fora da ameaça coberta.
+
+Documentar.
+
+==================================================
+ETAPA 25 — AUDIT ACCESS
+==================================================
+
+Runtime NÃO deve ler audit administrativo por padrão.
+
+Criar níveis:
+
+runtime operational audit
+admin audit
+
+ou filtragem equivalente.
+
+Evitar vazamento de informação de segurança para futuro modelo.
+
+==================================================
+ETAPA 26 — SESSION SECURITY
+==================================================
+
+Session deve registrar:
+
+principal humano
+runtime principal quando aplicável
+active_project_id
+
+Não permitir runtime trocar projeto arbitrariamente.
+
+Projeto precisa estar permitido pelo principal humano e runtime.
+
+==================================================
+ETAPA 27 — PROJECT INTERSECTION
+==================================================
+
+A autorização efetiva deve ser interseção:
+
+human scope
+∩
+runtime scope
+∩
+project enabled
+∩
+tool scope
+∩
+capability grant
+
+Nunca união.
+
+==================================================
+ETAPA 28 — KNOWLEDGE ACCESS
+==================================================
+
+Preservar:
+
+LUMA
+→ Knowledge API
+→ Cérebro Meu Gestor
+
+Runtime pode receber:
+
+knowledge.read
+
+somente para projeto permitido.
+
+Não alterar corpus/engine/API.
+
+==================================================
+ETAPA 29 — LEARNING BOUNDARY
+==================================================
+
+Runtime futuro pode propor:
+
+LearningCandidate
+
+Mas NÃO:
+
+VALIDATED
+PROMOTED
+
+sem workflow futuro.
+
+Nesta fase:
+
+MODEL_PROPOSED candidate
+continua PROPOSED.
+
+==================================================
+ETAPA 30 — MODEL INPUT CONTRACT
+==================================================
+
+Criar contrato futuro:
+
+ModelInputContext
+
+Pode conter:
+
+user message
+session summary permitido
+project
+KnowledgeContext
+tool availability limitada
+pending action state
+
+NÃO conter:
+
+admin token
+owner token
+admin confirmation token
+raw grants administrativos
+DB connection
+secrets
+hidden security configuration
+
+==================================================
+ETAPA 31 — MODEL OUTPUT CONTRACT
+==================================================
+
+Criar contrato futuro:
+
+ModelDecision
+
+Campos conceituais:
+
+assistant_message
+intent
+proposed_actions
+requested_knowledge
+confidence
+needs_clarification
+
+Não aceitar do modelo:
+
+approved=true
+grant
+admin capability
+unlock
+identity override
+permission override
+
+Esses campos devem ser inexistentes/rejeitados.
+
+==================================================
+ETAPA 32 — TOOL CALL CONTRACT
+==================================================
+
+Criar futuro ToolCallProposal:
+
+tool_id
+capability
+parameters
+reason
+correlation_id
+
+É PROPOSTA.
+
+Não é execução.
+
+Tool executor futuro deve receber autorização derivada pelo backend,
+não do modelo.
+
+==================================================
+ETAPA 33 — AGENT CONTEXT
+==================================================
+
+Criar contrato futuro:
+
+AgentExecutionContext
+
+Contendo apenas:
+
+agent_id
+runtime_principal
+project_id
+allowed_capabilities
+session_id
+correlation_id
+
+Nenhum agente recebe OWNER automaticamente.
+
+==================================================
+ETAPA 34 — GOOGLE CALENDAR E TASKS
+==================================================
+
+Preservar contratos.
+
+Continuam:
+
+PLANNED
+DISABLED
+
+Não instalar SDK.
+Não OAuth.
+Não chamar APIs.
+
+Confirmar capabilities futuras:
+
+Calendar:
+calendar.read
+calendar.availability
+calendar.create
+calendar.update
+calendar.delete
+calendar.reminders
+
+Tasks:
+tasks.read
+tasks.create
+tasks.update
+tasks.complete
+tasks.reopen
+tasks.organize
+tasks.delete
+
+==================================================
+ETAPA 35 — GEMINI / ADK
+==================================================
+
+Continuam somente contratos.
+
+NÃO instalar.
+
+NÃO chamar.
+
+NÃO criar API key.
+
+NÃO criar agent executável.
+
+==================================================
+ETAPA 36 — REQUISITOS FUTUROS DA LUMA WEB
+==================================================
+
+Registrar oficialmente, fora do Cérebro Meu Gestor:
+
+LUMA Web será:
+
+- web responsiva;
+- desktop e celular;
+- interação por texto;
+- interação por voz;
+- conversa contínua;
+- futura entrada de arquivos/imagens quando aplicável.
+
+REQUISITO VISUAL CENTRAL:
+
+A interface terá um NÚCLEO VISUAL da LUMA.
+
+Esse núcleo deve reagir em tempo real à voz.
+
+Estados:
+
+IDLE
+LISTENING
+THINKING
+SPEAKING
+WAITING_APPROVAL
+ERROR
+
+Durante SPEAKING:
+
+- pulsar;
+- expandir/contrair;
+- reagir à amplitude;
+- reagir ao ritmo/vibração da voz da LUMA.
+
+Durante LISTENING:
+
+comportamento visual diferente.
+
+Durante THINKING:
+
+animação própria.
+
+Responsivo para desktop e celular.
+
+NÃO implementar frontend nesta fase.
+
+Apenas registrar como requisito oficial da LUMA.
+
+==================================================
+ETAPA 37 — ENDPOINTS RUNTIME
+==================================================
+
+Criar somente endpoints necessários para testar fronteira.
+
+Exemplos:
+
+GET /v1/runtime/status
+
+POST /v1/runtime/knowledge/query
+
+POST /v1/runtime/actions/propose
+
+GET /v1/runtime/actions/{id}
+
+POST /v1/runtime/learning/propose
+
+Todos autenticados como SERVICE_RUNTIME.
+
+Não expor admin.
+
+==================================================
+ETAPA 38 — ENDPOINTS HUMANOS
+==================================================
+
+Admin continua:
+
+/v1/admin/...
+
+Autenticado como HUMAN_OWNER.
+
+Se runtime token chamar admin:
+
+403.
+
+Se owner token chamar runtime:
+
+decidir explicitamente pela política.
+
+Preferência:
+usar fluxos separados.
+
+==================================================
+ETAPA 39 — TESTES DE IDENTIDADE
+==================================================
+
+Testar:
+
+owner token
+runtime token
+token trocado
+token ausente
+principal desabilitado
+runtime tentando admin
+owner sem capability
+grant expirado
+grant revogado
+
+==================================================
+ETAPA 40 — TESTES DE SEGURANÇA
+==================================================
+
+Testar:
+
+privilege escalation
+mass assignment
+grant injection
+identity spoof
+origin spoof
+HUMAN_DIRECT spoof
+approval spoof
+unlock spoof
+secret leakage
+audit leakage
+project switch
+session hijack
+replay
+revocation race
+
+==================================================
+ETAPA 41 — TESTES DE RESTART
+==================================================
+
+Após migração 0002:
+
+restart deve preservar:
+
+grants
+revocations
+retention policy
+audit hash chain
+runtime principal
+sessions
+actions
+approvals
+
+==================================================
+ETAPA 42 — MIGRAÇÃO DE BANCO 7B
+==================================================
+
+Criar teste específico:
+
+DB v0001 com dados
+↓
+upgrade v0002
+↓
+todos os dados preservados
+↓
+novos grants corretos
+↓
+nenhuma capability extra concedida.
+
+==================================================
+ETAPA 43 — KNOWLEDGE INTEGRATION
+==================================================
+
+Reexecutar integração real:
+
+OWNER/RUNTIME
+↓
+LUMA
+↓
+Knowledge API
+↓
+Cérebro Meu Gestor
+
+Confirmar:
+
+mesmos contextos
+fontes
+warnings
+permission_status
+
+Sem geração.
+
+==================================================
+ETAPA 44 — BACKUP
+==================================================
+
+Confirmar que backup inclui schema 0002.
+
+Restaurar em ambiente temporário.
+
+Executar integridade.
+
+==================================================
+ETAPA 45 — AUDITORIA
+==================================================
+
+Atualizar audit_workspace.py.
+
+Verificar:
+
+- sem secrets versionados;
+- runtime DB ignorado;
+- backup ignorado;
+- sem SDK Gemini;
+- sem ADK;
+- sem Google OAuth;
+- sem Calendar/Tasks;
+- sem frontend;
+- sem alteração no Cérebro;
+- sem alteração no Meu Gestor.
+
+==================================================
+ETAPA 46 — TESTES
+==================================================
+
+Executar toda suíte.
+
+Objetivo:
+
+100% pass.
+
+Registrar número final real.
+
+Não esconder skips.
+
+Se integração real for executada:
+registrar explicitamente.
+
+==================================================
+ETAPA 47 — VERSIONAMENTO
+==================================================
+
+Se aprovada:
+
+LUMA Backend:
+0.3.0
+
+Preservar:
+
+Knowledge API:
+0.1.0
+
+Cérebro:
+0.6.0
+
+Knowledge Engine:
+1.4.0
+
+==================================================
+ETAPA 48 — COMMIT LOCAL
+==================================================
+
+Após:
+
+testes
+auditoria
+relatório
+
+criar commit local:
+
+feat: adiciona fronteira de confiança da LUMA
+
+Registrar hash.
+
+NÃO criar remote.
+NÃO push.
+
+==================================================
+RELATÓRIO
+==================================================
+
+Criar:
+
+reports/FASE_7C_RELATORIO_TRUST_BOUNDARY.md
+
+Incluir:
+
+1. baseline;
+2. migração 0002;
+3. principals;
+4. HUMAN_OWNER;
+5. SERVICE_RUNTIME;
+6. control plane;
+7. runtime plane;
+8. credenciais;
+9. secret boundary;
+10. grants;
+11. revocations;
+12. precedence;
+13. action proposals;
+14. consent model;
+15. approval boundary;
+16. retention;
+17. audit integrity;
+18. sessions;
+19. learning;
+20. model contracts;
+21. agent contracts;
+22. tool proposals;
+23. Calendar/Tasks;
+24. requisito LUMA Web/voz/núcleo visual;
+25. endpoints;
+26. security tests;
+27. restart;
+28. migration test;
+29. Knowledge integration;
+30. backup;
+31. audit;
+32. versions;
+33. commit;
+34. limitações;
+35. recomendação próxima fase.
+
+==================================================
+CRITÉRIOS DE ACEITE
+==================================================
+
+Aprovar somente se:
+
+- HUMAN_OWNER e SERVICE_RUNTIME estiverem separados;
+- runtime não acessar admin;
+- runtime não criar grants;
+- runtime não aprovar;
+- runtime não desbloquear;
+- tokens administrativos nunca chegarem ao runtime;
+- default deny funcionar;
+- grants duráveis funcionarem;
+- revogação prevalecer;
+- scopes usarem interseção;
+- HUMAN_DIRECT não puder ser forjado;
+- model contracts não contiverem autorização;
+- retention estiver formalizada;
+- audit tiver integridade verificável;
+- migração 0001→0002 preservar dados;
+- restart preservar estado;
+- Knowledge continuar íntegra;
+- nenhum SDK/modelo/agente externo existir;
+- Calendar/Tasks continuarem desabilitados;
+- requisito visual da LUMA estiver registrado;
+- testes passarem;
+- worktree terminar limpa após commit.
+
+==================================================
+REGRA DE PARADA
+==================================================
+
+Ao concluir:
+
+PARE.
+
+NÃO integrar Gemini.
+NÃO instalar Google ADK.
+NÃO conectar Google Calendar.
+NÃO conectar Google Tasks.
+NÃO criar agentes executáveis.
+NÃO criar frontend.
+NÃO fazer deploy.
+NÃO criar remote.
+NÃO fazer push.
+
+Apresente o relatório e aguarde autorização explícita.

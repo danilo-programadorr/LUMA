@@ -1,16 +1,21 @@
 {
-  "phase": "7B",
+  "phase": "7C",
   "date": "2026-10-21",
   "status": "COMPLETE_LOCAL_VALIDATION",
-  "backend_version": "0.2.0",
-  "tests_passed": 108,
+  "backend_version": "0.3.0",
+  "tests_passed": 156,
   "tests_skipped": 0,
   "integration_cases": 8,
+  "integration_planes": [
+    "HUMAN_OWNER",
+    "SERVICE_RUNTIME"
+  ],
   "real_restart_processes": 2,
-  "schema_revision": 1,
+  "schema_revision": 2,
   "database": "runtime/luma.db",
   "baseline_7a": "cb06235a3e7b53d097d4851d7cae34130e3c5b38",
-  "branch": "codex/fase-7b-persistencia-control-plane",
+  "baseline_7b": "ada01cc344b9307f115069b580a52f1c55022145",
+  "branch": "codex/fase-7c-trust-boundary",
   "knowledge_api_version": "0.1.0",
   "brain_version": "0.6.0",
   "engine_version": "1.4.0",
@@ -18,5 +23,5 @@
   "external_execution_enabled": false,
   "generative_ai_enabled": false,
   "next_phase_authorized": false,
-  "report": "reports/FASE_7B_RELATORIO_PERSISTENCIA_CONTROL_PLANE.md"
+  "report": "reports/FASE_7C_RELATORIO_TRUST_BOUNDARY.md"
 }

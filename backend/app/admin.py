@@ -1,7 +1,7 @@
 import secrets
 from fastapi import APIRouter,Request,Security,Query
 from fastapi.security import HTTPBearer
-from .admin_models import StateChange,ProjectChange,Revoke,ActionCreate,Decision,ActionTransition,SessionCreate,LearningCreate,LearningChange
+from .admin_models import StateChange,ProjectChange,Revoke,ActionCreate,Decision,ActionTransition,SessionCreate,LearningCreate,LearningChange,GrantCreate
 from .errors import Fault
 from .models import Contract
 
@@ -34,7 +34,7 @@ def install(app,control,settings):
         return read
     for url,kind in [('projects','projects'),('tools','tools'),('agents','agents'),('actions','actions'),
         ('approvals','approvals'),('approval-requests','approval_requests'),('revocations','revocations'),
-        ('sessions','sessions'),('learning','learning'),('audit','audit_events')]:
+        ('sessions','sessions'),('learning','learning'),('audit','audit_events'),('grants','grants'),('retention','retention_policies'),('retention/preview','retention_preview'),('audit/verify','audit_verify')]:
         router.add_api_route('/'+url,reader(kind),methods=['GET'],name='admin_read_'+url)
 
     @router.post('/state')
@@ -63,4 +63,12 @@ def install(app,control,settings):
     def learning(body:LearningCreate,request:Request): return change(request,'learning',body.model_dump())
     @router.post('/learning/{candidate_id}/status')
     def learning_status(candidate_id:str,body:LearningChange,request:Request): return change(request,'learning_status',body.model_dump(),candidate_id)
+    def grant_change(request,data,target=None):
+        keys=request.headers.getlist('idempotency-key')
+        if len(keys)!=1: raise Fault('IDEMPOTENCY_KEY_REQUIRED')
+        return control.manage_grant(request.state.principal,data,keys[0],request.state.correlation_id,target,confirmation(request))
+    @router.post('/grants')
+    def grant_create(body:GrantCreate,request:Request): return grant_change(request,body.model_dump())
+    @router.post('/grants/{grant_id}/revoke')
+    def grant_revoke(grant_id:str,request:Request,body:Empty | None=None): return grant_change(request,{},grant_id)
     app.include_router(router)

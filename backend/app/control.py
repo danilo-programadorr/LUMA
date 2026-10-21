@@ -31,7 +31,7 @@ def date(value):
     except (ValueError,TypeError): raise Fault('INVALID_EXPIRATION') from None
 
 def action_scope(action):
-    return digest({k:action[k] for k in ('action_id','principal_id','project_id','tool_id','capability','intent','parameters','risk_level','approval_requirement','created_at')})
+    return digest({k:action[k] for k in ('action_id','principal_id','project_id','tool_id','capability','intent','parameters','risk_level','approval_requirement','created_at') } | {k:action[k] for k in ('origin_type','origin_id','session_id','correlation_id','human_principal_id') if k in action})
 
 
 class Control:
@@ -42,9 +42,9 @@ class Control:
 
     def close(self): self.store.close()
 
-    def safe(self,payload):
+    def safe(self,payload,max_chars=16384):
         raw=json.dumps(payload,ensure_ascii=False)
-        if len(raw)>16384: raise Fault('PAYLOAD_TOO_LARGE',413)
+        if len(raw)>max_chars: raise Fault('PAYLOAD_TOO_LARGE',413)
         secrets=(self.settings.token,self.settings.knowledge_token,self.settings.admin_confirmation_token)
         if any(secret and secret in raw for secret in secrets): raise Fault('SENSITIVE_PAYLOAD')
         if re.search(r'-----BEGIN .*PRIVATE KEY|AIza[0-9A-Za-z_-]{30,}|gh[pousr]_[0-9A-Za-z]{25,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}',raw):

@@ -153,7 +153,11 @@ def test_control_denies(client,mutation):
     if mutation in ('missing_capability','scope'):
         with control.store.transaction() as repo:
             row=repo.get('principals',principal.principal_id)
-            row['capabilities' if mutation=='missing_capability' else 'project_scopes']=[]
+            if mutation=='missing_capability':
+                for g in repo.rows('grants'):
+                    if g['principal_id']==principal.principal_id and g['capability']=='knowledge.read':
+                        g['status']='REVOKED';repo.put('grants',g['grant_id'],g)
+            else: row['project_scopes']=[]
             repo.put('principals',principal.principal_id,row)
     elif mutation=='revoked': control.mutate(control.principal(),'revoke',{'project_id':'meu-gestor','capability':'knowledge.read','tool_id':'knowledge','reason':'test','expires_at':None},'test-revoke','test')
     elif mutation=='disabled': control.mutate(control.principal(),'tool',{'enabled':False},'test-disable','test',target='knowledge')

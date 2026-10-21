@@ -36,7 +36,7 @@ patterns={
     'jwt':r'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}'
 }
 scanned=0
-for folder in ('backend','contracts','docs'):
+for folder in ('backend','contracts','docs','reports'):
     for file in (ROOT/folder).rglob('*'):
         if not file.is_file() or '__pycache__' in file.parts: continue
         content=file.read_text(encoding='utf-8-sig'); scanned+=1
@@ -59,10 +59,13 @@ if (finance/'.git').exists():
 tracked=git(ROOT,'ls-files').splitlines()
 if any(p.startswith(('runtime/','.venv/','__pycache__/','.pytest_cache/')) or p.endswith(('.db','.sqlite','.db-wal','.db-shm')) for p in tracked):
     errors.append('RUNTIME_OR_DATABASE_TRACKED')
-for ignored in ('runtime/luma.db','.venv/pyvenv.cfg','backend/app/__pycache__/example.pyc'):
+for ignored in ('runtime/luma.db','runtime/backups/example.db','.venv/pyvenv.cfg','backend/app/__pycache__/example.pyc'):
     if not git(ROOT,'check-ignore',ignored): errors.append('RUNTIME_NOT_IGNORED:'+ignored)
-if 'backend/migrations/v0001_initial.py' not in tracked: errors.append('MIGRATION_NOT_VERSIONED')
-if git(ROOT,'branch','--show-current')!='codex/fase-7b-persistencia-control-plane': errors.append('WRONG_PHASE_BRANCH')
+for migration in ('backend/migrations/v0001_initial.py','backend/migrations/v0002_trust_boundary.py'):
+    if migration not in tracked: errors.append('MIGRATION_NOT_VERSIONED:'+migration)
+if git(ROOT,'hash-object','backend/migrations/v0001_initial.py')!=git(ROOT,'rev-parse','ada01cc344b9307f115069b580a52f1c55022145:backend/migrations/v0001_initial.py'):
+    errors.append('HISTORICAL_MIGRATION_CHANGED')
+if git(ROOT,'branch','--show-current')!='codex/fase-7c-trust-boundary': errors.append('WRONG_PHASE_BRANCH')
 for requirement in (ROOT/'backend/requirements/lock.txt').read_text(encoding='utf-8-sig').splitlines():
     if requirement.lower().startswith(('google-','google_','gemini','openai','google-adk')): errors.append('FORBIDDEN_SDK_DEPENDENCY')
 for name in ('package.json','next.config.js','next.config.ts'):

@@ -315,5 +315,67 @@
     ],
     "title": "LearningChange",
     "type": "object"
+  },
+  "GrantCreate": {
+    "additionalProperties": false,
+    "properties": {
+      "principal_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Principal Id",
+        "type": "string"
+      },
+      "capability": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Capability",
+        "type": "string"
+      },
+      "project_id": {
+        "anyOf": [
+          {
+            "maxLength": 64,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Project Id"
+      },
+      "tool_id": {
+        "anyOf": [
+          {
+            "maxLength": 64,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Tool Id"
+      },
+      "expires_at": {
+        "anyOf": [
+          {
+            "maxLength": 40,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Expires At"
+      }
+    },
+    "required": [
+      "principal_id",
+      "capability"
+    ],
+    "title": "GrantCreate",
+    "type": "object"
   }
 }

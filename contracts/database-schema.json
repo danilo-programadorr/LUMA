@@ -1,5 +1,5 @@
 {
-  "revision": 1,
+  "revision": 2,
   "tables": {
     "actions": [
       {
@@ -205,6 +205,57 @@
         "indexed": false
       }
     ],
+    "audit_chain": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
     "audit_events": [
       {
         "name": "id",
@@ -251,6 +302,78 @@
       {
         "name": "data",
         "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "grants": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "capability",
+        "type": "VARCHAR(100)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "tool_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "scope",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "granted_by",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "expires_at",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
         "nullable": false,
         "primary_key": false,
         "indexed": false
@@ -430,6 +553,57 @@
         "nullable": true,
         "primary_key": false,
         "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "retention_policies": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
       },
       {
         "name": "status",

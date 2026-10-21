@@ -8,7 +8,7 @@ from .config import Settings
 from .auth import LocalAuthenticator
 from .errors import Fault
 from .models import KnowledgeRequest,KnowledgeContext,Contract,ident
-from .control import Control
+from .trust import Control
 from .admin import install
 from .knowledge import KnowledgeClient,KnowledgeService
 from .audit import emit
@@ -51,6 +51,8 @@ def create_app(settings=None,client=None):
     app.state.control=control
     app.state.local=control
     install(app,control,settings)
+    from .runtime import install_runtime
+    install_runtime(app,control,service)
     bearer=HTTPBearer(auto_error=False)
 
     @app.middleware('http')
@@ -94,7 +96,7 @@ def create_app(settings=None,client=None):
     @app.exception_handler(RequestValidationError)
     async def invalid(request,error):
         fields={str(x) for e in error.errors() for x in e['loc']}
-        elevation={'access_level','sensitivity','project_scope','project_scopes','principal_id','capabilities','roles','approval_level'}
+        elevation={'access_level','sensitivity','project_scope','project_scopes','principal_id','capabilities','roles','approval_level','origin_type','origin_id','approved','grant','unlock','identity','permission_override'}
         return failure(request,Fault('PRIVILEGE_ESCALATION' if fields&elevation else 'INVALID_REQUEST',403 if fields&elevation else 400))
 
     @app.get('/health')
@@ -135,6 +137,7 @@ def create_app(settings=None,client=None):
 
     @app.post('/v1/knowledge/query',response_model=KnowledgeContext,dependencies=[Security(bearer)])
     def query(body:KnowledgeRequest,request:Request):
+        control.safe(body.model_dump(mode='json'))
         principal=request.state.principal
         projects.resolve(body.project_id,principal)
         request.state.project_id=body.project_id

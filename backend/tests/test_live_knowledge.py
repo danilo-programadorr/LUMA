@@ -47,7 +47,7 @@ def test_real_http_integration(tmp_path):
     settings=Settings(secrets.token_urlsafe(32),token,knowledge_endpoint=f'http://127.0.0.1:{knowledge.port}')
     from backend.migrate import migrate
     from dataclasses import replace
-    settings=replace(settings,database_url='sqlite:///'+(tmp_path/'live.db').as_posix())
+    settings=replace(settings,runtime_token=secrets.token_urlsafe(32),database_url='sqlite:///'+(tmp_path/'live.db').as_posix())
     migrate(settings.database_url)
     luma=None
     comparisons=[]
@@ -59,18 +59,23 @@ def test_real_http_integration(tmp_path):
                           base_url=settings.knowledge_endpoint,timeout=15,trust_env=False,
                           headers={'Authorization':'Bearer '+token}) as direct:
             assert c.get('/v1/luma/status').json()['status']=='READY'
+            session_response=c.post('/v1/admin/sessions',json={'project_id':'meu-gestor'},headers={'Idempotency-Key':secrets.token_hex(12)})
+            assert session_response.status_code==200,session_response.text
+            session_id=session_response.json()['session_id']
             for question in ['arquitetura técnica','privacidade e dados pessoais','riscos atuais','permissão atual para executar',
                              'histórico de autorização','revogação parada e restauração','funcionalidades produto','segurança de ferramentas']:
                 body={'project_id':'meu-gestor','query':question}
                 expected=direct.post('/v1/knowledge/query',json=body)
                 actual=c.post('/v1/knowledge/query',json=body)
                 assert actual.status_code==expected.status_code==200,actual.text
+                runtime=c.post('/v1/runtime/knowledge/query',json={**body,'session_id':session_id},headers={'Authorization':'Bearer '+settings.runtime_token})
+                assert runtime.status_code==200,runtime.text
                 result=actual.json()
                 for field in ('project_id','results','sources','warnings','permission_status','status','confidence'):
-                    assert result[field]==expected.json()[field],field
+                    assert result[field]==expected.json()[field]==runtime.json()[field],field
                 assert result['brain_version']=='0.6.0' and result['engine_version']=='1.4.0'
                 assert result['content_trust']=='UNTRUSTED_DATA' and 'answer' not in result
-                comparisons.append({'category':question,'equivalent':True,'chunks':len(result['results'])})
+                comparisons.append({'category':question,'owner_equivalent':True,'runtime_equivalent':True,'chunks':len(result['results'])})
             schema=c.get('/openapi.json').json()
             (tmp_path/'openapi.json').write_text(json.dumps(schema,ensure_ascii=False,indent=2),encoding='utf8')
             knowledge.stop()

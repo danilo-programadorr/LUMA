@@ -18,7 +18,7 @@ class Contract(BaseModel):
 
 class Principal(Contract):
     principal_id: str = 'local-owner'
-    principal_type: Literal['LOCAL_OWNER'] = 'LOCAL_OWNER'
+    principal_type: Literal['HUMAN_OWNER','SERVICE_RUNTIME','AGENT_SERVICE','TOOL_SERVICE'] = 'HUMAN_OWNER'
     display_name: str = 'Owner local'
     roles: tuple[str, ...] = ('OWNER',)
     project_scopes: tuple[str, ...] = ('meu-gestor',)
@@ -94,6 +94,10 @@ class ActionRequest(Contract):
     risk_level: Literal['LOW','MEDIUM','HIGH']
     approval_requirement: Literal['AUTO','CONFIRM','DENY']
     status: Literal['PROPOSED','WAITING_APPROVAL','APPROVED','DENIED','EXECUTING','SUCCEEDED','FAILED','CANCELLED'] = 'PROPOSED'
+    origin_type: Literal['HUMAN_DIRECT','MODEL_PROPOSED','AGENT_PROPOSED','SYSTEM'] = 'SYSTEM'
+    origin_id: str | None = None
+    session_id: str | None = None
+    correlation_id: str | None = None
     created_at: datetime = Field(default_factory=now)
 
 
@@ -109,6 +113,8 @@ class ApprovalRecord(Contract):
 
 
 class Session(Contract):
+    human_principal_id: str | None = None
+    runtime_principal_id: str | None = None
     session_id: str = Field(default_factory=ident)
     principal_id: str
     active_project_id: str
@@ -131,3 +137,20 @@ class LearningCandidate(Contract):
 class ModelProvider(Protocol):
     """Future port only. No concrete model provider in Phase 7A."""
     def generate(self, context: KnowledgeContext) -> str: ...
+
+class Grant(Contract):
+    grant_id:str
+    principal_id:str
+    capability:str
+    project_id:str | None=None
+    tool_id:str | None=None
+    scope:Literal['GLOBAL','PROJECT']
+    granted_by:str
+    created_at:str
+    expires_at:str | None=None
+    status:Literal['ACTIVE','REVOKED','EXPIRED']
+
+class RetentionPolicy(Contract):
+    category:Literal['sessions','actions','approvals','learning_candidates','audit']
+    mode:Literal['NO_AUTO_DELETE']='NO_AUTO_DELETE'
+    purge_enabled:Literal[False]=False

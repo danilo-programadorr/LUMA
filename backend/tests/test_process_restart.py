@@ -14,7 +14,8 @@ def test_real_process_restart(tmp_path):
     path=tmp_path/'restart.db';url='sqlite:///'+path.as_posix();migrate(url)
     token,knowledge,confirmation=(secrets.token_urlsafe(32) for _ in range(3))
     env={k:v for k,v in os.environ.items() if k.upper() in ('PATH','SYSTEMROOT','WINDIR','TEMP','TMP','PATHEXT')}
-    env.update(LUMA_TOKEN=token,LUMA_KNOWLEDGE_TOKEN=knowledge,LUMA_ADMIN_CONFIRM_TOKEN=confirmation,
+    runtime=secrets.token_urlsafe(32)
+    env.update(LUMA_RUNTIME_TOKEN=runtime,LUMA_OWNER_TOKEN=token,LUMA_KNOWLEDGE_TOKEN=knowledge,LUMA_ADMIN_CONFIRM_TOKEN=confirmation,
         LUMA_DATABASE_URL=url,PYTHONDONTWRITEBYTECODE='1')
     process_ids=[]
     def launch():
@@ -55,10 +56,20 @@ def test_real_process_restart(tmp_path):
         learning=post(c,'learning',{'project_id':'meu-gestor','source':'synthetic','claim':'unverified','evidence':['ref'],'confidence':'LOW'})
         post(c,'revocations',{'project_id':'meu-gestor','capability':'knowledge.read','tool_id':'knowledge','reason':'restart-test'})
         post(c,'tools/knowledge/disable')
+        grant_rows=c.get('/v1/admin/grants').json()
+        retention=c.get('/v1/admin/retention').json()
+        before_chain=c.get('/v1/admin/audit/verify').json()
+        assert before_chain['verified']
         post(c,'state',{'state':'LOCKED'})
     finally: stop(proc,c)
     proc,c=launch()
     try:
+        assert c.get('/v1/admin/grants').json()==grant_rows
+        assert c.get('/v1/admin/retention').json()==retention
+        chain=c.get('/v1/admin/audit/verify').json()
+        assert chain['verified'] and chain['sequence']>before_chain['sequence']
+        identity=c.get('/v1/runtime/status',headers={'Authorization':'Bearer '+runtime}).json()
+        assert identity['principal_id']=='luma-runtime'
         assert c.get('/v1/admin/state').json()['state']=='LOCKED'
         assert c.get('/v1/admin/actions/'+a['action_id']).json()['status']=='APPROVED'
         assert c.get('/v1/admin/approvals').json()[0]['approval_id']==approval['approval_id']
@@ -73,5 +84,5 @@ def test_real_process_restart(tmp_path):
     finally: stop(proc,c)
     assert len(set(process_ids))==2
     (tmp_path/'restart-evidence.json').write_text(json.dumps({'distinct_processes':2,'graceful_exit_codes':[0,0],
-        'preserved':['LOCKED','revocation','disabled_tool','action','approval','session','learning','audit'],
+        'preserved':['LOCKED','revocation','disabled_tool','action','approval','session','learning','audit','grants','retention_policies','audit_hash_chain','runtime_principal'],
         'bootstrap_count':1,'knowledge_blocked_after_restart':True},indent=2),encoding='utf8')

@@ -8,8 +8,13 @@
         "type": "string"
       },
       "principal_type": {
-        "const": "LOCAL_OWNER",
-        "default": "LOCAL_OWNER",
+        "default": "HUMAN_OWNER",
+        "enum": [
+          "HUMAN_OWNER",
+          "SERVICE_RUNTIME",
+          "AGENT_SERVICE",
+          "TOOL_SERVICE"
+        ],
         "title": "Principal Type",
         "type": "string"
       },
@@ -153,6 +158,34 @@
       "capabilities"
     ],
     "title": "Tool",
+    "type": "object"
+  },
+  "Limits": {
+    "additionalProperties": false,
+    "properties": {
+      "max_documents": {
+        "default": 5,
+        "maximum": 5,
+        "minimum": 1,
+        "title": "Max Documents",
+        "type": "integer"
+      },
+      "max_chunks": {
+        "default": 12,
+        "maximum": 12,
+        "minimum": 1,
+        "title": "Max Chunks",
+        "type": "integer"
+      },
+      "max_chars": {
+        "default": 16000,
+        "maximum": 16000,
+        "minimum": 256,
+        "title": "Max Chars",
+        "type": "integer"
+      }
+    },
+    "title": "Limits",
     "type": "object"
   },
   "KnowledgeRequest": {
@@ -393,6 +426,53 @@
         "title": "Status",
         "type": "string"
       },
+      "origin_type": {
+        "default": "SYSTEM",
+        "enum": [
+          "HUMAN_DIRECT",
+          "MODEL_PROPOSED",
+          "AGENT_PROPOSED",
+          "SYSTEM"
+        ],
+        "title": "Origin Type",
+        "type": "string"
+      },
+      "origin_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Origin Id"
+      },
+      "session_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session Id"
+      },
+      "correlation_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Correlation Id"
+      },
       "created_at": {
         "format": "date-time",
         "title": "Created At",
@@ -475,6 +555,30 @@
   "Session": {
     "additionalProperties": false,
     "properties": {
+      "human_principal_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Human Principal Id"
+      },
+      "runtime_principal_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Runtime Principal Id"
+      },
       "session_id": {
         "title": "Session Id",
         "type": "string"
@@ -578,6 +682,128 @@
       "confidence"
     ],
     "title": "LearningCandidate",
+    "type": "object"
+  },
+  "Grant": {
+    "additionalProperties": false,
+    "properties": {
+      "grant_id": {
+        "title": "Grant Id",
+        "type": "string"
+      },
+      "principal_id": {
+        "title": "Principal Id",
+        "type": "string"
+      },
+      "capability": {
+        "title": "Capability",
+        "type": "string"
+      },
+      "project_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Project Id"
+      },
+      "tool_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Tool Id"
+      },
+      "scope": {
+        "enum": [
+          "GLOBAL",
+          "PROJECT"
+        ],
+        "title": "Scope",
+        "type": "string"
+      },
+      "granted_by": {
+        "title": "Granted By",
+        "type": "string"
+      },
+      "created_at": {
+        "title": "Created At",
+        "type": "string"
+      },
+      "expires_at": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Expires At"
+      },
+      "status": {
+        "enum": [
+          "ACTIVE",
+          "REVOKED",
+          "EXPIRED"
+        ],
+        "title": "Status",
+        "type": "string"
+      }
+    },
+    "required": [
+      "grant_id",
+      "principal_id",
+      "capability",
+      "scope",
+      "granted_by",
+      "created_at",
+      "status"
+    ],
+    "title": "Grant",
+    "type": "object"
+  },
+  "RetentionPolicy": {
+    "additionalProperties": false,
+    "properties": {
+      "category": {
+        "enum": [
+          "sessions",
+          "actions",
+          "approvals",
+          "learning_candidates",
+          "audit"
+        ],
+        "title": "Category",
+        "type": "string"
+      },
+      "mode": {
+        "const": "NO_AUTO_DELETE",
+        "default": "NO_AUTO_DELETE",
+        "title": "Mode",
+        "type": "string"
+      },
+      "purge_enabled": {
+        "const": false,
+        "default": false,
+        "title": "Purge Enabled",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "category"
+    ],
+    "title": "RetentionPolicy",
     "type": "object"
   }
 }

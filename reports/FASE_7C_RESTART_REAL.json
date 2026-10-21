@@ -1,0 +1,23 @@
+{
+  "distinct_processes": 2,
+  "graceful_exit_codes": [
+    0,
+    0
+  ],
+  "preserved": [
+    "LOCKED",
+    "revocation",
+    "disabled_tool",
+    "action",
+    "approval",
+    "session",
+    "learning",
+    "audit",
+    "grants",
+    "retention_policies",
+    "audit_hash_chain",
+    "runtime_principal"
+  ],
+  "bootstrap_count": 1,
+  "knowledge_blocked_after_restart": true
+}

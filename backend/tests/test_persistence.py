@@ -10,7 +10,9 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import inspect,select,update
 from backend.app.config import Settings
-from backend.app.control import Control,stamp
+from backend.app.trust import Control
+from backend.app.control import stamp
+from backend.app.trust_data import grant
 from backend.app.database import Store,TABLES,version,database_path,engine_for
 from backend.app.errors import Fault
 from backend.app.main import create_app
@@ -66,7 +68,7 @@ def test_migration_bootstrap(cfg,tmp_path):
     first=Control(cfg)
     with first.store.read() as repo:
         before={name:len(repo.rows(name)) for name in TABLES}
-        assert before['principals']==1 and before['agents']==9 and before['tools']==9
+        assert before['principals']==2 and before['agents']==9 and before['tools']==9
         assert 'token' not in json.dumps(repo.get('principals','local-owner')).lower()
     first.close()
     second=Control(cfg)
@@ -97,7 +99,7 @@ def test_admin_auth(api,authorization):
 def test_capability_not_role(api):
     c=api.app.state.control
     with c.store.transaction() as repo:
-        p=repo.get('principals','local-owner');p['capabilities'].remove('admin.state.manage');repo.put('principals','local-owner',p)
+        g=next(g for g in repo.rows('grants') if g['principal_id']=='local-owner' and g['capability']=='admin.state.manage');g['status']='REVOKED';repo.put('grants',g['grant_id'],g)
     assert api.get('/v1/admin/state').status_code==200
     assert post(api,'state',{'state':'LOCKED'}).status_code==403
     with c.store.transaction() as repo:
@@ -127,7 +129,7 @@ def test_state_unlock_and_idempotency(api,cfg):
 def test_action_approval_consume(api,cfg):
     a=action(api)
     bad=post(api,'approvals/'+a['action_id']+'/decision',{'approved':True})
-    assert bad.status_code==400
+    assert bad.status_code==403
     body={'decision':'APPROVE','scope':a['scope'],'confirmation':'HUMAN_DECISION'}
     assert post(api,'approvals/'+a['action_id']+'/decision',body).status_code==403
     wrong={**body,'scope':'0'*64}
@@ -180,7 +182,7 @@ def test_tools_and_scope(api):
     c=api.app.state.control
     with c.store.transaction() as repo:
         t=repo.get('tools','google_calendar');t['enabled']=True;repo.put('tools','google_calendar',t)
-        p=repo.get('principals','local-owner');p['capabilities'].append('calendar.read');repo.put('principals','local-owner',p)
+        grant(repo,'local-owner','calendar.read','meu-gestor','google_calendar',by='SYNTHETIC_TEST')
         project=repo.get('projects','meu-gestor');project['capabilities'].append('calendar.read');repo.put('projects','meu-gestor',project)
     p=c.principal()
     with pytest.raises(Fault,match='EXTERNAL_EXECUTION_DISABLED'): c.check(p,c.resolve('meu-gestor',p),'google_calendar','calendar.read')
