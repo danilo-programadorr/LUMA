@@ -11,7 +11,7 @@ from backend.model_worker.adapter import GeminiAdapter
 MAX_FRAME=262144
 
 def main():
-    correlation='';adapter=None
+    correlation='';adapter=None;stage='model worker startup'
     try:
         raw=sys.stdin.buffer.readline(MAX_FRAME+1)
         if len(raw)>MAX_FRAME or not raw.endswith(b'\n'): raise Fault('MODEL_INVALID_RESPONSE',503)
@@ -23,6 +23,7 @@ def main():
         if set(config)!={'model','timeout','max_output_tokens','temperature'}: raise Fault('MODEL_INVALID_RESPONSE',503)
         ModelSettings(provider='gemini',api_key=os.environ.get('GEMINI_API_KEY',''),**config)
         context=ModelInputContext.model_validate_json(json.dumps(request['context']))
+        stage='GeminiAdapter initialization'
         adapter=GeminiAdapter(os.environ.get('GEMINI_API_KEY',''),config)
         result=adapter.generate(context)
         reply=dict(correlation_id=correlation,result=result.model_dump(mode='json'))
@@ -32,6 +33,8 @@ def main():
         if adapter:
             try: adapter.close()
             except Exception: pass
+    if 'error' in reply:
+        reply['diagnostic']=dict(safe_error_type=adapter.safe_error_type if adapter else 'InternalError',safe_detail=adapter.safe_detail if adapter else 'NONE',failure_stage=adapter.stage if adapter else stage,credential_present=bool(os.environ.get('GEMINI_API_KEY')),generation_attempted=adapter.generation_attempted if adapter else False)
     output=json.dumps(reply,ensure_ascii=False).encode('utf8')+b'\n'
     if len(output)>131072: output=json.dumps(dict(correlation_id=correlation,error='MODEL_INVALID_RESPONSE')).encode()+b'\n'
     sys.stdout.buffer.write(output);sys.stdout.buffer.flush()

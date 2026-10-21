@@ -1,0 +1,10 @@
+{
+  "baseline": "273d536b843172df03eff4918d83d8483f9ac64b",
+  "files": {
+    "backend/app/model_provider.py": "148d49e673e33551b49e1884760e696b46ba0068d5aa4213d6b4d2b42fbea577",
+    "backend/model_worker/adapter.py": "2737c795eb25936ac96da345f32f37bbfc374f8ab886bd7b099604c225590e18",
+    "backend/model_worker/worker.py": "431a93e567159cf1c0596a41696e6e977ce775e73944f5a833dd4d6936ecf6d0",
+    "backend/validate_gemini.py": "c44e97b23429f6fcb78cc48276bf64f81e623021eaa4f190f6e81efb52e4cded",
+    "backend/tests/test_model_diagnostics.py": "c4e25149961cbfdb6502596a08ab6d418e7b246b3da853e64180e465131ee822"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "status": "FAILED",
+  "real_model_tested": false,
+  "model_used": "gemini-3.8-flash",
+  "cases": [],
+  "cases_executed": 0,
+  "servers_stopped": true
+}

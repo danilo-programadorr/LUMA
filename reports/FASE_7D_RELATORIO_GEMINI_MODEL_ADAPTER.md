@@ -72,3 +72,32 @@ Pendência exata: disponibilizar LUMA_GEMINI_API_KEY (ou alias GEMINI_API_KEY) n
 Limitações adicionais: separação de processo sem sandbox de SO, sem garantia universal de detecção de segredo desconhecido ou falsidade em linguagem natural, schema e orçamento ainda não exercitados contra o serviço Gemini real, ambiente local SQLite sem validação de produção. Audit tamper-evident continua sem âncora externa. Conversas limitadas podem conter texto privado autorizado, protegido pelas permissões locais e fora do Git; não há criptografia de aplicação.
 
 **Parada na Fase 7D.** Não aprovada integralmente enquanto Gemini real estiver bloqueado. Não iniciar 7E/ADK, agentes, Calendar, Tasks, frontend, voz ou deploy. Requisito visual/voz existente foi preservado. Próxima recomendação é concluir a validação Gemini isolada com credencial; só depois avaliar autorização específica para 7E.
+
+
+## Correcao dirigida de 2026-10-21 — diagnostico seguro
+
+Responsavel: Codex. Base: 273d536b843172df03eff4918d83d8483f9ac64b, backend 0.4.0rc1.
+
+Evidencia fornecida pelo proprietario: chamada direta google-genai ao modelo gemini-3.8-flash retornou OK no PowerShell configurado. O relatorio FAILED anterior foi preservado em FASE_7D_GEMINI_REAL_ANTES_CORRECAO.json. Essa evidencia nao determina qual etapa falhou dentro da LUMA.
+
+Causa comprovada da ausencia de diagnostico (confianca alta, inspecao de backend/validate_gemini.py na base): except Exception descartava a excecao; a primeira resposta HTTP diferente de 200 virava assert sem codigo; cases_executed contava apenas casos aprovados; servers_stopped era incondicional. A causa da falha da chamada real permanece NAO CONFIRMADA. Nao ha evidencia para atribui-la a credencial, rede, modelo ou generation config.
+
+Correcao: etapas explicitas, codigos e tipos seguros, protocolo do worker com diagnostico de campos e valores enumerados, distincao entre HTTP 400, MAX_TOKENS e schema invalido; contagem de tentativas e aprovados separada; cleanup verificado; historico dos relatorios preservado. Mensagens brutas de excecao, prompts, respostas e credenciais nao sao persistidos. Temperatura, limite, MIME, hash do schema e versao da instrucao sao registraveis sem conteudo sensivel.
+
+A chamada minima 'Responda somente OK' usa o mesmo GeminiModelProvider, Python -I, ambiente restrito, GeminiAdapter e ModelDecision estruturado; nao introduz modo permissivo. Apos esse probe passam os oito cenarios existentes pelo backend HTTP. O modelo permanece sem autoridade para executar ferramentas. Parametros e schema de geracao nao foram relaxados nem alterados sem evidencia de incompatibilidade.
+
+Execucao neste processo: credential_present=false; validador retorna BLOCKED_NEEDS_CREDENTIAL na etapa configuration. Isso descreve somente o processo Codex, nao invalida a evidencia do PowerShell do proprietario. O proprietario confirmou que executara o validador no PowerShell configurado e fornecera o JSON sanitizado. Nenhuma integracao Gemini real nova foi comprovada nesta correcao.
+
+Decisao atual: NO-GO para promover 0.4.0rc1. Validacao real e causa raiz pendentes. Nenhuma nova fase autorizada ou iniciada.
+
+Comando para o PowerShell que ja possui a credencial:
+
+```powershell
+Set-Location 'D:\projetos\luma'
+.\.venv\Scripts\python.exe -m backend.validate_gemini
+Get-Content -LiteralPath '.\reports\FASE_7D_GEMINI_REAL.json' -Raw
+```
+
+O resultado atual e os historicos distinguem a falha original da execucao sem credencial neste processo. O manifesto FASE_7D_HASHES_ENTREGA.json continua sendo evidencia da candidata original; nao foi reescrito para ocultar a correcao.
+
+Validacao local da correcao: suite original 206 passed (180.79s); suite ampliada 213 passed, zero skips (182.83s), exit code 0. Sete testes direcionados do validador final tambem passaram (2.89s). Um aviso de deprecacao Starlette/httpx ja conhecido. Auditoria FASE_7D_AUDITORIA_CORRECAO.json: VERIFIED, sem erros; fonte main@9fe7fd3a69a537f9e67953b7028e64c676a48547 e repositorio financeiro limpos.

@@ -1,0 +1,11 @@
+{
+  "command": "python -m pytest backend/tests -v --tb=short --basetemp=runtime/tests-7d-directed-final -o faulthandler_timeout=90",
+  "passed": 213,
+  "skipped": 0,
+  "failed": 0,
+  "warnings": 1,
+  "duration_seconds": 182.83,
+  "exit_code": 0,
+  "final_validator_targeted_tests": 7,
+  "real_gemini": false
+}
