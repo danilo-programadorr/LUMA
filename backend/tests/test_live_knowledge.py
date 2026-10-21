@@ -45,6 +45,10 @@ def test_real_http_integration(tmp_path):
     ka=knowledge_app(KSettings(token,KPrincipal('luma-consumer',('meu-gestor',),'INTERNO',('INTERNO',))))
     knowledge=Server(ka).start()
     settings=Settings(secrets.token_urlsafe(32),token,knowledge_endpoint=f'http://127.0.0.1:{knowledge.port}')
+    from backend.migrate import migrate
+    from dataclasses import replace
+    settings=replace(settings,database_url='sqlite:///'+(tmp_path/'live.db').as_posix())
+    migrate(settings.database_url)
     luma=None
     comparisons=[]
     try:

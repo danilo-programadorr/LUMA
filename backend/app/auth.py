@@ -4,8 +4,9 @@ from .errors import Fault
 
 class LocalAuthenticator:
     """Replaceable identity adapter; token resolves to server-owned principal."""
-    def __init__(self,settings):
+    def __init__(self,settings,control=None):
         self.settings=settings
+        self.control=control
 
     def authenticate(self,request):
         values=request.headers.getlist('authorization')
@@ -14,4 +15,4 @@ class LocalAuthenticator:
         if (len(parts)!=2 or parts[0].lower()!='bearer' or not parts[1].isascii() or
             len(parts[1])>256 or not secrets.compare_digest(parts[1],self.settings.token)):
             raise Fault('UNAUTHORIZED',401)
-        return self.settings.principal
+        return self.control.principal() if self.control else self.settings.principal

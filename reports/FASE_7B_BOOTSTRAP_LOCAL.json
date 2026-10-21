@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-21",
+  "database": "runtime/luma.db",
+  "schema": 1,
+  "counts": {
+    "principals": 1,
+    "projects": 1,
+    "tools": 9,
+    "agents": 9,
+    "audit_events": 1,
+    "actions": 0,
+    "approvals": 0
+  },
+  "secrets_persisted": false,
+  "service_started": false
+}

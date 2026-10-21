@@ -8,9 +8,8 @@ from .config import Settings
 from .auth import LocalAuthenticator
 from .errors import Fault
 from .models import KnowledgeRequest,KnowledgeContext,Contract,ident
-from .registry import Projects,TOOLS,AGENTS
-from .policy import Policy
-from .state import LocalState
+from .control import Control
+from .admin import install
 from .knowledge import KnowledgeClient,KnowledgeService
 from .audit import emit
 
@@ -32,21 +31,26 @@ def failure(request,error):
 
 def create_app(settings=None,client=None):
     settings=settings or Settings.from_env()
-    projects,policy=Projects(settings.knowledge_endpoint),Policy()
+    control=Control(settings)
+    projects=policy=control
     client=client or KnowledgeClient(settings)
     service=KnowledgeService(settings,projects,policy,client)
-    auth=LocalAuthenticator(settings)
+    auth=LocalAuthenticator(settings,control)
 
     @asynccontextmanager
     async def lifespan(app):
         # Remote knowledge availability is independent of LUMA readiness.
         try: yield
-        finally: client.close()
+        finally:
+            client.close()
+            control.close()
 
     app=FastAPI(title='LUMA Backend',version=__version__,docs_url=None,redoc_url=None,lifespan=lifespan,
         responses={'default':{'model':ErrorResponse,'description':'Fail-closed structured error'}})
     app.state.policy,app.state.projects,app.state.service=policy,projects,service
-    app.state.local=LocalState(projects)
+    app.state.control=control
+    app.state.local=control
+    install(app,control,settings)
     bearer=HTTPBearer(auto_error=False)
 
     @app.middleware('http')
@@ -76,6 +80,10 @@ def create_app(settings=None,client=None):
             emit(p.principal_id if p else None,request.state.project_id,known.get(request.url.path,'HTTP'),
                 request.state.result if request.state.result!='OK' else str(response.status_code if response else 500),
                 request.state.correlation_id,tool_id='knowledge' if request.url.path=='/v1/knowledge/query' else None)
+        try:
+            control.http_event(request.state.principal,request.state.project_id,known.get(request.url.path,'ADMIN_HTTP' if request.url.path.startswith('/v1/admin/') else 'HTTP'),request.state.result if request.state.result!='OK' else str(response.status_code),request.state.correlation_id)
+        except Fault:
+            response=failure(request,Fault('AUDIT_UNAVAILABLE',503))
         response.headers['X-Correlation-ID']=request.state.correlation_id
         response.headers['Cache-Control']='no-store'
         return response
@@ -119,10 +127,11 @@ def create_app(settings=None,client=None):
     def project_list(request:Request): return project_status(request.state.principal,request.state.correlation_id)
 
     @app.get('/v1/tools',dependencies=[Security(bearer)])
-    def tools(): return [{**t.model_dump(mode='json'),'enabled':t.enabled and t.tool_id not in policy.disabled and policy.state=='RUNNING'} for t in TOOLS.values()]
+    def tools(request:Request):
+        return [{**t,'enabled':t['enabled'] and policy.state=='RUNNING'} for t in control.listing(request.state.principal,'tools')]
 
     @app.get('/v1/agents',dependencies=[Security(bearer)])
-    def agents(): return list(AGENTS)
+    def agents(request:Request): return control.listing(request.state.principal,'agents')
 
     @app.post('/v1/knowledge/query',response_model=KnowledgeContext,dependencies=[Security(bearer)])
     def query(body:KnowledgeRequest,request:Request):

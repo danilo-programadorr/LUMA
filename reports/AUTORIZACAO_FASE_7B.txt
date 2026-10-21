@@ -1,0 +1,952 @@
+AUTORIZAÇÃO DO PROPRIETÁRIO — FASE 7B
+
+PERSISTÊNCIA DURÁVEL E CONTROL PLANE LOCAL DA LUMA
+
+Workspace:
+
+D:\projetos\luma
+
+==================================================
+ESTADO ATUAL
+==================================================
+
+LUMA Backend:
+0.1.0
+
+Knowledge API:
+0.1.0
+
+Cérebro Meu Gestor:
+0.6.0
+
+Knowledge Engine:
+1.4.0
+
+Testes da Fase 7A:
+65 aprovados
+
+Git:
+repositório local inicializado
+sem remote
+sem push
+ainda sem commit oficial da LUMA
+
+==================================================
+PRIMEIRO — CRIAR CHECKPOINT DA FASE 7A
+==================================================
+
+Antes de implementar 7B:
+
+1. executar git status;
+2. executar auditoria existente;
+3. confirmar ausência de segredos;
+4. confirmar que runtime/.venv/caches estão ignorados;
+5. criar o PRIMEIRO commit local do projeto LUMA contendo somente a
+   entrega validada da Fase 7A.
+
+Commit sugerido:
+
+feat: cria núcleo inicial da LUMA
+
+NÃO criar remote.
+NÃO fazer push.
+
+Registrar o hash do baseline.
+
+Depois:
+
+criar branch local:
+
+codex/fase-7b-persistencia-control-plane
+
+e trabalhar somente nela.
+
+==================================================
+OBJETIVO DA FASE 7B
+==================================================
+
+Transformar controles críticos da LUMA, hoje em memória, em estado
+durável e auditável.
+
+Persistir com segurança:
+
+- identidade/principal;
+- project registry configurável;
+- estado global da LUMA;
+- revogações;
+- tools habilitadas/desabilitadas;
+- approval requests;
+- approval records;
+- action requests;
+- sessions;
+- learning candidates;
+- audit events;
+- configuração operacional permitida.
+
+Criar também uma superfície administrativa LOCAL e autenticada para que,
+no futuro, a LUMA Web possa administrar esses controles.
+
+NÃO conectar Gemini.
+NÃO instalar Google ADK.
+NÃO conectar Calendar.
+NÃO conectar Tasks.
+NÃO criar agentes executáveis.
+NÃO criar frontend.
+
+==================================================
+ETAPA 1 — TECNOLOGIA DE PERSISTÊNCIA
+==================================================
+
+Para esta fase local, usar uma camada de persistência abstrata.
+
+Preferência:
+
+SQLAlchemy 2.x
++
+SQLite local
+
+Justificativa:
+
+- simples para ambiente local;
+- transacional;
+- reproduzível;
+- sem serviço externo;
+- adequado à atual escala;
+- fácil migração futura para PostgreSQL.
+
+A arquitetura NÃO deve depender de recursos exclusivos do SQLite.
+
+Criar interface/repository layer para permitir futura troca por PostgreSQL
+sem reescrever regras de negócio.
+
+NÃO introduzir PostgreSQL nesta fase.
+
+==================================================
+ETAPA 2 — LOCAL DO BANCO
+==================================================
+
+Criar banco em diretório runtime ignorado, por exemplo:
+
+runtime/luma.db
+
+ou equivalente.
+
+O banco NÃO deve ser versionado.
+
+Adicionar configuração:
+
+LUMA_DATABASE_URL
+
+Default local seguro:
+
+sqlite:///...
+
+Não permitir path arbitrário enviado por cliente.
+
+==================================================
+ETAPA 3 — MIGRAÇÕES
+==================================================
+
+Usar Alembic ou mecanismo equivalente sustentável.
+
+Criar schema inicial versionado.
+
+NÃO depender de:
+
+create_all silencioso em produção futura.
+
+Desenvolvimento/testes podem usar banco temporário isolado.
+
+==================================================
+ETAPA 4 — PRINCIPALS
+==================================================
+
+Persistir principal.
+
+Inicial:
+
+local-owner
+
+Campos relevantes:
+
+principal_id
+principal_type
+display_name
+status
+created_at
+updated_at
+
+Roles/capabilities devem ser normalizados ou modelados de maneira
+auditável.
+
+Não persistir bearer token em texto puro.
+
+==================================================
+ETAPA 5 — TOKENS
+==================================================
+
+Bearer local continua vindo de ambiente nesta fase.
+
+Se for necessário persistir referência de credencial:
+
+armazenar somente identificador/hash apropriado.
+
+Nunca token em claro.
+
+Não criar gerenciamento completo de credenciais ainda.
+
+==================================================
+ETAPA 6 — PROJECT REGISTRY DURÁVEL
+==================================================
+
+Persistir projetos.
+
+Inicial:
+
+meu-gestor
+
+Manter:
+
+project_id
+name
+status
+knowledge_endpoint
+knowledge_mode
+enabled
+created_at
+updated_at
+
+Knowledge endpoint deve continuar restrito à política segura atual.
+
+Não permitir URL arbitrária via endpoint administrativo.
+
+==================================================
+ETAPA 7 — TOOL REGISTRY DURÁVEL
+==================================================
+
+Persistir estado operacional das ferramentas.
+
+Knowledge:
+ENABLED_LOCAL
+
+Google Calendar:
+PLANNED / DISABLED
+
+Google Tasks:
+PLANNED / DISABLED
+
+GitHub:
+PLANNED / DISABLED
+
+Firebase:
+PLANNED / DISABLED
+
+Codex:
+PLANNED / DISABLED
+
+Analytics:
+PLANNED / DISABLED
+
+Google Ads/Meta:
+PLANNED / DISABLED
+
+PC Runner:
+PLANNED / DISABLED
+
+Reinício do backend NÃO deve reativar ferramenta revogada/desabilitada.
+
+==================================================
+ETAPA 8 — ESTADO GLOBAL / KILL SWITCH
+==================================================
+
+Persistir:
+
+RUNNING
+PAUSED
+LOCKED
+
+Mudança deve:
+
+- ser transacional;
+- gerar evento de auditoria;
+- sobreviver reinício.
+
+LOCKED deve continuar bloqueando ações conforme política.
+
+Não criar endpoint público para desbloqueio sem autenticação forte.
+
+==================================================
+ETAPA 9 — CAPABILITY REVOCATION
+==================================================
+
+Persistir revogações por:
+
+principal
+project
+tool
+capability
+
+Campos:
+
+revocation_id
+principal_id quando aplicável
+project_id quando aplicável
+tool_id quando aplicável
+capability
+reason
+created_at
+expires_at opcional
+revoked_by
+
+Fail-closed.
+
+==================================================
+ETAPA 10 — ACTION REQUEST
+==================================================
+
+Persistir ActionRequest.
+
+Estados:
+
+PROPOSED
+WAITING_APPROVAL
+APPROVED
+DENIED
+EXECUTING
+SUCCEEDED
+FAILED
+CANCELLED
+
+Nesta fase:
+
+NÃO executar ações externas.
+
+Garantir transições válidas.
+
+Não permitir pular arbitrariamente de PROPOSED para SUCCEEDED.
+
+==================================================
+ETAPA 11 — APPROVAL RECORD
+==================================================
+
+Persistir aprovação.
+
+Manter:
+
+action_id
+principal
+decision
+scope
+created_at
+expires_at
+consumed_at
+reason
+
+Regras:
+
+- específica à ação;
+- single-use quando aplicável;
+- não reutilizável;
+- expiração;
+- parâmetros/hash da ação vinculados.
+
+Reinício não pode fazer aprovação desaparecer nem voltar a valer.
+
+==================================================
+ETAPA 12 — IDEMPOTÊNCIA
+==================================================
+
+Criar idempotency keys para mutações administrativas relevantes.
+
+Exemplos:
+
+criar action
+aprovar
+revogar
+alterar estado global
+
+Repetição legítima não deve duplicar registros.
+
+Conflito deve ser explícito.
+
+==================================================
+ETAPA 13 — SESSIONS
+==================================================
+
+Persistir somente metadados mínimos das sessões.
+
+Não persistir conversa integral.
+
+Campos:
+
+session_id
+principal_id
+active_project_id
+status
+created_at
+last_activity
+
+Preparar expiração/encerramento.
+
+==================================================
+ETAPA 14 — LEARNING CANDIDATES
+==================================================
+
+Persistir candidatos.
+
+Status:
+
+PROPOSED
+VALIDATED
+REJECTED
+PROMOTED
+
+Mas:
+
+PROMOTED continua impossível enquanto write-back canônico estiver
+desabilitado.
+
+Persistência NÃO autoriza promoção automática.
+
+==================================================
+ETAPA 15 — AUDIT LOG DURÁVEL
+==================================================
+
+Persistir eventos de auditoria.
+
+Registrar:
+
+event_id
+timestamp
+principal_id
+project_id
+event_type
+tool_id
+action_id
+result
+correlation_id
+
+Não registrar:
+
+tokens
+segredos
+conteúdo integral de Knowledge
+conteúdo financeiro
+payload completo sensível
+
+Audit log deve ser append-oriented.
+
+Não fornecer endpoint genérico de edição.
+
+==================================================
+ETAPA 16 — TRANSAÇÕES
+==================================================
+
+Ações relacionadas devem ser atômicas.
+
+Exemplo:
+
+aprovar action
++
+marcar approval consumida
++
+alterar estado da action
++
+gravar audit
+
+não podem deixar estado parcial silencioso.
+
+==================================================
+ETAPA 17 — CONCORRÊNCIA
+==================================================
+
+Testar concorrência para:
+
+dupla aprovação
+duplo consumo
+revogação simultânea
+alteração de kill switch
+duas tentativas com mesma idempotency key
+
+Uma approval não pode ser consumida duas vezes.
+
+==================================================
+ETAPA 18 — RECOVERY APÓS RESTART
+==================================================
+
+Teste obrigatório:
+
+iniciar backend
+↓
+criar estado
+↓
+parar backend
+↓
+reiniciar
+↓
+confirmar estado preservado
+
+Testar:
+
+kill switch
+revogação
+approval
+action
+session
+learning candidate
+tool state
+
+==================================================
+ETAPA 19 — BOOTSTRAP
+==================================================
+
+Primeira inicialização deve criar bootstrap conhecido somente quando banco
+estiver vazio.
+
+Não sobrescrever estado existente.
+
+Bootstrap deve incluir:
+
+owner
+meu-gestor
+Knowledge tool
+tools planejadas
+agent registry
+configuração inicial
+
+Executar novamente não pode duplicar registros.
+
+==================================================
+ETAPA 20 — AGENT REGISTRY
+==================================================
+
+Persistir os nove registros:
+
+1. LUMA — Gestora Geral
+2. Produto
+3. Desenvolvimento
+4. Codex / Engenheiro de Código
+5. QA
+6. Segurança
+7. Dados & Analytics
+8. Growth & Marketing
+9. Conteúdo & Social
+
+Todos:
+
+PLANNED
+
+Nenhum agente executável.
+
+==================================================
+ETAPA 21 — ADMIN CAPABILITIES
+==================================================
+
+Criar capabilities administrativas explícitas.
+
+Exemplo:
+
+admin.status.read
+admin.projects.read
+admin.tools.read
+admin.tools.manage
+admin.approvals.read
+admin.approvals.manage
+admin.actions.read
+admin.revocations.manage
+admin.audit.read
+admin.sessions.read
+admin.learning.read
+admin.learning.manage
+
+OWNER pode possuir essas capabilities conforme bootstrap.
+
+Não usar simplesmente:
+
+if owner: allow everything
+
+==================================================
+ETAPA 22 — ENDPOINTS ADMINISTRATIVOS
+==================================================
+
+Criar endpoints locais autenticados.
+
+Sugestão:
+
+GET  /v1/admin/state
+
+GET  /v1/admin/projects
+GET  /v1/admin/tools
+GET  /v1/admin/agents
+
+GET  /v1/admin/actions
+GET  /v1/admin/actions/{id}
+
+GET  /v1/admin/approvals
+
+GET  /v1/admin/revocations
+
+GET  /v1/admin/sessions
+
+GET  /v1/admin/learning
+
+GET  /v1/admin/audit
+
+Não criar endpoints mutáveis ainda sem políticas específicas.
+
+==================================================
+ETAPA 23 — ENDPOINTS MUTÁVEIS CONTROLADOS
+==================================================
+
+Criar somente os necessários para administrar o núcleo.
+
+Exemplos:
+
+POST /v1/admin/state
+POST /v1/admin/tools/{tool_id}/enable
+POST /v1/admin/tools/{tool_id}/disable
+POST /v1/admin/revocations
+POST /v1/admin/approvals/{action_id}/decision
+
+Cada endpoint deve exigir capability administrativa específica.
+
+Não confiar em role textual isolada.
+
+==================================================
+ETAPA 24 — CONFIRMAÇÃO HUMANA
+==================================================
+
+Approval via HTTP deve ser decisão do principal autenticado.
+
+Nunca aceitar:
+
+approved=true
+
+como campo vindo de futura saída de LLM.
+
+A decisão deve passar pela superfície administrativa autenticada.
+
+==================================================
+ETAPA 25 — ESTADO GLOBAL
+==================================================
+
+Alterar:
+
+RUNNING → PAUSED
+PAUSED → RUNNING
+* → LOCKED
+
+deve ser permitido conforme capability.
+
+Saída de LOCKED exige política mais forte.
+
+Nesta fase:
+
+exigir confirmação administrativa explícita.
+
+Documentar.
+
+==================================================
+ETAPA 26 — KNOWLEDGE DURANTE ESTADOS
+==================================================
+
+Preservar política atual:
+
+PAUSED/LOCKED podem bloquear Knowledge conforme política configurada.
+
+Não mudar silenciosamente.
+
+Testar.
+
+==================================================
+ETAPA 27 — TOOL ENABLE NÃO SIGNIFICA EXECUÇÃO
+==================================================
+
+Mesmo que Calendar/Tasks sejam marcados ENABLED futuramente:
+
+nenhuma chamada externa existe nesta fase.
+
+Tool state e executor são camadas diferentes.
+
+Testar que enable não cria executor inexistente.
+
+==================================================
+ETAPA 28 — GOOGLE CALENDAR / TASKS
+==================================================
+
+Manter contratos existentes.
+
+NÃO integrar ainda.
+
+Persistir apenas estado/configuração não secreta do tool registry.
+
+Calendar e Tasks continuam DISABLED/PLANNED.
+
+==================================================
+ETAPA 29 — GEMINI / ADK
+==================================================
+
+Continuam apenas contratos.
+
+NÃO instalar.
+NÃO importar SDK.
+NÃO chamar API.
+
+==================================================
+ETAPA 30 — CONFIGURAÇÃO
+==================================================
+
+Separar:
+
+configuração estática
+segredos
+estado operacional persistente
+
+Exemplo:
+
+.env
+→ secrets/endpoints locais
+
+DB
+→ revogações, approvals, actions, tool state etc.
+
+Não copiar segredo para DB.
+
+==================================================
+ETAPA 31 — BACKUP LOCAL
+==================================================
+
+Documentar backup seguro do banco local.
+
+Não criar sincronização em nuvem.
+
+Procedimento deve considerar consistência.
+
+Preferir backup com aplicação parada ou mecanismo transacional adequado.
+
+==================================================
+ETAPA 32 — RESET DE DESENVOLVIMENTO
+==================================================
+
+Criar procedimento explícito:
+
+reset LOCAL de desenvolvimento.
+
+Deve exigir confirmação/comando inequívoco.
+
+Nunca ocorrer automaticamente no startup.
+
+==================================================
+ETAPA 33 — TESTES DE PERSISTÊNCIA
+==================================================
+
+Adicionar testes para:
+
+schema
+migrations
+bootstrap
+restart
+revocations
+tool state
+kill switch
+actions
+approvals
+idempotency
+sessions
+learning
+audit
+transactions
+concurrency
+
+==================================================
+ETAPA 34 — TESTES DE API ADMIN
+==================================================
+
+Testar:
+
+sem token
+token inválido
+capability ausente
+capability correta
+objeto inexistente
+payload inválido
+idempotency
+dupla aprovação
+approval expirada
+approval de outro principal
+LOCKED
+revogação
+audit
+
+==================================================
+ETAPA 35 — SEGURANÇA
+==================================================
+
+Testar:
+
+SQL injection
+path injection
+mass assignment
+elevação de capability via payload
+troca de principal
+troca de projeto
+edição de audit
+segredo em log
+segredo em DB
+approval forjada
+replay
+
+Fail-closed.
+
+==================================================
+ETAPA 36 — KNOWLEDGE INTEGRATION
+==================================================
+
+Reexecutar integração:
+
+LUMA
+→ Knowledge API
+→ Cérebro Meu Gestor
+
+Confirmar que persistência não alterou:
+
+project routing
+ACL
+KnowledgeContext
+warnings
+sources
+permission_status
+
+==================================================
+ETAPA 37 — AUDITORIA
+==================================================
+
+Atualizar audit_workspace.py.
+
+Validar:
+
+segredos
+banco não versionado
+migrations versionadas
+runtime ignorado
+nenhuma alteração no Meu Gestor
+nenhuma alteração no Cérebro
+nenhum SDK Google/Gemini/ADK
+nenhum frontend
+
+==================================================
+ETAPA 38 — VERSIONAMENTO
+==================================================
+
+Se concluído:
+
+LUMA Backend:
+0.2.0
+
+Preservar:
+
+Knowledge API 0.1.0
+Cérebro 0.6.0
+Engine 1.4.0
+
+==================================================
+ETAPA 39 — COMMIT LOCAL
+==================================================
+
+Após testes finais e auditoria:
+
+criar um commit LOCAL atômico da Fase 7B.
+
+Sugestão:
+
+feat: adiciona persistência e control plane da LUMA
+
+NÃO criar remote.
+NÃO fazer push.
+
+Informar hashes:
+
+baseline 7A
+commit 7B
+
+==================================================
+RELATÓRIO
+==================================================
+
+Criar:
+
+reports/FASE_7B_RELATORIO_PERSISTENCIA_CONTROL_PLANE.md
+
+Incluir:
+
+1. baseline Git;
+2. banco;
+3. schema;
+4. migrations;
+5. repositories;
+6. bootstrap;
+7. identities;
+8. projects;
+9. tools;
+10. agents;
+11. capabilities;
+12. revocations;
+13. global state;
+14. actions;
+15. approvals;
+16. sessions;
+17. learning;
+18. audit;
+19. admin API;
+20. transactions;
+21. idempotency;
+22. restart recovery;
+23. concurrency;
+24. security;
+25. Knowledge integration;
+26. tests;
+27. limitations;
+28. versions;
+29. commits;
+30. recommendation next phase.
+
+==================================================
+CRITÉRIO DE ACEITE
+==================================================
+
+Aprovar somente se:
+
+- estado sobreviver restart;
+- kill switch sobreviver restart;
+- revogações sobreviverem restart;
+- approval não puder ser reutilizada;
+- action e approval forem transacionais;
+- audit for persistente;
+- DB não contiver secrets;
+- endpoints admin exigirem capability;
+- LLM não puder autoaprovar;
+- project isolation permanecer;
+- Knowledge continuar funcionando;
+- tools externas continuarem sem executor;
+- Calendar/Tasks continuarem não integrados;
+- Gemini/ADK não forem usados;
+- testes e auditoria aprovarem;
+- app e Cérebro permanecerem intactos.
+
+==================================================
+REGRA DE PARADA
+==================================================
+
+PARE ao concluir.
+
+NÃO conectar Gemini.
+NÃO instalar Google ADK.
+NÃO conectar Calendar.
+NÃO conectar Tasks.
+NÃO criar agentes executáveis.
+NÃO criar frontend.
+NÃO fazer deploy.
+NÃO criar remote.
+NÃO fazer push.
+
+Aguarde autorização explícita.

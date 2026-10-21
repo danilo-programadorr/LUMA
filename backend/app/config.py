@@ -2,6 +2,7 @@ import os
 from dataclasses import dataclass, field
 from urllib.parse import urlsplit
 from .models import Principal
+from .database import DEFAULT_URL,database_path
 
 
 @dataclass(frozen=True)
@@ -15,8 +16,13 @@ class Settings:
     history: bool = False
     packages: tuple[str,...] = ()
     principal: Principal = field(default_factory=Principal)
+    database_url: str = DEFAULT_URL
+    admin_confirmation_token: str = field(default="",repr=False)
 
     def __post_init__(self):
+        database_path(self.database_url)
+        if self.admin_confirmation_token and (not 32<=len(self.admin_confirmation_token)<=256 or not self.admin_confirmation_token.isascii() or any(c.isspace() for c in self.admin_confirmation_token) or self.admin_confirmation_token in (self.token,self.knowledge_token)):
+            raise ValueError("INVALID_CONFIRMATION_CONFIGURATION")
         u=urlsplit(self.knowledge_endpoint)
         tokens=(self.token,self.knowledge_token)
         if (any(not 32<=len(t)<=256 or not t.isascii() or any(c.isspace() for c in t) for t in tokens)
@@ -36,6 +42,7 @@ class Settings:
                 knowledge_endpoint=get('KNOWLEDGE_ENDPOINT','http://127.0.0.1:8765'),
                 host=get('HOST','127.0.0.1'),port=int(get('PORT','8770')),
                 timeout=float(get('TIMEOUT','3')),history=history=='true',
-                packages=tuple(x.strip() for x in get('KNOWLEDGE_PACKAGES').split(',') if x.strip()))
+                packages=tuple(x.strip() for x in get('KNOWLEDGE_PACKAGES').split(',') if x.strip()),
+                database_url=get('DATABASE_URL',DEFAULT_URL),admin_confirmation_token=get('ADMIN_CONFIRM_TOKEN'))
         except (ValueError,TypeError):
             raise ValueError('INVALID_LOCAL_CONFIGURATION') from None

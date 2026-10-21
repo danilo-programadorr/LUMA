@@ -1,0 +1,319 @@
+{
+  "StateChange": {
+    "additionalProperties": false,
+    "properties": {
+      "state": {
+        "enum": [
+          "RUNNING",
+          "PAUSED",
+          "LOCKED"
+        ],
+        "title": "State",
+        "type": "string"
+      },
+      "confirmation": {
+        "anyOf": [
+          {
+            "const": "UNLOCK_LUMA",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Confirmation"
+      }
+    },
+    "required": [
+      "state"
+    ],
+    "title": "StateChange",
+    "type": "object"
+  },
+  "ProjectChange": {
+    "additionalProperties": false,
+    "properties": {
+      "name": {
+        "anyOf": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Name"
+      },
+      "status": {
+        "anyOf": [
+          {
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Status"
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Enabled"
+      }
+    },
+    "title": "ProjectChange",
+    "type": "object"
+  },
+  "Revoke": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "const": "meu-gestor",
+        "title": "Project Id",
+        "type": "string"
+      },
+      "tool_id": {
+        "anyOf": [
+          {
+            "maxLength": 64,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Tool Id"
+      },
+      "capability": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Capability",
+        "type": "string"
+      },
+      "reason": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Reason",
+        "type": "string"
+      },
+      "expires_at": {
+        "anyOf": [
+          {
+            "maxLength": 40,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Expires At"
+      }
+    },
+    "required": [
+      "project_id",
+      "capability",
+      "reason"
+    ],
+    "title": "Revoke",
+    "type": "object"
+  },
+  "ActionCreate": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "const": "meu-gestor",
+        "title": "Project Id",
+        "type": "string"
+      },
+      "tool_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "capability": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Capability",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "minLength": 1,
+        "title": "Intent",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      }
+    },
+    "required": [
+      "project_id",
+      "tool_id",
+      "capability",
+      "intent"
+    ],
+    "title": "ActionCreate",
+    "type": "object"
+  },
+  "Decision": {
+    "additionalProperties": false,
+    "properties": {
+      "decision": {
+        "enum": [
+          "APPROVE",
+          "DENY"
+        ],
+        "title": "Decision",
+        "type": "string"
+      },
+      "scope": {
+        "pattern": "^[a-f0-9]{64}$",
+        "title": "Scope",
+        "type": "string"
+      },
+      "confirmation": {
+        "const": "HUMAN_DECISION",
+        "title": "Confirmation",
+        "type": "string"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "maxLength": 500,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      }
+    },
+    "required": [
+      "decision",
+      "scope",
+      "confirmation"
+    ],
+    "title": "Decision",
+    "type": "object"
+  },
+  "ActionTransition": {
+    "additionalProperties": false,
+    "properties": {
+      "status": {
+        "const": "CANCELLED",
+        "title": "Status",
+        "type": "string"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "title": "ActionTransition",
+    "type": "object"
+  },
+  "SessionCreate": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "const": "meu-gestor",
+        "title": "Project Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id"
+    ],
+    "title": "SessionCreate",
+    "type": "object"
+  },
+  "LearningCreate": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "const": "meu-gestor",
+        "title": "Project Id",
+        "type": "string"
+      },
+      "source": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Source",
+        "type": "string"
+      },
+      "claim": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Claim",
+        "type": "string"
+      },
+      "evidence": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 10,
+        "minItems": 1,
+        "title": "Evidence",
+        "type": "array"
+      },
+      "confidence": {
+        "enum": [
+          "LOW",
+          "MEDIUM",
+          "HIGH"
+        ],
+        "title": "Confidence",
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id",
+      "source",
+      "claim",
+      "evidence",
+      "confidence"
+    ],
+    "title": "LearningCreate",
+    "type": "object"
+  },
+  "LearningChange": {
+    "additionalProperties": false,
+    "properties": {
+      "status": {
+        "enum": [
+          "VALIDATED",
+          "REJECTED"
+        ],
+        "title": "Status",
+        "type": "string"
+      }
+    },
+    "required": [
+      "status"
+    ],
+    "title": "LearningChange",
+    "type": "object"
+  }
+}

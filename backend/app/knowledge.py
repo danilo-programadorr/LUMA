@@ -103,8 +103,9 @@ class KnowledgeService:
     def query(self,principal,request,correlation_id):
         project=self.projects.resolve(request.project_id,principal)
         self.policy.check(principal,project,'knowledge','knowledge.read')
-        if request.include_history and not self.settings.history: raise Fault('HISTORY_DENIED',403)
-        if request.package and request.package not in self.settings.packages: raise Fault('PACKAGE_DENIED',403)
+        history,packages=self.policy.knowledge_options() if hasattr(self.policy,'knowledge_options') else (self.settings.history,self.settings.packages)
+        if request.include_history and not history: raise Fault('HISTORY_DENIED',403)
+        if request.package and request.package not in packages: raise Fault('PACKAGE_DENIED',403)
         context=self.resolve_client(project).query(request,correlation_id)
         # Recheck revocation after I/O; do not release context if control state changed meanwhile.
         project=self.projects.resolve(request.project_id,principal)

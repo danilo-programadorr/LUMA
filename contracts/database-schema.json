@@ -1,0 +1,691 @@
+{
+  "revision": 1,
+  "tables": {
+    "actions": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "agents": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "approval_requests": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "approvals": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "audit_events": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "idempotency": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "learning": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "principals": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "projects": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "revocations": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "schema_version": [
+      {
+        "name": "id",
+        "type": "INTEGER",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "version",
+        "type": "INTEGER",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "epoch",
+        "type": "INTEGER",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "sessions": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "system_state": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "tools": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ]
+  }
+}

@@ -16,8 +16,19 @@ from backend.app.knowledge import KnowledgeClient,KnowledgeService
 from backend.app.main import create_app
 
 
+@pytest.fixture(scope='module')
+def schema_template(tmp_path_factory):
+    from backend.migrate import migrate
+    path=tmp_path_factory.mktemp('legacy-schema')/'template.db'
+    migrate('sqlite:///'+path.as_posix())
+    return path
+
+
 @pytest.fixture
-def settings(): return Settings(secrets.token_urlsafe(32),secrets.token_urlsafe(32))
+def settings(tmp_path,schema_template):
+    import shutil
+    path=tmp_path/'test.db';shutil.copyfile(schema_template,path)
+    return Settings(secrets.token_urlsafe(32),secrets.token_urlsafe(32),database_url='sqlite:///'+path.as_posix(),admin_confirmation_token=secrets.token_urlsafe(32))
 
 
 @pytest.fixture
@@ -138,12 +149,16 @@ def test_control_denies(client,mutation):
     service=client.app.state.service
     policy=client.app.state.policy
     principal=service.settings.principal
-    if mutation=='missing_capability': principal=principal.model_copy(update={'capabilities':()})
-    elif mutation=='scope': principal=principal.model_copy(update={'project_scopes':()})
-    elif mutation=='revoked': policy.revoke(principal.principal_id,'meu-gestor','knowledge.read')
-    elif mutation=='disabled': policy.disable('knowledge')
-    elif mutation=='suspended': policy.suspend('meu-gestor')
-    else: policy.set_state(mutation)
+    control=client.app.state.control
+    if mutation in ('missing_capability','scope'):
+        with control.store.transaction() as repo:
+            row=repo.get('principals',principal.principal_id)
+            row['capabilities' if mutation=='missing_capability' else 'project_scopes']=[]
+            repo.put('principals',principal.principal_id,row)
+    elif mutation=='revoked': control.mutate(control.principal(),'revoke',{'project_id':'meu-gestor','capability':'knowledge.read','tool_id':'knowledge','reason':'test','expires_at':None},'test-revoke','test')
+    elif mutation=='disabled': control.mutate(control.principal(),'tool',{'enabled':False},'test-disable','test',target='knowledge')
+    elif mutation=='suspended': control.mutate(control.principal(),'project',{'status':'SUSPENDED'},'test-suspend','test',target='meu-gestor')
+    else: control.mutate(control.principal(),'state',{'state':mutation,'confirmation':None},'test-state','test')
     with pytest.raises(Fault):
         service.query(principal,KnowledgeRequest(project_id='meu-gestor',query='test'),'test')
 

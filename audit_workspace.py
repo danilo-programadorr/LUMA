@@ -55,8 +55,23 @@ finance=Path(r'D:\projetos\meu_gestor_financeiro')
 finance_state={'access':'read-only git metadata; no before-baseline claimed'}
 if (finance/'.git').exists():
     finance_state.update(head=git(finance,'rev-parse','HEAD'),working_tree_clean=not bool(git(finance,'status','--porcelain')))
-result={'date':'2026-10-20','verifier':'Codex','status':'VERIFIED' if not errors else 'FAILED',
+# Durable control-plane delivery checks; migrations must be staged/tracked before final audit.
+tracked=git(ROOT,'ls-files').splitlines()
+if any(p.startswith(('runtime/','.venv/','__pycache__/','.pytest_cache/')) or p.endswith(('.db','.sqlite','.db-wal','.db-shm')) for p in tracked):
+    errors.append('RUNTIME_OR_DATABASE_TRACKED')
+for ignored in ('runtime/luma.db','.venv/pyvenv.cfg','backend/app/__pycache__/example.pyc'):
+    if not git(ROOT,'check-ignore',ignored): errors.append('RUNTIME_NOT_IGNORED:'+ignored)
+if 'backend/migrations/v0001_initial.py' not in tracked: errors.append('MIGRATION_NOT_VERSIONED')
+if git(ROOT,'branch','--show-current')!='codex/fase-7b-persistencia-control-plane': errors.append('WRONG_PHASE_BRANCH')
+for requirement in (ROOT/'backend/requirements/lock.txt').read_text(encoding='utf-8-sig').splitlines():
+    if requirement.lower().startswith(('google-','google_','gemini','openai','google-adk')): errors.append('FORBIDDEN_SDK_DEPENDENCY')
+for name in ('package.json','next.config.js','next.config.ts'):
+    if (ROOT/name).exists(): errors.append('UNEXPECTED_FRONTEND')
+for file in [ROOT/'.env.example',ROOT/'README.md']:
+    for label,pattern in patterns.items():
+        if re.search(pattern,file.read_text(encoding='utf8')): errors.append('SENSITIVE_PATTERN:'+file.name+':'+label)
+result={'date':'2026-10-21','verifier':'Codex','status':'VERIFIED' if not errors else 'FAILED',
     'source_commit':head,'brain_unchanged_hash_counts':counts,'runtime_and_contract_files_scanned':scanned,
-    'git_local_only':True,'production_verified':False,'finance_repository':finance_state,'errors':errors}
+    'baseline_7a':'cb06235a3e7b53d097d4851d7cae34130e3c5b38','migrations_versioned':'backend/migrations/v0001_initial.py' in tracked,'runtime_ignored':True,'git_local_only':True,'production_verified':False,'finance_repository':finance_state,'errors':errors}
 print(json.dumps(result,ensure_ascii=False,indent=2))
 raise SystemExit(bool(errors))

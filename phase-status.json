@@ -1,18 +1,22 @@
 {
-  "phase": "7A",
-  "date": "2026-10-20",
+  "phase": "7B",
+  "date": "2026-10-21",
   "status": "COMPLETE_LOCAL_VALIDATION",
-  "backend_version": "0.1.0",
-  "tests_passed": 65,
+  "backend_version": "0.2.0",
+  "tests_passed": 108,
   "tests_skipped": 0,
   "integration_cases": 8,
+  "real_restart_processes": 2,
+  "schema_revision": 1,
+  "database": "runtime/luma.db",
+  "baseline_7a": "cb06235a3e7b53d097d4851d7cae34130e3c5b38",
+  "branch": "codex/fase-7b-persistencia-control-plane",
   "knowledge_api_version": "0.1.0",
   "brain_version": "0.6.0",
   "engine_version": "1.4.0",
-  "local_only": true,
   "servers_left_running": false,
   "external_execution_enabled": false,
   "generative_ai_enabled": false,
   "next_phase_authorized": false,
-  "report": "reports/FASE_7A_RELATORIO_NUCLEO_LUMA.md"
+  "report": "reports/FASE_7B_RELATORIO_PERSISTENCIA_CONTROL_PLANE.md"
 }
