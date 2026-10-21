@@ -2,9 +2,52 @@
   "openapi": "3.1.0",
   "info": {
     "title": "LUMA Backend",
-    "version": "0.3.0"
+    "version": "0.4.0rc1"
   },
   "paths": {
+    "/v1/conversation/turn": {
+      "post": {
+        "summary": "Turn",
+        "operationId": "turn_v1_conversation_turn_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConversationTurn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationAnswer"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Fail-closed structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/v1/admin/state": {
       "get": {
         "summary": "State",
@@ -2152,6 +2195,148 @@
           "status"
         ],
         "title": "ActionTransition"
+      },
+      "ConversationAnswer": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "correlation_id": {
+            "type": "string",
+            "title": "Correlation Id"
+          },
+          "assistant_message": {
+            "type": "string",
+            "title": "Assistant Message"
+          },
+          "citations": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Citations"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "confidence": {
+            "type": "string",
+            "title": "Confidence"
+          },
+          "model_confidence": {
+            "type": "number",
+            "title": "Model Confidence"
+          },
+          "freshness": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Freshness"
+          },
+          "production_verified": {
+            "type": "boolean",
+            "title": "Production Verified",
+            "default": false
+          },
+          "proposed_actions": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Proposed Actions"
+          },
+          "learning_candidates": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Learning Candidates"
+          },
+          "needs_clarification": {
+            "type": "boolean",
+            "title": "Needs Clarification"
+          },
+          "model_status": {
+            "type": "string",
+            "title": "Model Status"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "system_instruction_version": {
+            "type": "string",
+            "title": "System Instruction Version"
+          },
+          "usage": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Usage"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "session_id",
+          "project_id",
+          "correlation_id",
+          "assistant_message",
+          "citations",
+          "warnings",
+          "confidence",
+          "model_confidence",
+          "freshness",
+          "proposed_actions",
+          "learning_candidates",
+          "needs_clarification",
+          "model_status",
+          "model_name",
+          "system_instruction_version",
+          "usage"
+        ],
+        "title": "ConversationAnswer"
+      },
+      "ConversationTurn": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Session Id"
+          },
+          "user_message": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "User Message"
+          },
+          "locale": {
+            "type": "string",
+            "pattern": "^[a-z]{2}-[A-Z]{2}$",
+            "title": "Locale",
+            "default": "pt-BR"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "session_id",
+          "user_message"
+        ],
+        "title": "ConversationTurn"
       },
       "Decision": {
         "properties": {

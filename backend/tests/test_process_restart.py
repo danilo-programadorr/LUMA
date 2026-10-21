@@ -16,7 +16,7 @@ def test_real_process_restart(tmp_path):
     env={k:v for k,v in os.environ.items() if k.upper() in ('PATH','SYSTEMROOT','WINDIR','TEMP','TMP','PATHEXT')}
     runtime=secrets.token_urlsafe(32)
     env.update(LUMA_RUNTIME_TOKEN=runtime,LUMA_OWNER_TOKEN=token,LUMA_KNOWLEDGE_TOKEN=knowledge,LUMA_ADMIN_CONFIRM_TOKEN=confirmation,
-        LUMA_DATABASE_URL=url,PYTHONDONTWRITEBYTECODE='1')
+        LUMA_DATABASE_URL=url,PYTHONDONTWRITEBYTECODE='1',LUMA_TEST_FAKE_MODEL='1')
     process_ids=[]
     def launch():
         with socket.socket() as sock:
@@ -53,6 +53,8 @@ def test_real_process_restart(tmp_path):
         a=post(c,'actions',{'project_id':'meu-gestor','tool_id':'google_calendar','capability':'calendar.delete','intent':'synthetic','parameters':{}})
         approval=post(c,'approvals/'+a['action_id']+'/decision',{'decision':'APPROVE','scope':a['scope'],'confirmation':'HUMAN_DECISION'},True)
         session=post(c,'sessions',{'project_id':'meu-gestor'})
+        conversation=c.post('/v1/conversation/turn',json={'session_id':session['session_id'],'user_message':'Synthetic first turn'},headers={'Idempotency-Key':'restart-first-turn'})
+        assert conversation.status_code==200,conversation.text
         learning=post(c,'learning',{'project_id':'meu-gestor','source':'synthetic','claim':'unverified','evidence':['ref'],'confidence':'LOW'})
         post(c,'revocations',{'project_id':'meu-gestor','capability':'knowledge.read','tool_id':'knowledge','reason':'restart-test'})
         post(c,'tools/knowledge/disable')
@@ -64,6 +66,13 @@ def test_real_process_restart(tmp_path):
     finally: stop(proc,c)
     proc,c=launch()
     try:
+        from backend.app.database import Store
+        persisted=Store(url)
+        with persisted.read() as repo:
+            window=repo.get('conversation_windows',session['session_id'])
+            assert window['turns'][0]['user']=='Synthetic first turn'
+            assert repo.rows('conversation_requests')[0]['status']=='COMPLETED'
+        persisted.close()
         assert c.get('/v1/admin/grants').json()==grant_rows
         assert c.get('/v1/admin/retention').json()==retention
         chain=c.get('/v1/admin/audit/verify').json()
@@ -84,5 +93,5 @@ def test_real_process_restart(tmp_path):
     finally: stop(proc,c)
     assert len(set(process_ids))==2
     (tmp_path/'restart-evidence.json').write_text(json.dumps({'distinct_processes':2,'graceful_exit_codes':[0,0],
-        'preserved':['LOCKED','revocation','disabled_tool','action','approval','session','learning','audit','grants','retention_policies','audit_hash_chain','runtime_principal'],
+        'preserved':['LOCKED','revocation','disabled_tool','action','approval','session','learning','audit','grants','retention_policies','audit_hash_chain','runtime_principal','conversation_window','conversation_request_metadata'],
         'bootstrap_count':1,'knowledge_blocked_after_restart':True},indent=2),encoding='utf8')

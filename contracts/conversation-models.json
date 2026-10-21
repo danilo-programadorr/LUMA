@@ -1,0 +1,827 @@
+{
+  "KnowledgeRequest": {
+    "$defs": {
+      "Limits": {
+        "additionalProperties": false,
+        "properties": {
+          "max_documents": {
+            "default": 5,
+            "maximum": 5,
+            "minimum": 1,
+            "title": "Max Documents",
+            "type": "integer"
+          },
+          "max_chunks": {
+            "default": 12,
+            "maximum": 12,
+            "minimum": 1,
+            "title": "Max Chunks",
+            "type": "integer"
+          },
+          "max_chars": {
+            "default": 16000,
+            "maximum": 16000,
+            "minimum": 256,
+            "title": "Max Chars",
+            "type": "integer"
+          }
+        },
+        "title": "Limits",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "query": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Query",
+        "type": "string"
+      },
+      "package": {
+        "anyOf": [
+          {
+            "pattern": "^PACKAGE_[A-Z_]+$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Package"
+      },
+      "include_history": {
+        "default": false,
+        "title": "Include History",
+        "type": "boolean"
+      },
+      "limits": {
+        "$ref": "#/$defs/Limits"
+      }
+    },
+    "required": [
+      "project_id",
+      "query"
+    ],
+    "title": "KnowledgeRequest",
+    "type": "object"
+  },
+  "Limits": {
+    "additionalProperties": false,
+    "properties": {
+      "max_documents": {
+        "default": 5,
+        "maximum": 5,
+        "minimum": 1,
+        "title": "Max Documents",
+        "type": "integer"
+      },
+      "max_chunks": {
+        "default": 12,
+        "maximum": 12,
+        "minimum": 1,
+        "title": "Max Chunks",
+        "type": "integer"
+      },
+      "max_chars": {
+        "default": 16000,
+        "maximum": 16000,
+        "minimum": 256,
+        "title": "Max Chars",
+        "type": "integer"
+      }
+    },
+    "title": "Limits",
+    "type": "object"
+  },
+  "ModelInputContext": {
+    "$defs": {
+      "KnowledgeContext": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "title": "Project Id",
+            "type": "string"
+          },
+          "brain_version": {
+            "title": "Brain Version",
+            "type": "string"
+          },
+          "engine_version": {
+            "title": "Engine Version",
+            "type": "string"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "results": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          },
+          "permission_status": {
+            "const": "NOT_DETERMINED_BY_RETRIEVAL",
+            "title": "Permission Status",
+            "type": "string"
+          },
+          "retrieved_at": {
+            "format": "date-time",
+            "title": "Retrieved At",
+            "type": "string"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "correlation_id": {
+            "title": "Correlation Id",
+            "type": "string"
+          },
+          "mode": {
+            "const": "lexical",
+            "default": "lexical",
+            "title": "Mode",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "string"
+          },
+          "content_trust": {
+            "const": "UNTRUSTED_DATA",
+            "default": "UNTRUSTED_DATA",
+            "title": "Content Trust",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "brain_version",
+          "engine_version",
+          "query",
+          "results",
+          "sources",
+          "warnings",
+          "permission_status",
+          "request_id",
+          "correlation_id",
+          "status",
+          "confidence"
+        ],
+        "title": "KnowledgeContext",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "user_message": {
+        "maxLength": 2000,
+        "title": "User Message",
+        "type": "string"
+      },
+      "session_summary": {
+        "default": "",
+        "maxLength": 2000,
+        "title": "Session Summary",
+        "type": "string"
+      },
+      "project_id": {
+        "maxLength": 64,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "knowledge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/KnowledgeContext"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "available_tools": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Available Tools",
+        "type": "array"
+      },
+      "pending_action_ids": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Pending Action Ids",
+        "type": "array"
+      },
+      "session_id": {
+        "default": "",
+        "maxLength": 64,
+        "title": "Session Id",
+        "type": "string"
+      },
+      "locale": {
+        "default": "pt-BR",
+        "pattern": "^[a-z]{2}-[A-Z]{2}$",
+        "title": "Locale",
+        "type": "string"
+      }
+    },
+    "required": [
+      "user_message",
+      "project_id"
+    ],
+    "title": "ModelInputContext",
+    "type": "object"
+  },
+  "ModelDecision": {
+    "$defs": {
+      "AnswerCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Document Id",
+            "type": "string"
+          },
+          "chunk_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Chunk Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "chunk_id"
+        ],
+        "title": "AnswerCitation",
+        "type": "object"
+      },
+      "LearningProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Claim",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "evidence"
+        ],
+        "title": "LearningProposal",
+        "type": "object"
+      },
+      "ToolCallProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "capability": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Capability",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "correlation_id": {
+            "maxLength": 64,
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool_id",
+          "capability",
+          "reason",
+          "correlation_id"
+        ],
+        "title": "ToolCallProposal",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "assistant_message": {
+        "maxLength": 4000,
+        "title": "Assistant Message",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "title": "Intent",
+        "type": "string"
+      },
+      "proposed_actions": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/ToolCallProposal"
+        },
+        "maxItems": 3,
+        "title": "Proposed Actions",
+        "type": "array"
+      },
+      "requested_knowledge": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Requested Knowledge",
+        "type": "array"
+      },
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Confidence",
+        "type": "number"
+      },
+      "needs_clarification": {
+        "default": false,
+        "title": "Needs Clarification",
+        "type": "boolean"
+      },
+      "citations": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/AnswerCitation"
+        },
+        "maxItems": 5,
+        "title": "Citations",
+        "type": "array"
+      },
+      "learning_candidates": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/LearningProposal"
+        },
+        "maxItems": 2,
+        "title": "Learning Candidates",
+        "type": "array"
+      }
+    },
+    "required": [
+      "assistant_message",
+      "intent",
+      "confidence"
+    ],
+    "title": "ModelDecision",
+    "type": "object"
+  },
+  "ModelResult": {
+    "$defs": {
+      "AnswerCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Document Id",
+            "type": "string"
+          },
+          "chunk_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Chunk Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "chunk_id"
+        ],
+        "title": "AnswerCitation",
+        "type": "object"
+      },
+      "LearningProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Claim",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "evidence"
+        ],
+        "title": "LearningProposal",
+        "type": "object"
+      },
+      "ModelDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "assistant_message": {
+            "maxLength": 4000,
+            "title": "Assistant Message",
+            "type": "string"
+          },
+          "intent": {
+            "maxLength": 1000,
+            "title": "Intent",
+            "type": "string"
+          },
+          "proposed_actions": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/ToolCallProposal"
+            },
+            "maxItems": 3,
+            "title": "Proposed Actions",
+            "type": "array"
+          },
+          "requested_knowledge": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Requested Knowledge",
+            "type": "array"
+          },
+          "confidence": {
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "needs_clarification": {
+            "default": false,
+            "title": "Needs Clarification",
+            "type": "boolean"
+          },
+          "citations": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/AnswerCitation"
+            },
+            "maxItems": 5,
+            "title": "Citations",
+            "type": "array"
+          },
+          "learning_candidates": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/LearningProposal"
+            },
+            "maxItems": 2,
+            "title": "Learning Candidates",
+            "type": "array"
+          }
+        },
+        "required": [
+          "assistant_message",
+          "intent",
+          "confidence"
+        ],
+        "title": "ModelDecision",
+        "type": "object"
+      },
+      "ModelUsage": {
+        "additionalProperties": false,
+        "properties": {
+          "input_tokens": {
+            "anyOf": [
+              {
+                "maximum": 10000000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Input Tokens"
+          },
+          "output_tokens": {
+            "anyOf": [
+              {
+                "maximum": 10000000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Output Tokens"
+          }
+        },
+        "title": "ModelUsage",
+        "type": "object"
+      },
+      "ToolCallProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "capability": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Capability",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "correlation_id": {
+            "maxLength": 64,
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool_id",
+          "capability",
+          "reason",
+          "correlation_id"
+        ],
+        "title": "ToolCallProposal",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "decision": {
+        "$ref": "#/$defs/ModelDecision"
+      },
+      "usage": {
+        "$ref": "#/$defs/ModelUsage"
+      },
+      "model_name": {
+        "maxLength": 100,
+        "title": "Model Name",
+        "type": "string"
+      },
+      "instruction_version": {
+        "default": "luma-system-1",
+        "title": "Instruction Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "decision",
+      "model_name"
+    ],
+    "title": "ModelResult",
+    "type": "object"
+  },
+  "ConversationTurn": {
+    "additionalProperties": false,
+    "properties": {
+      "session_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Session Id",
+        "type": "string"
+      },
+      "user_message": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "User Message",
+        "type": "string"
+      },
+      "locale": {
+        "default": "pt-BR",
+        "pattern": "^[a-z]{2}-[A-Z]{2}$",
+        "title": "Locale",
+        "type": "string"
+      }
+    },
+    "required": [
+      "session_id",
+      "user_message"
+    ],
+    "title": "ConversationTurn",
+    "type": "object"
+  },
+  "ConversationAnswer": {
+    "additionalProperties": false,
+    "properties": {
+      "session_id": {
+        "title": "Session Id",
+        "type": "string"
+      },
+      "project_id": {
+        "title": "Project Id",
+        "type": "string"
+      },
+      "correlation_id": {
+        "title": "Correlation Id",
+        "type": "string"
+      },
+      "assistant_message": {
+        "title": "Assistant Message",
+        "type": "string"
+      },
+      "citations": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Citations",
+        "type": "array"
+      },
+      "warnings": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Warnings",
+        "type": "array"
+      },
+      "confidence": {
+        "title": "Confidence",
+        "type": "string"
+      },
+      "model_confidence": {
+        "title": "Model Confidence",
+        "type": "number"
+      },
+      "freshness": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Freshness",
+        "type": "array"
+      },
+      "production_verified": {
+        "default": false,
+        "title": "Production Verified",
+        "type": "boolean"
+      },
+      "proposed_actions": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Proposed Actions",
+        "type": "array"
+      },
+      "learning_candidates": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Learning Candidates",
+        "type": "array"
+      },
+      "needs_clarification": {
+        "title": "Needs Clarification",
+        "type": "boolean"
+      },
+      "model_status": {
+        "title": "Model Status",
+        "type": "string"
+      },
+      "model_name": {
+        "title": "Model Name",
+        "type": "string"
+      },
+      "system_instruction_version": {
+        "title": "System Instruction Version",
+        "type": "string"
+      },
+      "usage": {
+        "additionalProperties": true,
+        "title": "Usage",
+        "type": "object"
+      }
+    },
+    "required": [
+      "session_id",
+      "project_id",
+      "correlation_id",
+      "assistant_message",
+      "citations",
+      "warnings",
+      "confidence",
+      "model_confidence",
+      "freshness",
+      "proposed_actions",
+      "learning_candidates",
+      "needs_clarification",
+      "model_status",
+      "model_name",
+      "system_instruction_version",
+      "usage"
+    ],
+    "title": "ConversationAnswer",
+    "type": "object"
+  },
+  "ModelUsage": {
+    "additionalProperties": false,
+    "properties": {
+      "input_tokens": {
+        "anyOf": [
+          {
+            "maximum": 10000000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Input Tokens"
+      },
+      "output_tokens": {
+        "anyOf": [
+          {
+            "maximum": 10000000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Output Tokens"
+      }
+    },
+    "title": "ModelUsage",
+    "type": "object"
+  }
+}

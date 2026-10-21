@@ -1,0 +1,11 @@
+{
+  "status": "BLOCKED_NEEDS_CREDENTIAL",
+  "real_model_tested": false,
+  "model_used": null,
+  "required_environment": [
+    "LUMA_MODEL_PROVIDER",
+    "LUMA_GEMINI_API_KEY",
+    "LUMA_GEMINI_MODEL"
+  ],
+  "cases_executed": 0
+}

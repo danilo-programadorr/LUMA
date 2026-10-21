@@ -133,7 +133,7 @@ def test_grants_learning_retention(api,cfg):
     assert api.post('/v1/admin/grants/'+g.json()['grant_id']+'/revoke',headers=headers(cfg)).status_code==200
     assert api.post('/v1/runtime/learning/propose',json=data,headers=headers(cfg,True)).status_code==403
     preview=api.get('/v1/admin/retention/preview');assert preview.status_code==200
-    assert len(preview.json())==5 and all(r['mode']=='NO_AUTO_DELETE' and r['eligible_for_deletion']==0 for r in preview.json())
+    assert len(preview.json())==7 and all(r['mode']=='NO_AUTO_DELETE' and r['eligible_for_deletion']==0 for r in preview.json())
 
 @pytest.mark.parametrize('secret_kind',['token','runtime_token','knowledge_token','admin_confirmation_token'])
 def test_secrets_not_persisted_or_in_context(api,cfg,secret_kind):
@@ -193,8 +193,8 @@ def test_migrate_v1_with_data(tmp_path):
             actual=repo.get(table,key)
             assert all(actual[k]==v for k,v in row.items()),table
         owner=repo.get('principals','local-owner');assert owner['principal_type']=='HUMAN_OWNER'
-        assert {g['capability'] for g in repo.rows('grants') if g['principal_id']=='local-owner'}=={'knowledge.read','admin.sessions.manage',*NEW_ADMIN_CAPS}
-        assert {g['capability'] for g in repo.rows('grants') if g['principal_id']=='luma-runtime'}==set(RUNTIME_CAPS)
+        assert {g['capability'] for g in repo.rows('grants') if g['principal_id']=='local-owner'}=={'knowledge.read','admin.sessions.manage','conversation.turn',*NEW_ADMIN_CAPS}
+        assert {g['capability'] for g in repo.rows('grants') if g['principal_id']=='luma-runtime'}==set(RUNTIME_CAPS)|{'runtime.model.generate'}
         assert verify(repo)['sequence']==1
     store.close()
 
@@ -217,7 +217,7 @@ def test_backup_schema2_and_chain(cfg,tmp_path):
     snapshot=backup(cfg.database_url);target=tmp_path/'restored.db';shutil.copyfile(snapshot,target)
     with closing(sqlite3.connect(target)) as connection:
         assert connection.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
-        assert connection.execute('SELECT version FROM schema_version').fetchone()[0]==2
+        assert connection.execute('SELECT version FROM schema_version').fetchone()[0]==3
     clone=Control(replace(cfg,database_url='sqlite:///'+target.as_posix()))
     with c.store.read() as original,clone.store.read() as restored:
         for table in TABLES: assert original.rows(table)==restored.rows(table),table

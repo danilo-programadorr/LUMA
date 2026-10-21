@@ -136,7 +136,7 @@ class LearningCandidate(Contract):
 
 class ModelProvider(Protocol):
     """Future port only. No concrete model provider in Phase 7A."""
-    def generate(self, context: KnowledgeContext) -> str: ...
+    def generate(self, context: "ModelInputContext", correlation_id: str) -> "ModelResult": ...
 
 class Grant(Contract):
     grant_id:str

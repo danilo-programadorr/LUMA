@@ -45,7 +45,7 @@ class Control:
     def safe(self,payload,max_chars=16384):
         raw=json.dumps(payload,ensure_ascii=False)
         if len(raw)>max_chars: raise Fault('PAYLOAD_TOO_LARGE',413)
-        secrets=(self.settings.token,self.settings.knowledge_token,self.settings.admin_confirmation_token)
+        secrets=(self.settings.token,self.settings.knowledge_token,self.settings.admin_confirmation_token,getattr(self,'model_api_key',''))
         if any(secret and secret in raw for secret in secrets): raise Fault('SENSITIVE_PAYLOAD')
         if re.search(r'-----BEGIN .*PRIVATE KEY|AIza[0-9A-Za-z_-]{30,}|gh[pousr]_[0-9A-Za-z]{25,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}',raw):
             raise Fault('SENSITIVE_PAYLOAD')

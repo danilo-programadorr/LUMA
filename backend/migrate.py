@@ -1,9 +1,11 @@
 import argparse
 import os
 from .app.database import DEFAULT_URL,database_path,engine_for
-from sqlalchemy import inspect
+from sqlalchemy import inspect,select
+from .app.database import version
 from .migrations.v0001_initial import upgrade as initial
-from .migrations.v0002_trust_boundary import upgrade
+from .migrations.v0002_trust_boundary import upgrade as trust_upgrade
+from .migrations.v0003_conversation import upgrade
 
 
 def migrate(url):
@@ -14,6 +16,7 @@ def migrate(url):
             connection.exec_driver_sql('BEGIN IMMEDIATE')
             try:
                 if not inspect(connection).get_table_names(): initial(connection)
+                if connection.execute(select(version.c.version)).scalar_one()==1: trust_upgrade(connection)
                 changed=upgrade(connection)
                 connection.commit()
                 return changed
@@ -28,6 +31,6 @@ def main():
     parser.add_argument('command',choices=['upgrade'])
     parser.parse_args()
     changed=migrate(os.environ.get('LUMA_DATABASE_URL',DEFAULT_URL))
-    print('Migration 0002 applied' if changed else 'Schema 0002 already current')
+    print('Migration 0003 applied' if changed else 'Schema 0003 already current')
 
 if __name__=='__main__': main()

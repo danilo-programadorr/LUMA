@@ -52,7 +52,9 @@ def test_real_http_integration(tmp_path):
     luma=None
     comparisons=[]
     try:
-        app=create_app(settings)
+        from backend.tests.test_conversation import FakeModelProvider
+        from backend.app.model_config import ModelSettings
+        app=create_app(settings,model_provider=FakeModelProvider(),model_settings=ModelSettings(model='gemini-test'))
         luma=Server(app).start()
         with httpx.Client(base_url=f'http://127.0.0.1:{luma.port}',timeout=15,trust_env=False,
                           headers={'Authorization':'Bearer '+settings.token}) as c, httpx.Client(
@@ -75,6 +77,9 @@ def test_real_http_integration(tmp_path):
                     assert result[field]==expected.json()[field]==runtime.json()[field],field
                 assert result['brain_version']=='0.6.0' and result['engine_version']=='1.4.0'
                 assert result['content_trust']=='UNTRUSTED_DATA' and 'answer' not in result
+                conversation=c.post('/v1/conversation/turn',json={'session_id':session_id,'user_message':question},headers={'Idempotency-Key':secrets.token_hex(12)})
+                assert conversation.status_code==200,conversation.text
+                assert conversation.json()['citations']
                 comparisons.append({'category':question,'owner_equivalent':True,'runtime_equivalent':True,'chunks':len(result['results'])})
             schema=c.get('/openapi.json').json()
             (tmp_path/'openapi.json').write_text(json.dumps(schema,ensure_ascii=False,indent=2),encoding='utf8')
@@ -87,6 +92,6 @@ def test_real_http_integration(tmp_path):
     finally:
         if luma: luma.stop()
         if knowledge.thread.is_alive(): knowledge.stop()
-    evidence={'http_only':True,'loopback_only':True,'cases':comparisons,'knowledge_worker_stopped':ka.state.adapter.process.poll() is not None,
+    evidence={'http_only':True,'conversation_fake_with_real_knowledge':True,'loopback_only':True,'cases':comparisons,'knowledge_worker_stopped':ka.state.adapter.process.poll() is not None,
               'luma_stopped':not luma.thread.is_alive(),'degraded_without_knowledge':True}
     (tmp_path/'integration.json').write_text(json.dumps(evidence,ensure_ascii=False,indent=2),encoding='utf8')

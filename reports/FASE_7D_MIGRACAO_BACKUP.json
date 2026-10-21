@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-21",
+  "verifier": "Codex",
+  "source_revision": 2,
+  "target_revision": 3,
+  "previous_rows_preserved": true,
+  "after_counts": {
+    "principals": 2,
+    "projects": 1,
+    "tools": 9,
+    "agents": 9,
+    "system_state": 1,
+    "actions": 0,
+    "approvals": 0,
+    "approval_requests": 0,
+    "revocations": 0,
+    "sessions": 0,
+    "learning": 0,
+    "audit_events": 1,
+    "idempotency": 0,
+    "retention_policies": 7,
+    "audit_chain": 1,
+    "grants": 29,
+    "conversation_windows": 0,
+    "conversation_requests": 0
+  },
+  "audit_chain_verified": {
+    "sequence": 1,
+    "event_hash": "adc30d0de568cabf6277fea10f8dd593a8236aaac5f6b0feb05e04fa08d1c745"
+  },
+  "restored_integrity": "ok",
+  "restored_all_tables_equal": true,
+  "reset_performed": false,
+  "backups": [
+    {
+      "path": "runtime/backups/luma-backup-db5a62264a6a4e499e28eaf871ff0270.db",
+      "sha256": "4584fb05522e7b6c2a8bb0d6495660f42f00bdeb115881dce3433881d54fa638"
+    },
+    {
+      "path": "runtime/backups/luma-backup-d912089e2e3747f181996710315f73dd.db",
+      "sha256": "87a34fcd405251c4b9f9cd171acb624fdcc16310104384e8b9eb72a80c20866e"
+    }
+  ],
+  "restored_database": "runtime/restore-7d-366c9e6b979b8e88.db"
+}

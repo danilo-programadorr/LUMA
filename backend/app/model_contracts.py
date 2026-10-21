@@ -27,14 +27,26 @@ class ModelInputContext(Contract):
     knowledge:KnowledgeContext | None=None
     available_tools:tuple[str,...]=()
     pending_action_ids:tuple[str,...]=()
+    session_id:str=Field(default='',max_length=64)
+    locale:str=Field(default='pt-BR',pattern=r'^[a-z]{2}-[A-Z]{2}$')
+
+class AnswerCitation(Contract):
+    document_id:str=Field(min_length=1,max_length=160)
+    chunk_id:str=Field(min_length=1,max_length=200)
+
+class LearningProposal(Contract):
+    claim:str=Field(min_length=1,max_length=2000)
+    evidence:tuple[str,...]=Field(min_length=1,max_length=5)
 
 class ModelDecision(Contract):
     assistant_message:str=Field(max_length=4000)
     intent:str=Field(max_length=1000)
-    proposed_actions:tuple[ToolCallProposal,...]=()
+    proposed_actions:tuple[ToolCallProposal,...]=Field(default=(),max_length=3)
     requested_knowledge:tuple[str,...]=()
     confidence:float=Field(ge=0,le=1)
     needs_clarification:bool=False
+    citations:tuple[AnswerCitation,...]=Field(default=(),max_length=5)
+    learning_candidates:tuple[LearningProposal,...]=Field(default=(),max_length=2)
 
 class AgentExecutionContext(Contract):
     agent_id:str=Field(max_length=64)

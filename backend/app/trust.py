@@ -10,7 +10,10 @@ class Control(LegacyControl):
         with self.store.read() as repo: existing=bool(repo.get('system_state','global'))
         super().bootstrap()
         with self.store.transaction() as repo:
-            if not existing: seed(repo)
+            if not existing:
+                seed(repo)
+                from backend.migrations.v0003_conversation import seed as conversation_seed
+                conversation_seed(repo)
             if not repo.get('principals','luma-runtime'): raise Fault('BOOTSTRAP_INCOMPLETE',503)
             verify(repo)
 
@@ -104,12 +107,12 @@ class Control(LegacyControl):
                 result['status']='REVOKED';repo.put('grants',target,result)
             else:
                 subject=self._principal(repo,data['principal_id']);cap=data['capability'];project=data.get('project_id');tool=data.get('tool_id')
-                allowed=set(ADMIN_CAPS+NEW_ADMIN_CAPS+RUNTIME_CAPS+('runtime.learning.propose',))|{c for t in TOOLS.values() for c in t.capabilities}
+                allowed=set(ADMIN_CAPS+NEW_ADMIN_CAPS+RUNTIME_CAPS+('runtime.learning.propose','runtime.model.generate','conversation.turn'))|{c for t in TOOLS.values() for c in t.capabilities}
                 if cap not in allowed: raise Fault('UNKNOWN_CAPABILITY')
                 if subject.principal_id==p.principal_id: raise Fault('SELF_GRANT_DENIED',403)
                 if cap.startswith('admin.'):
                     if subject.principal_type!='HUMAN_OWNER' or not confirmed: raise Fault('CRITICAL_GRANT_DENIED',403)
-                if subject.principal_type!='HUMAN_OWNER' and cap not in (*RUNTIME_CAPS,'runtime.learning.propose'):
+                if subject.principal_type!='HUMAN_OWNER' and cap not in (*RUNTIME_CAPS,'runtime.learning.propose','runtime.model.generate'):
                     raise Fault('SERVICE_GRANT_DENIED',403)
                 if not cap.startswith('admin.') and not project: raise Fault('PROJECT_SCOPE_REQUIRED',403)
                 if project:

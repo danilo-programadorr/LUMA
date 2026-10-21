@@ -29,9 +29,16 @@ def failure(request,error):
         status_code=error.status,headers={'WWW-Authenticate':'Bearer'} if error.status==401 else None)
 
 
-def create_app(settings=None,client=None):
+def create_app(settings=None,client=None,model_provider=None,model_settings=None):
     settings=settings or Settings.from_env()
+    from .model_config import ModelSettings
+    from .model_provider import GeminiModelProvider
+    from .conversation import ConversationService,install_conversation
+    model_settings=model_settings or ModelSettings.from_env(settings)
+    model_settings.check_separation(settings)
+    provider=model_provider or GeminiModelProvider(model_settings)
     control=Control(settings)
+    control.model_api_key=model_settings.api_key
     projects=policy=control
     client=client or KnowledgeClient(settings)
     service=KnowledgeService(settings,projects,policy,client)
@@ -42,12 +49,16 @@ def create_app(settings=None,client=None):
         # Remote knowledge availability is independent of LUMA readiness.
         try: yield
         finally:
+            provider.close()
             client.close()
             control.close()
 
     app=FastAPI(title='LUMA Backend',version=__version__,docs_url=None,redoc_url=None,lifespan=lifespan,
         responses={'default':{'model':ErrorResponse,'description':'Fail-closed structured error'}})
     app.state.policy,app.state.projects,app.state.service=policy,projects,service
+    app.state.model_provider=provider
+    app.state.conversation=ConversationService(control,service,provider,model_settings)
+    install_conversation(app,app.state.conversation)
     app.state.control=control
     app.state.local=control
     install(app,control,settings)
@@ -123,7 +134,7 @@ def create_app(settings=None,client=None):
         rows=project_status(request.state.principal,request.state.correlation_id)
         return {'service_version':__version__,'state':policy.state,'status':'READY' if rows and all(p['knowledge_status']=='AVAILABLE' for p in rows) else 'DEGRADED',
             'principal':request.state.principal.model_dump(mode='json'),'projects':rows,
-            'generative_ai_enabled':False,'external_execution_enabled':False}
+            'generative_ai_enabled':model_settings.configured,'model':provider.status(),'external_execution_enabled':False}
 
     @app.get('/v1/projects',dependencies=[Security(bearer)])
     def project_list(request:Request): return project_status(request.state.principal,request.state.correlation_id)

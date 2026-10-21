@@ -1,0 +1,14 @@
+{
+  "versions": {
+    "google-genai": "2.32.0",
+    "google-auth": "2.62.0",
+    "fastapi": "0.156.2",
+    "pydantic": "2.14.1",
+    "httpx": "0.28.1",
+    "SQLAlchemy": "2.1.5",
+    "pytest": "9.1.1"
+  },
+  "google-generativeai": null,
+  "google-adk": null,
+  "real_model_tested": false
+}

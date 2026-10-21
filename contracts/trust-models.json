@@ -297,6 +297,18 @@
         },
         "title": "Pending Action Ids",
         "type": "array"
+      },
+      "session_id": {
+        "default": "",
+        "maxLength": 64,
+        "title": "Session Id",
+        "type": "string"
+      },
+      "locale": {
+        "default": "pt-BR",
+        "pattern": "^[a-z]{2}-[A-Z]{2}$",
+        "title": "Locale",
+        "type": "string"
       }
     },
     "required": [
@@ -306,8 +318,106 @@
     "title": "ModelInputContext",
     "type": "object"
   },
+  "AnswerCitation": {
+    "additionalProperties": false,
+    "properties": {
+      "document_id": {
+        "maxLength": 160,
+        "minLength": 1,
+        "title": "Document Id",
+        "type": "string"
+      },
+      "chunk_id": {
+        "maxLength": 200,
+        "minLength": 1,
+        "title": "Chunk Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "document_id",
+      "chunk_id"
+    ],
+    "title": "AnswerCitation",
+    "type": "object"
+  },
+  "LearningProposal": {
+    "additionalProperties": false,
+    "properties": {
+      "claim": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Claim",
+        "type": "string"
+      },
+      "evidence": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 5,
+        "minItems": 1,
+        "title": "Evidence",
+        "type": "array"
+      }
+    },
+    "required": [
+      "claim",
+      "evidence"
+    ],
+    "title": "LearningProposal",
+    "type": "object"
+  },
   "ModelDecision": {
     "$defs": {
+      "AnswerCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Document Id",
+            "type": "string"
+          },
+          "chunk_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Chunk Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "chunk_id"
+        ],
+        "title": "AnswerCitation",
+        "type": "object"
+      },
+      "LearningProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Claim",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "evidence"
+        ],
+        "title": "LearningProposal",
+        "type": "object"
+      },
       "ToolCallProposal": {
         "additionalProperties": false,
         "properties": {
@@ -366,6 +476,7 @@
         "items": {
           "$ref": "#/$defs/ToolCallProposal"
         },
+        "maxItems": 3,
         "title": "Proposed Actions",
         "type": "array"
       },
@@ -387,6 +498,24 @@
         "default": false,
         "title": "Needs Clarification",
         "type": "boolean"
+      },
+      "citations": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/AnswerCitation"
+        },
+        "maxItems": 5,
+        "title": "Citations",
+        "type": "array"
+      },
+      "learning_candidates": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/LearningProposal"
+        },
+        "maxItems": 2,
+        "title": "Learning Candidates",
+        "type": "array"
       }
     },
     "required": [

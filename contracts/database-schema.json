@@ -1,5 +1,5 @@
 {
-  "revision": 2,
+  "revision": 3,
   "tables": {
     "actions": [
       {
@@ -277,6 +277,108 @@
         "nullable": true,
         "primary_key": false,
         "indexed": true
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "conversation_requests": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(40)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "created_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "updated_at",
+        "type": "VARCHAR(40)",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "data",
+        "type": "JSON",
+        "nullable": false,
+        "primary_key": false,
+        "indexed": false
+      }
+    ],
+    "conversation_windows": [
+      {
+        "name": "id",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "primary_key": true,
+        "indexed": false
+      },
+      {
+        "name": "principal_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
+      },
+      {
+        "name": "project_id",
+        "type": "VARCHAR(64)",
+        "nullable": true,
+        "primary_key": false,
+        "indexed": false
       },
       {
         "name": "status",
