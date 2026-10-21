@@ -1,0 +1,136 @@
+{
+  "phase": "7A",
+  "version": "0.1.0",
+  "date": "2026-10-20",
+  "note": "Own hash omitted; environment, runtime, caches and Git metadata excluded.",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "1685dc57160486eaf32f0763d19d7ca6f73b5a38934e273f8beebee6071e8a54"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "c95c2dce9bf9c3b6ae6de738dd23e0a6ef47a6a553d939b29ce43864ddfb2b51"
+    },
+    {
+      "path": "audit_workspace.py",
+      "sha256": "f01d65a4ee2ca68598e94b37f336b3c00e860297df6324de727d8708d696c76e"
+    },
+    {
+      "path": "backend/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "backend/__main__.py",
+      "sha256": "ccc7ac6fe0bff161357cf3510d86f98f7cc9085e4310dd988eba14ae5574e678"
+    },
+    {
+      "path": "backend/app/__init__.py",
+      "sha256": "41362a5ea4931c546433d4c48290c5707bf02dbbea1c3aafa9f43d1225e47003"
+    },
+    {
+      "path": "backend/app/audit.py",
+      "sha256": "9fd733aa623d372560e0b1bbc5ac543491ce4799f2589b086e97522af7aa28c3"
+    },
+    {
+      "path": "backend/app/auth.py",
+      "sha256": "d9c4ad0a8906f9f1bbaa2cbff7a2fae58da954a56d93cbda77dabbbe8dda3956"
+    },
+    {
+      "path": "backend/app/config.py",
+      "sha256": "10f8d3a79c374808205d365b808db7451fa8e0ff2df2bc3e38ac9231d086b0b8"
+    },
+    {
+      "path": "backend/app/errors.py",
+      "sha256": "558dd7bbd48b5889250c85e3575c3b44e1e500eb3830a16beaa659f342875826"
+    },
+    {
+      "path": "backend/app/knowledge.py",
+      "sha256": "fdae80142e4c89b2891425da7c12773d394e0fc55f6df32968f3ee63f3b74269"
+    },
+    {
+      "path": "backend/app/main.py",
+      "sha256": "c79ebd4766729561e1fc91e4f1fd504a3946daad894ae2fc5d5f3e73eeb9d878"
+    },
+    {
+      "path": "backend/app/models.py",
+      "sha256": "1d7af22c19a2fe75d1675754ef08ea97c2927ad95e1960610311f190e57976b5"
+    },
+    {
+      "path": "backend/app/policy.py",
+      "sha256": "ed379f79db9bdd705e8170861983788e6281b9b3f7e3fcf46d4b9d3e16390985"
+    },
+    {
+      "path": "backend/app/registry.py",
+      "sha256": "de34cdb08d09dafa15f31112e7a40ccc8ec73eb1f9b00232bb7e22f41ce2ec46"
+    },
+    {
+      "path": "backend/app/state.py",
+      "sha256": "09cb43b8bd17dd53f0453ad0162595d800096de3ed2f31ae15b11e461915bab7"
+    },
+    {
+      "path": "backend/requirements/lock.txt",
+      "sha256": "0a0657f5a87fde745ce6557ca4c7bb9a62d340b09b184d1b180ea06d1d35d4c7"
+    },
+    {
+      "path": "backend/tests/test_foundation.py",
+      "sha256": "40f06ea2ac77c59def58fcce1303bda78541ea244be4d20b5a0b6d0485d0fc76"
+    },
+    {
+      "path": "backend/tests/test_live_knowledge.py",
+      "sha256": "00e6d2a673497caafdbf77b6df676212bd4f69c31d980d951617622fd832f291"
+    },
+    {
+      "path": "contracts/models.json",
+      "sha256": "385235ddf19ef26a82c55a7b0aa92bab0276c28d05433df5646d727901fc58b9"
+    },
+    {
+      "path": "contracts/openapi.json",
+      "sha256": "d44ec2b5681c00679f19a9ab44c26f0374053da9e6e56e144685db9d2de80eaf"
+    },
+    {
+      "path": "contracts/registries.json",
+      "sha256": "4e88128784d0d19cd5beb8ea0976e6da22a9b099400194f6ab596fba380820b4"
+    },
+    {
+      "path": "docs/ARQUITETURA.md",
+      "sha256": "77d34a8e379c6fcf6844e6137de2ca7a66084b1e7ec9ff1f2cc26f80638a3142"
+    },
+    {
+      "path": "docs/CONTRATOS_FUTUROS.md",
+      "sha256": "11a2fbb10bb59db8dbf2c6a7e5d00e1bd301cfd9562143a5fd08fe51aa64ac9b"
+    },
+    {
+      "path": "phase-status.json",
+      "sha256": "842499954027606553750a24aeffa27a555b99d4fc5d89205e3be3d6e8bae52a"
+    },
+    {
+      "path": "README.md",
+      "sha256": "b47e4a15d638a39367c4111aced02788c1287a1d180fb309d6c1a20cd030ba80"
+    },
+    {
+      "path": "reports/AUTORIZACAO_FASE_7A.txt",
+      "sha256": "8a235410d79c8e8634d229ea1b01085e2991ddee543be43e74ae7054cd6463bf"
+    },
+    {
+      "path": "reports/FASE_7A_AUDITORIA.json",
+      "sha256": "ebf6656b70112c05687364e42a799256aa2833c228578a26c83ba31265cd586b"
+    },
+    {
+      "path": "reports/FASE_7A_INTEGRACAO_KNOWLEDGE.json",
+      "sha256": "d0db393ea589a94b08262e07a73bac016ec13a7feeb9a10bffd2d9db4c0fa76c"
+    },
+    {
+      "path": "reports/FASE_7A_RELATORIO_NUCLEO_LUMA.md",
+      "sha256": "0c1d2ddee281dac41c16c8228db97a6d198f1740e160d3540a43e7b7d4192f9d"
+    },
+    {
+      "path": "reports/FASE_7A_TESTES_CANDIDATA.txt",
+      "sha256": "bbae8f3308f41d4453211f4b27a4e635e8419437f8a2fede319811475026944c"
+    },
+    {
+      "path": "reports/FASE_7A_TESTES_FINAL.txt",
+      "sha256": "510a9573b24984e28b75f757279b286dcc28751dec3d21aebbcd066e1ba77e0b"
+    }
+  ]
+}

@@ -1,0 +1,1088 @@
+AUTORIZAÇÃO DO PROPRIETÁRIO — FASE 7A
+
+FUNDAÇÃO DO BACKEND DA LUMA
+IDENTIDADE, PERMISSÕES, CONSUMIDOR DE KNOWLEDGE E CONTRATOS
+
+==================================================
+CONTEXTO
+==================================================
+
+A Knowledge API do Meu Gestor está concluída:
+
+Knowledge API: 0.1.0
+Brain/corpus: 0.6.0
+Knowledge Engine: 1.4.0
+Modo permitido: lexical
+
+Endpoint local previsto:
+
+http://127.0.0.1:8765
+
+O projeto LUMA ainda NÃO existe como plataforma executável.
+
+==================================================
+NOVO WORKSPACE
+==================================================
+
+Criar e trabalhar em:
+
+D:\projetos\luma
+
+Este é um projeto separado.
+
+NÃO colocar o backend da LUMA dentro de:
+
+D:\cerebro do gestor
+
+NÃO alterar:
+
+D:\projetos\meu_gestor_financeiro
+
+NÃO alterar o Cérebro Meu Gestor salvo documentação explicitamente
+autorizada fora do corpus.
+
+==================================================
+IDENTIDADE DO PRODUTO
+==================================================
+
+Nome oficial:
+
+LUMA
+
+Tipo:
+
+plataforma WEB RESPONSIVA.
+
+A LUMA NÃO será aplicativo Flutter/APK.
+
+Frontend futuro:
+
+Next.js + TypeScript
+
+Backend:
+
+Python + FastAPI
+
+LLM principal futuro:
+
+Google Gemini API
+
+Framework de agentes futuro:
+
+Google ADK
+
+Knowledge:
+
+Knowledge APIs próprias por projeto.
+
+==================================================
+OBJETIVO DA FASE 7A
+==================================================
+
+Criar o NÚCLEO LOCAL do backend da LUMA, sem inteligência generativa ainda.
+
+Esta fase deve definir e validar:
+
+- identidade;
+- principal;
+- permissões;
+- projects;
+- capabilities;
+- approvals;
+- consumer contract;
+- integração local com Knowledge API;
+- auditoria;
+- sessões;
+- contratos futuros de ferramentas;
+- aprendizado controlado.
+
+NÃO conectar Gemini nesta fase.
+NÃO instalar Google ADK nesta fase.
+NÃO conectar Google Calendar nesta fase.
+NÃO conectar Google Tasks nesta fase.
+NÃO criar os oito agentes ainda.
+NÃO criar frontend ainda.
+
+==================================================
+ETAPA 1 — INICIALIZAÇÃO DO PROJETO
+==================================================
+
+Criar estrutura sustentável.
+
+Sugestão:
+
+luma/
+  backend/
+    app/
+      main.py
+      config/
+      auth/
+      identity/
+      projects/
+      knowledge/
+      approvals/
+      capabilities/
+      audit/
+      sessions/
+      learning/
+      tools/
+      schemas/
+    tests/
+    requirements/
+  contracts/
+  docs/
+  .gitignore
+  README.md
+
+Pode melhorar a estrutura se houver justificativa técnica.
+
+Criar Git LOCAL.
+
+NÃO criar repositório remoto.
+NÃO fazer push.
+
+==================================================
+ETAPA 2 — PRINCÍPIO DE ARQUITETURA
+==================================================
+
+Separar claramente:
+
+LUMA
+≠
+Cérebro Meu Gestor
+
+LUMA é consumidor/orquestrador.
+
+O Cérebro é fonte de conhecimento.
+
+Fluxo:
+
+usuário
+↓
+LUMA
+↓
+seleciona projeto
+↓
+Knowledge API do projeto
+↓
+contexto rastreável
+
+A LUMA nunca deve ler diretamente arquivos internos do Cérebro quando
+houver API oficial disponível.
+
+==================================================
+ETAPA 3 — MODELO DE USUÁRIO / PRINCIPAL
+==================================================
+
+Criar modelo interno para identidade.
+
+Nesta primeira versão local:
+
+owner principal
+
+Campos conceituais:
+
+principal_id
+principal_type
+display_name
+roles
+project_scopes
+capabilities
+approval_level
+
+Não usar dados pessoais desnecessários.
+
+Não implementar Google Login ainda.
+
+Preparar abstração para autenticação futura.
+
+==================================================
+ETAPA 4 — OWNER
+==================================================
+
+Nesta instalação inicial existe um proprietário principal.
+
+Definir role:
+
+OWNER
+
+OWNER não significa que todo agente ou ferramenta recebe acesso irrestrito.
+
+Permissão do usuário e permissão da ferramenta são coisas diferentes.
+
+==================================================
+ETAPA 5 — PROJECT REGISTRY
+==================================================
+
+Criar registro de projetos.
+
+Inicialmente:
+
+project_id: meu-gestor
+
+Campos:
+
+project_id
+name
+status
+knowledge_endpoint
+knowledge_mode
+enabled
+capabilities
+metadata
+
+Preparar estrutura para posteriormente adicionar:
+
+mechai
+
+e outros projetos.
+
+Não implementar MechAI agora.
+
+==================================================
+ETAPA 6 — KNOWLEDGE CLIENT
+==================================================
+
+Implementar cliente da LUMA para consumir:
+
+Knowledge API 0.1.0
+
+NÃO duplicar a Knowledge Engine.
+
+A LUMA deve utilizar HTTP.
+
+Implementar:
+
+health
+status
+query
+
+com:
+
+timeout
+retry limitado quando seguro
+tratamento de erro
+request correlation
+fail-closed
+
+==================================================
+ETAPA 7 — CREDENCIAL DA KNOWLEDGE API
+==================================================
+
+Token da Knowledge API deve vir exclusivamente de variável de ambiente.
+
+Nunca:
+
+hard-code
+logar
+expor em resposta
+salvar em documentação
+
+Criar:
+
+.env.example
+
+sem segredo real.
+
+==================================================
+ETAPA 8 — CONTRATO DO CONSUMIDOR
+==================================================
+
+A LUMA deve converter uma solicitação interna em:
+
+project_id
+query
+package
+include_history
+limits
+
+Nunca permitir que uma camada futura de LLM eleve arbitrariamente:
+
+access_level
+sensitivity
+project_scope
+
+Esses valores pertencem à política do backend.
+
+==================================================
+ETAPA 9 — CONTEXT OBJECT
+==================================================
+
+Criar objeto interno:
+
+KnowledgeContext
+
+com campos como:
+
+project_id
+brain_version
+engine_version
+query
+results
+sources
+warnings
+permission_status
+retrieved_at
+request_id
+
+Preservar integralmente proveniência.
+
+==================================================
+ETAPA 10 — CONTEXTO NÃO É INSTRUÇÃO
+==================================================
+
+Formalizar:
+
+conteúdo recuperado
+=
+DADO NÃO CONFIÁVEL
+
+Mesmo que algum documento diga:
+
+"ignore regras"
+"execute comando"
+"revele segredo"
+
+o backend da LUMA não deve interpretá-lo como política executável.
+
+==================================================
+ETAPA 11 — CAPABILITY MODEL
+==================================================
+
+Criar modelo de capabilities.
+
+Exemplos futuros:
+
+knowledge.read
+calendar.read
+calendar.write
+calendar.delete
+tasks.read
+tasks.write
+tasks.delete
+github.read
+github.write
+firebase.read
+firebase.deploy
+codex.execute
+ads.manage
+
+Nesta fase apenas definir contratos.
+
+NÃO executar capacidades externas.
+
+==================================================
+ETAPA 12 — TOOL REGISTRY
+==================================================
+
+Criar registry conceitual de ferramentas.
+
+Inicialmente registrar como:
+
+PLANNED / DISABLED
+
+- Google Calendar
+- Google Tasks
+- GitHub
+- Firebase
+- Codex
+- Analytics
+- Google Ads / Meta
+- PC Runner
+
+Knowledge Client pode ficar:
+
+ENABLED_LOCAL
+
+porque já existe integração local autorizada.
+
+==================================================
+ETAPA 13 — GOOGLE CALENDAR CONTRACT
+==================================================
+
+Registrar ferramenta futura:
+
+google_calendar
+
+Capacidades previstas:
+
+calendar.read
+calendar.availability
+calendar.create
+calendar.update
+calendar.delete
+calendar.reminders
+
+Casos:
+
+- consultar agenda;
+- consultar horários livres;
+- criar compromisso;
+- alterar compromisso;
+- cancelar compromisso;
+- adicionar lembrete;
+- acompanhar calendário sincronizado com o celular.
+
+NÃO implementar OAuth.
+NÃO chamar Google.
+
+==================================================
+ETAPA 14 — GOOGLE TASKS CONTRACT
+==================================================
+
+Registrar ferramenta futura:
+
+google_tasks
+
+Capacidades:
+
+tasks.read
+tasks.create
+tasks.update
+tasks.complete
+tasks.reopen
+tasks.organize
+tasks.delete
+
+Usos:
+
+- pendências pessoais;
+- pendências de projetos;
+- tarefas com prazo;
+- tarefas concluídas;
+- listas.
+
+NÃO chamar Google nesta fase.
+
+==================================================
+ETAPA 15 — POLÍTICA DE APROVAÇÃO
+==================================================
+
+Criar modelo explícito:
+
+AUTO
+CONFIRM
+DENY
+
+Definir política inicial conceitual.
+
+Exemplo:
+
+knowledge.read
+→ AUTO
+
+calendar.read
+→ AUTO
+
+calendar.availability
+→ AUTO
+
+calendar.create
+→ AUTO quando pedido explicitamente pelo OWNER
+
+calendar.update
+→ AUTO quando pedido explicitamente pelo OWNER
+
+calendar.delete
+→ CONFIRM
+
+calendar invite/outros participantes
+→ CONFIRM
+
+tasks.read
+→ AUTO
+
+tasks.create
+→ AUTO quando explicitamente solicitado
+
+tasks.update/complete
+→ AUTO quando explicitamente solicitado
+
+tasks.delete
+→ CONFIRM
+
+github.read
+→ AUTO
+
+github.write
+→ CONFIRM
+
+firebase.deploy
+→ CONFIRM
+
+codex.execute
+→ CONFIRM ou política específica futura
+
+Não implementar ações ainda.
+
+==================================================
+ETAPA 16 — ACTION REQUEST
+==================================================
+
+Criar contrato:
+
+ActionRequest
+
+Campos conceituais:
+
+action_id
+principal_id
+project_id
+tool_id
+capability
+intent
+parameters
+risk_level
+approval_requirement
+status
+created_at
+
+Status:
+
+PROPOSED
+WAITING_APPROVAL
+APPROVED
+DENIED
+EXECUTING
+SUCCEEDED
+FAILED
+CANCELLED
+
+Nesta fase não executar ferramentas externas.
+
+==================================================
+ETAPA 17 — APPROVAL RECORD
+==================================================
+
+Criar contrato separado:
+
+ApprovalRecord
+
+Com:
+
+approval_id
+action_id
+principal_id
+decision
+timestamp
+scope
+reason opcional
+
+Uma aprovação:
+
+- é específica;
+- tem escopo;
+- não vira permissão eterna automaticamente.
+
+==================================================
+ETAPA 18 — REVOGAÇÃO
+==================================================
+
+Projetar suporte para:
+
+revogar capability
+desabilitar tool
+suspender projeto
+kill switch global da LUMA
+
+Sem implementar integração externa.
+
+Criar estado global conceitual:
+
+RUNNING
+PAUSED
+LOCKED
+
+Quando LOCKED:
+
+nenhuma futura ação mutável pode executar.
+
+Knowledge read pode seguir política própria.
+
+==================================================
+ETAPA 19 — AUDIT LOG
+==================================================
+
+Criar auditoria estruturada.
+
+Registrar:
+
+event_id
+timestamp
+principal_id
+project_id
+event_type
+tool_id quando aplicável
+action_id
+result
+correlation_id
+
+Não registrar:
+
+segredos
+tokens
+conteúdo financeiro integral
+conteúdo completo de documentos
+
+==================================================
+ETAPA 20 — SESSIONS
+==================================================
+
+Criar conceito de sessão da LUMA.
+
+Campos:
+
+session_id
+principal_id
+active_project_id
+created_at
+last_activity
+status
+
+Não armazenar histórico de conversa completo indiscriminadamente.
+
+Preparar para frontend futuro.
+
+==================================================
+ETAPA 21 — PROJECT ROUTING
+==================================================
+
+Criar serviço que recebe:
+
+project_id
+
+e encontra o knowledge client correto.
+
+Se projeto não existir:
+
+fail-closed.
+
+Nunca usar automaticamente o Cérebro Meu Gestor para responder uma
+pergunta de projeto desconhecido.
+
+==================================================
+ETAPA 22 — LEARNING CANDIDATES
+==================================================
+
+A LUMA deverá aprender, mas NÃO alterar conhecimento canônico
+automaticamente.
+
+Criar contrato:
+
+LearningCandidate
+
+Campos conceituais:
+
+candidate_id
+source
+project_id
+claim
+evidence
+confidence
+status
+created_at
+
+Status:
+
+PROPOSED
+VALIDATED
+REJECTED
+PROMOTED
+
+Nesta fase somente contrato/storage local simples se necessário.
+
+==================================================
+ETAPA 23 — REGRA DE APRENDIZADO
+==================================================
+
+Fluxo obrigatório:
+
+experiência
+↓
+candidato de aprendizado
+↓
+evidência
+↓
+validação
+↓
+aprovação quando necessária
+↓
+write-back futuro
+
+Nunca:
+
+inferência da LUMA
+↓
+verdade canônica automática
+
+==================================================
+ETAPA 24 — MEMORY VS KNOWLEDGE
+==================================================
+
+Documentar a diferença:
+
+MEMORY
+→ preferências, histórico operacional e contexto pessoal permitido.
+
+KNOWLEDGE
+→ fatos canônicos dos projetos.
+
+LEARNING CANDIDATE
+→ informação ainda não promovida.
+
+Não misturar os três.
+
+==================================================
+ETAPA 25 — AGENT REGISTRY
+==================================================
+
+Registrar somente como arquitetura futura os nove agentes planejados:
+
+1. LUMA — Gestora Geral
+2. Produto
+3. Desenvolvimento
+4. Codex / Engenheiro de Código
+5. QA
+6. Segurança
+7. Dados & Analytics
+8. Growth & Marketing
+9. Conteúdo & Social
+
+Status inicial:
+
+PLANNED
+
+NÃO criar agentes executáveis nesta fase.
+
+==================================================
+ETAPA 26 — RESPONSABILIDADE DA LUMA
+==================================================
+
+Registrar:
+
+LUMA é a única orquestradora principal.
+
+Especialistas não devem:
+
+- autoatribuir privilégios;
+- chamar qualquer ferramenta sem capability;
+- alterar projeto ativo;
+- ignorar approval policy;
+- promover aprendizado para conhecimento sozinhos.
+
+==================================================
+ETAPA 27 — MODEL PROVIDER CONTRACT
+==================================================
+
+Criar abstração futura:
+
+ModelProvider
+
+Sem implementação real.
+
+Provider previsto:
+
+Google Gemini API
+
+Não usar OpenAI API como motor da LUMA.
+
+Não chamar Gemini nesta fase.
+
+==================================================
+ETAPA 28 — AGENT FRAMEWORK CONTRACT
+==================================================
+
+Registrar:
+
+framework futuro:
+Google ADK
+
+Não instalar nesta fase.
+
+A arquitetura interna da LUMA não deve ficar tão acoplada ao ADK que seja
+impossível trocar implementação no futuro.
+
+==================================================
+ETAPA 29 — ENDPOINTS LOCAIS DA FASE
+==================================================
+
+Pode criar endpoints internos como:
+
+GET /health
+
+GET /v1/luma/status
+
+GET /v1/projects
+
+POST /v1/knowledge/query
+
+GET /v1/tools
+
+GET /v1/agents
+
+Esses endpoints ainda são backend local.
+
+Não gerar respostas de IA.
+
+==================================================
+ETAPA 30 — ENDPOINT KNOWLEDGE
+==================================================
+
+POST /v1/knowledge/query
+
+deve:
+
+autenticar principal local
+↓
+validar project_id
+↓
+resolver project registry
+↓
+consultar Knowledge API
+↓
+retornar KnowledgeContext
+
+Não acessar arquivos diretamente.
+
+==================================================
+ETAPA 31 — AUTH LOCAL
+==================================================
+
+Para testes locais, utilizar mecanismo simples e seguro de desenvolvimento.
+
+Não implementar OAuth Google ainda.
+
+Segredo somente em variável de ambiente.
+
+Preparar interfaces para futura autenticação Google.
+
+==================================================
+ETAPA 32 — BIND
+==================================================
+
+Backend da LUMA nesta fase:
+
+127.0.0.1 somente.
+
+Nada de exposição externa.
+
+==================================================
+ETAPA 33 — TESTES
+==================================================
+
+Criar testes para:
+
+identity
+principal
+project registry
+project routing
+knowledge client
+knowledge context
+capabilities
+tool registry
+approval policy
+action requests
+approval records
+revocation
+kill switch
+audit
+sessions
+learning candidates
+agent registry
+model provider contract
+
+==================================================
+ETAPA 34 — TESTES DE SEGURANÇA
+==================================================
+
+Cobrir:
+
+projeto inexistente
+elevação de scope
+capability ausente
+tool disabled
+ação mutable sem aprovação
+aprovação de outra action
+aprovação expirada/fora de escopo quando aplicável
+kill switch
+prompt injection em KnowledgeContext
+token ausente
+token inválido
+Knowledge API indisponível
+
+Fail-closed.
+
+==================================================
+ETAPA 35 — TESTE DE INTEGRAÇÃO KNOWLEDGE
+==================================================
+
+Com Knowledge API local disponível:
+
+LUMA Backend
+↓
+Knowledge API
+↓
+Knowledge Engine
+
+Executar perguntas representativas.
+
+Confirmar:
+
+project_id correto
+fontes preservadas
+warnings preservados
+permission_status preservado
+nenhuma geração natural
+
+==================================================
+ETAPA 36 — START/STOP
+==================================================
+
+Backend deve iniciar e terminar sem processo órfão.
+
+Se Knowledge API estiver indisponível:
+
+LUMA continua iniciando,
+mas project knowledge deve aparecer DEGRADED/UNAVAILABLE,
+sem inventar contexto.
+
+==================================================
+ETAPA 37 — DOCUMENTAÇÃO
+==================================================
+
+Criar documentação de arquitetura contendo:
+
+LUMA
+Knowledge
+identidade
+projects
+capabilities
+tools
+approvals
+audit
+sessions
+learning
+agents futuros
+Gemini futuro
+Google ADK futuro
+Calendar
+Tasks
+
+==================================================
+ETAPA 38 — VERSIONAMENTO
+==================================================
+
+Criar versão:
+
+LUMA Backend 0.1.0
+
+se implementado e validado.
+
+Não alterar:
+
+Cérebro Meu Gestor 0.6.0
+Engine 1.4.0
+Knowledge API 0.1.0
+
+==================================================
+ETAPA 39 — NÃO CRIAR FRONTEND
+==================================================
+
+Nenhum Next.js ainda.
+
+Nenhuma interface web ainda.
+
+==================================================
+ETAPA 40 — NÃO INTEGRAR GOOGLE
+==================================================
+
+NÃO:
+
+Google OAuth
+Gemini API
+Google ADK
+Google Calendar API
+Google Tasks API
+
+nesta fase.
+
+Somente contratos.
+
+==================================================
+RELATÓRIO
+==================================================
+
+Criar:
+
+D:\projetos\luma\reports\FASE_7A_RELATORIO_NUCLEO_LUMA.md
+
+Incluir:
+
+1. estrutura;
+2. arquitetura;
+3. identidade;
+4. project registry;
+5. Knowledge consumer;
+6. capabilities;
+7. tool registry;
+8. approval policy;
+9. action requests;
+10. revogação;
+11. audit;
+12. sessions;
+13. learning;
+14. agent registry;
+15. Calendar contract;
+16. Tasks contract;
+17. Gemini contract;
+18. ADK contract;
+19. endpoints;
+20. testes;
+21. segurança;
+22. integração Knowledge API;
+23. limitações;
+24. arquivos;
+25. versão;
+26. recomendação da próxima fase.
+
+==================================================
+CRITÉRIO DE ACEITE
+==================================================
+
+Aprovar somente se:
+
+- Backend LUMA inicia localmente;
+- identidade é explícita;
+- project scope é obrigatório;
+- Knowledge API é consumida por HTTP;
+- projeto incorreto é rejeitado;
+- capabilities existem;
+- approval policy funciona;
+- tool disabled não executa;
+- kill switch é fail-closed;
+- learning não promove fatos automaticamente;
+- agentes continuam apenas registrados;
+- Calendar/Tasks continuam apenas contratos;
+- Gemini/ADK não foram chamados;
+- testes aprovados;
+- nenhum segredo versionado;
+- app e Cérebro permanecem intactos.
+
+==================================================
+REGRA DE PARADA
+==================================================
+
+Ao terminar:
+
+PARE.
+
+NÃO conectar Gemini.
+NÃO instalar Google ADK.
+NÃO conectar Calendar.
+NÃO conectar Tasks.
+NÃO criar frontend.
+NÃO criar agentes executáveis.
+NÃO fazer deploy.
+NÃO fazer push remoto.
+
+Apresente o relatório e aguarde autorização explícita.

@@ -1,0 +1,49 @@
+{
+  "http_only": true,
+  "loopback_only": true,
+  "cases": [
+    {
+      "category": "arquitetura técnica",
+      "equivalent": true,
+      "chunks": 12
+    },
+    {
+      "category": "privacidade e dados pessoais",
+      "equivalent": true,
+      "chunks": 12
+    },
+    {
+      "category": "riscos atuais",
+      "equivalent": true,
+      "chunks": 12
+    },
+    {
+      "category": "permissão atual para executar",
+      "equivalent": true,
+      "chunks": 12
+    },
+    {
+      "category": "histórico de autorização",
+      "equivalent": true,
+      "chunks": 12
+    },
+    {
+      "category": "revogação parada e restauração",
+      "equivalent": true,
+      "chunks": 7
+    },
+    {
+      "category": "funcionalidades produto",
+      "equivalent": true,
+      "chunks": 11
+    },
+    {
+      "category": "segurança de ferramentas",
+      "equivalent": true,
+      "chunks": 12
+    }
+  ],
+  "knowledge_worker_stopped": true,
+  "luma_stopped": true,
+  "degraded_without_knowledge": true
+}

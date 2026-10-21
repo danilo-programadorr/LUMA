@@ -1,0 +1,583 @@
+{
+  "Principal": {
+    "additionalProperties": false,
+    "properties": {
+      "principal_id": {
+        "default": "local-owner",
+        "title": "Principal Id",
+        "type": "string"
+      },
+      "principal_type": {
+        "const": "LOCAL_OWNER",
+        "default": "LOCAL_OWNER",
+        "title": "Principal Type",
+        "type": "string"
+      },
+      "display_name": {
+        "default": "Owner local",
+        "title": "Display Name",
+        "type": "string"
+      },
+      "roles": {
+        "default": [
+          "OWNER"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "title": "Roles",
+        "type": "array"
+      },
+      "project_scopes": {
+        "default": [
+          "meu-gestor"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "title": "Project Scopes",
+        "type": "array"
+      },
+      "capabilities": {
+        "default": [
+          "knowledge.read"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "title": "Capabilities",
+        "type": "array"
+      },
+      "approval_level": {
+        "const": "OWNER_SCOPED",
+        "default": "OWNER_SCOPED",
+        "title": "Approval Level",
+        "type": "string"
+      }
+    },
+    "title": "Principal",
+    "type": "object"
+  },
+  "Project": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "title": "Project Id",
+        "type": "string"
+      },
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
+      "status": {
+        "default": "ACTIVE",
+        "enum": [
+          "ACTIVE",
+          "SUSPENDED"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "knowledge_endpoint": {
+        "title": "Knowledge Endpoint",
+        "type": "string"
+      },
+      "knowledge_mode": {
+        "const": "lexical",
+        "default": "lexical",
+        "title": "Knowledge Mode",
+        "type": "string"
+      },
+      "enabled": {
+        "default": true,
+        "title": "Enabled",
+        "type": "boolean"
+      },
+      "capabilities": {
+        "default": [
+          "knowledge.read"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "title": "Capabilities",
+        "type": "array"
+      },
+      "metadata": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Metadata",
+        "type": "object"
+      }
+    },
+    "required": [
+      "project_id",
+      "name",
+      "knowledge_endpoint"
+    ],
+    "title": "Project",
+    "type": "object"
+  },
+  "Tool": {
+    "additionalProperties": false,
+    "properties": {
+      "tool_id": {
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "PLANNED",
+          "ENABLED_LOCAL"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "enabled": {
+        "default": false,
+        "title": "Enabled",
+        "type": "boolean"
+      },
+      "capabilities": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Capabilities",
+        "type": "array"
+      }
+    },
+    "required": [
+      "tool_id",
+      "status",
+      "capabilities"
+    ],
+    "title": "Tool",
+    "type": "object"
+  },
+  "KnowledgeRequest": {
+    "$defs": {
+      "Limits": {
+        "additionalProperties": false,
+        "properties": {
+          "max_documents": {
+            "default": 5,
+            "maximum": 5,
+            "minimum": 1,
+            "title": "Max Documents",
+            "type": "integer"
+          },
+          "max_chunks": {
+            "default": 12,
+            "maximum": 12,
+            "minimum": 1,
+            "title": "Max Chunks",
+            "type": "integer"
+          },
+          "max_chars": {
+            "default": 16000,
+            "maximum": 16000,
+            "minimum": 256,
+            "title": "Max Chars",
+            "type": "integer"
+          }
+        },
+        "title": "Limits",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "query": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Query",
+        "type": "string"
+      },
+      "package": {
+        "anyOf": [
+          {
+            "pattern": "^PACKAGE_[A-Z_]+$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Package"
+      },
+      "include_history": {
+        "default": false,
+        "title": "Include History",
+        "type": "boolean"
+      },
+      "limits": {
+        "$ref": "#/$defs/Limits"
+      }
+    },
+    "required": [
+      "project_id",
+      "query"
+    ],
+    "title": "KnowledgeRequest",
+    "type": "object"
+  },
+  "KnowledgeContext": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "title": "Project Id",
+        "type": "string"
+      },
+      "brain_version": {
+        "title": "Brain Version",
+        "type": "string"
+      },
+      "engine_version": {
+        "title": "Engine Version",
+        "type": "string"
+      },
+      "query": {
+        "title": "Query",
+        "type": "string"
+      },
+      "results": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Results",
+        "type": "array"
+      },
+      "sources": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Sources",
+        "type": "array"
+      },
+      "warnings": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Warnings",
+        "type": "array"
+      },
+      "permission_status": {
+        "const": "NOT_DETERMINED_BY_RETRIEVAL",
+        "title": "Permission Status",
+        "type": "string"
+      },
+      "retrieved_at": {
+        "format": "date-time",
+        "title": "Retrieved At",
+        "type": "string"
+      },
+      "request_id": {
+        "title": "Request Id",
+        "type": "string"
+      },
+      "correlation_id": {
+        "title": "Correlation Id",
+        "type": "string"
+      },
+      "mode": {
+        "const": "lexical",
+        "default": "lexical",
+        "title": "Mode",
+        "type": "string"
+      },
+      "status": {
+        "title": "Status",
+        "type": "string"
+      },
+      "confidence": {
+        "title": "Confidence",
+        "type": "string"
+      },
+      "content_trust": {
+        "const": "UNTRUSTED_DATA",
+        "default": "UNTRUSTED_DATA",
+        "title": "Content Trust",
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id",
+      "brain_version",
+      "engine_version",
+      "query",
+      "results",
+      "sources",
+      "warnings",
+      "permission_status",
+      "request_id",
+      "correlation_id",
+      "status",
+      "confidence"
+    ],
+    "title": "KnowledgeContext",
+    "type": "object"
+  },
+  "ActionRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "action_id": {
+        "title": "Action Id",
+        "type": "string"
+      },
+      "principal_id": {
+        "title": "Principal Id",
+        "type": "string"
+      },
+      "project_id": {
+        "title": "Project Id",
+        "type": "string"
+      },
+      "tool_id": {
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "capability": {
+        "title": "Capability",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "title": "Intent",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      },
+      "risk_level": {
+        "enum": [
+          "LOW",
+          "MEDIUM",
+          "HIGH"
+        ],
+        "title": "Risk Level",
+        "type": "string"
+      },
+      "approval_requirement": {
+        "enum": [
+          "AUTO",
+          "CONFIRM",
+          "DENY"
+        ],
+        "title": "Approval Requirement",
+        "type": "string"
+      },
+      "status": {
+        "default": "PROPOSED",
+        "enum": [
+          "PROPOSED",
+          "WAITING_APPROVAL",
+          "APPROVED",
+          "DENIED",
+          "EXECUTING",
+          "SUCCEEDED",
+          "FAILED",
+          "CANCELLED"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      }
+    },
+    "required": [
+      "principal_id",
+      "project_id",
+      "tool_id",
+      "capability",
+      "intent",
+      "risk_level",
+      "approval_requirement"
+    ],
+    "title": "ActionRequest",
+    "type": "object"
+  },
+  "ApprovalRecord": {
+    "additionalProperties": false,
+    "properties": {
+      "approval_id": {
+        "title": "Approval Id",
+        "type": "string"
+      },
+      "action_id": {
+        "title": "Action Id",
+        "type": "string"
+      },
+      "principal_id": {
+        "title": "Principal Id",
+        "type": "string"
+      },
+      "decision": {
+        "enum": [
+          "APPROVE",
+          "DENY"
+        ],
+        "title": "Decision",
+        "type": "string"
+      },
+      "timestamp": {
+        "format": "date-time",
+        "title": "Timestamp",
+        "type": "string"
+      },
+      "expires_at": {
+        "format": "date-time",
+        "title": "Expires At",
+        "type": "string"
+      },
+      "scope": {
+        "title": "Scope",
+        "type": "string"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "maxLength": 500,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      }
+    },
+    "required": [
+      "action_id",
+      "principal_id",
+      "decision",
+      "expires_at",
+      "scope"
+    ],
+    "title": "ApprovalRecord",
+    "type": "object"
+  },
+  "Session": {
+    "additionalProperties": false,
+    "properties": {
+      "session_id": {
+        "title": "Session Id",
+        "type": "string"
+      },
+      "principal_id": {
+        "title": "Principal Id",
+        "type": "string"
+      },
+      "active_project_id": {
+        "title": "Active Project Id",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      },
+      "last_activity": {
+        "format": "date-time",
+        "title": "Last Activity",
+        "type": "string"
+      },
+      "status": {
+        "default": "ACTIVE",
+        "enum": [
+          "ACTIVE",
+          "CLOSED"
+        ],
+        "title": "Status",
+        "type": "string"
+      }
+    },
+    "required": [
+      "principal_id",
+      "active_project_id"
+    ],
+    "title": "Session",
+    "type": "object"
+  },
+  "LearningCandidate": {
+    "additionalProperties": false,
+    "properties": {
+      "candidate_id": {
+        "title": "Candidate Id",
+        "type": "string"
+      },
+      "source": {
+        "maxLength": 500,
+        "minLength": 1,
+        "title": "Source",
+        "type": "string"
+      },
+      "project_id": {
+        "title": "Project Id",
+        "type": "string"
+      },
+      "claim": {
+        "maxLength": 2000,
+        "minLength": 1,
+        "title": "Claim",
+        "type": "string"
+      },
+      "evidence": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Evidence",
+        "type": "array"
+      },
+      "confidence": {
+        "enum": [
+          "LOW",
+          "MEDIUM",
+          "HIGH"
+        ],
+        "title": "Confidence",
+        "type": "string"
+      },
+      "status": {
+        "default": "PROPOSED",
+        "enum": [
+          "PROPOSED",
+          "VALIDATED",
+          "REJECTED",
+          "PROMOTED"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "created_at": {
+        "format": "date-time",
+        "title": "Created At",
+        "type": "string"
+      }
+    },
+    "required": [
+      "source",
+      "project_id",
+      "claim",
+      "evidence",
+      "confidence"
+    ],
+    "title": "LearningCandidate",
+    "type": "object"
+  }
+}

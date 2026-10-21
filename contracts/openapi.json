@@ -1,0 +1,413 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "LUMA Backend",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Fail-closed structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/luma/status": {
+      "get": {
+        "summary": "Status",
+        "operationId": "status_v1_luma_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Fail-closed structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/projects": {
+      "get": {
+        "summary": "Project List",
+        "operationId": "project_list_v1_projects_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Fail-closed structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/tools": {
+      "get": {
+        "summary": "Tools",
+        "operationId": "tools_v1_tools_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Fail-closed structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/agents": {
+      "get": {
+        "summary": "Agents",
+        "operationId": "agents_v1_agents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "default": {
+            "description": "Fail-closed structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/knowledge/query": {
+      "post": {
+        "summary": "Query",
+        "operationId": "query_v1_knowledge_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KnowledgeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeContext"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Fail-closed structured error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorDetail": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code"
+        ],
+        "title": "ErrorDetail"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "correlation_id": {
+            "type": "string",
+            "title": "Correlation Id"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "correlation_id",
+          "error"
+        ],
+        "title": "ErrorResponse"
+      },
+      "KnowledgeContext": {
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "brain_version": {
+            "type": "string",
+            "title": "Brain Version"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "results": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Results"
+          },
+          "sources": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "permission_status": {
+            "type": "string",
+            "const": "NOT_DETERMINED_BY_RETRIEVAL",
+            "title": "Permission Status"
+          },
+          "retrieved_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrieved At"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "correlation_id": {
+            "type": "string",
+            "title": "Correlation Id"
+          },
+          "mode": {
+            "type": "string",
+            "const": "lexical",
+            "title": "Mode",
+            "default": "lexical"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "confidence": {
+            "type": "string",
+            "title": "Confidence"
+          },
+          "content_trust": {
+            "type": "string",
+            "const": "UNTRUSTED_DATA",
+            "title": "Content Trust",
+            "default": "UNTRUSTED_DATA"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "project_id",
+          "brain_version",
+          "engine_version",
+          "query",
+          "results",
+          "sources",
+          "warnings",
+          "permission_status",
+          "request_id",
+          "correlation_id",
+          "status",
+          "confidence"
+        ],
+        "title": "KnowledgeContext"
+      },
+      "KnowledgeRequest": {
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Project Id"
+          },
+          "query": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Query"
+          },
+          "package": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^PACKAGE_[A-Z_]+$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package"
+          },
+          "include_history": {
+            "type": "boolean",
+            "title": "Include History",
+            "default": false
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Limits"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "project_id",
+          "query"
+        ],
+        "title": "KnowledgeRequest"
+      },
+      "Limits": {
+        "properties": {
+          "max_documents": {
+            "type": "integer",
+            "maximum": 5.0,
+            "minimum": 1.0,
+            "title": "Max Documents",
+            "default": 5
+          },
+          "max_chunks": {
+            "type": "integer",
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Max Chunks",
+            "default": 12
+          },
+          "max_chars": {
+            "type": "integer",
+            "maximum": 16000.0,
+            "minimum": 256.0,
+            "title": "Max Chars",
+            "default": 16000
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Limits"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

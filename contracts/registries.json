@@ -1,0 +1,142 @@
+{
+  "tools": [
+    {
+      "tool_id": "knowledge",
+      "status": "ENABLED_LOCAL",
+      "enabled": true,
+      "capabilities": [
+        "knowledge.read"
+      ]
+    },
+    {
+      "tool_id": "google_calendar",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "calendar.read",
+        "calendar.availability",
+        "calendar.create",
+        "calendar.update",
+        "calendar.delete",
+        "calendar.reminders",
+        "calendar.invite",
+        "calendar.write"
+      ]
+    },
+    {
+      "tool_id": "google_tasks",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "tasks.read",
+        "tasks.create",
+        "tasks.update",
+        "tasks.complete",
+        "tasks.reopen",
+        "tasks.organize",
+        "tasks.delete",
+        "tasks.write"
+      ]
+    },
+    {
+      "tool_id": "github",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "github.read",
+        "github.write"
+      ]
+    },
+    {
+      "tool_id": "firebase",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "firebase.read",
+        "firebase.deploy"
+      ]
+    },
+    {
+      "tool_id": "codex",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "codex.execute"
+      ]
+    },
+    {
+      "tool_id": "analytics",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "analytics.read"
+      ]
+    },
+    {
+      "tool_id": "ads",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "ads.manage"
+      ]
+    },
+    {
+      "tool_id": "pc_runner",
+      "status": "PLANNED",
+      "enabled": false,
+      "capabilities": [
+        "pc.execute"
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "agent_id": "luma",
+      "name": "LUMA — Gestora Geral",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "product",
+      "name": "Produto",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "development",
+      "name": "Desenvolvimento",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "codex",
+      "name": "Codex / Engenheiro de Código",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "qa",
+      "name": "QA",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "security",
+      "name": "Segurança",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "data",
+      "name": "Dados & Analytics",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "growth",
+      "name": "Growth & Marketing",
+      "status": "PLANNED"
+    },
+    {
+      "agent_id": "content",
+      "name": "Conteúdo & Social",
+      "status": "PLANNED"
+    }
+  ],
+  "future_model_provider": "Google Gemini API",
+  "future_agent_framework": "Google ADK",
+  "external_execution_enabled": false
+}
