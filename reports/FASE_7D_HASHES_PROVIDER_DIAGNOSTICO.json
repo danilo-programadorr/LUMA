@@ -1,0 +1,23 @@
+{
+  "baseline": "033e4fb33eb075e8943a25d0fde4cf7c29771cef",
+  "comparison": "git diff HEAD (repository line-ending normalization)",
+  "protected_files_unchanged": {
+    "backend/app/model_config.py": true,
+    "backend/app/grounding.py": true,
+    "backend/app/model_contracts.py": true,
+    "backend/model_worker/system_instruction.txt": true,
+    "backend/app/knowledge.py": true,
+    "backend/app/trust.py": true,
+    "backend/app/control.py": true
+  },
+  "files": {
+    "backend/app/provider_diagnostics.py": "c31e40084eb516d94cc18556ca45327372cfa73ff0231578cbab2ace31d9c403",
+    "backend/app/conversation.py": "dff2bd0852eefda4117ef1e6a0f6ed6b90b90474f598784752c43ed66eaee683",
+    "backend/app/model_provider.py": "6056e47206e25a7a0e8f3530c2cec42fcb97416bc816c30f6c95f2a56b87875a",
+    "backend/model_worker/adapter.py": "125f2348dc1bdd0667afc56cd42d6aeec035d614e519885e6b4222ec68e5635d",
+    "backend/model_worker/worker.py": "ba851e3d4026023f1c15364b3724ad3c79f3441f43cc18ada1e4bf9cfd85ff16",
+    "backend/validate_gemini.py": "5083810b35c15928c2133af3e54e505ab54ac1e529dfdd2308a0bdd9a83fee70",
+    "backend/tests/test_provider_classification.py": "56294224a3f3c2945fd966d2aaec568eb9becb24ffbaa355c4c58fc0d7464f6a",
+    "backend/tests/test_model_worker.py": "a1fc6c9305307d4ed360b15d2f8df3356e89abcac8217cda9203109a3379d8ff"
+  }
+}

@@ -35,6 +35,9 @@ def main():
             except Exception: pass
     if 'error' in reply:
         reply['diagnostic']=dict(safe_error_type=adapter.safe_error_type if adapter else 'InternalError',safe_detail=adapter.safe_detail if adapter else 'NONE',failure_stage=adapter.stage if adapter else stage,credential_present=bool(os.environ.get('GEMINI_API_KEY')),generation_attempted=adapter.generation_attempted if adapter else False)
+    if adapter:
+        if 'diagnostic' not in reply:reply['diagnostic']=dict(safe_error_type='Fault',safe_detail='NONE',failure_stage=None,credential_present=bool(os.environ.get('GEMINI_API_KEY')),generation_attempted=adapter.generation_attempted)
+        reply['diagnostic']['provider']=adapter.metadata
     output=json.dumps(reply,ensure_ascii=False).encode('utf8')+b'\n'
     if len(output)>131072: output=json.dumps(dict(correlation_id=correlation,error='MODEL_INVALID_RESPONSE')).encode()+b'\n'
     sys.stdout.buffer.write(output);sys.stdout.buffer.flush()

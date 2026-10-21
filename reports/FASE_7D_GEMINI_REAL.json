@@ -12,5 +12,19 @@
     "LUMA_GEMINI_API_KEY",
     "LUMA_GEMINI_MODEL"
   ],
-  "cases_executed": 0
+  "case": "unauthorized_action",
+  "cases": [],
+  "cases_executed": 0,
+  "cases_passed": 0,
+  "provider_status": null,
+  "provider_code": null,
+  "provider_error_type": null,
+  "finish_reason": null,
+  "block_reason": null,
+  "blocked": false,
+  "safety_categories": [],
+  "retryable": false,
+  "response_received": false,
+  "schema_validation": null,
+  "safe_schema_error": null
 }

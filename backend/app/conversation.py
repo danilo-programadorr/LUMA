@@ -3,7 +3,7 @@ import json,re,time
 from datetime import timedelta
 from fastapi import APIRouter,Request,Security
 from fastapi.security import HTTPBearer
-from pydantic import Field
+from pydantic import Field,ValidationError
 from .models import Contract,KnowledgeRequest,Limits,now,ident
 from .model_contracts import ModelInputContext,ModelDecision
 from .generation import ModelResult
@@ -85,8 +85,10 @@ class ConversationService:
             else:
                 # Do not supply factual history as a substitute for fresh authorized Knowledge.
                 summary='[]'
-            context=ModelInputContext(user_message=body.user_message,session_summary=summary,project_id=project,session_id=body.session_id,
-                locale=body.locale,grounding_requirement=requirement,knowledge=knowledge,available_tools=(),pending_action_ids=())
+            try:
+                context=ModelInputContext(user_message=body.user_message,session_summary=summary,project_id=project,session_id=body.session_id,
+                    locale=body.locale,grounding_requirement=requirement,knowledge=knowledge,available_tools=(),pending_action_ids=())
+            except ValidationError:raise Fault('MODEL_INPUT_SCHEMA_INVALID',503) from None
             self.control.safe(context.model_dump(mode='json'),max_chars=65536)
             result=self.provider.generate(context,correlation)
             if not isinstance(result,ModelResult): raise Fault('MODEL_INVALID_RESPONSE',503)

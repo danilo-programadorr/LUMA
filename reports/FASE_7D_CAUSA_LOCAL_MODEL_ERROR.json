@@ -1,0 +1,29 @@
+{
+  "baseline": "033e4fb33eb075e8943a25d0fde4cf7c29771cef",
+  "database": "gemini-validation-7692b6fa50fa4550.db",
+  "database_sha256": "f09663a2f9279ca7087e9210c019153a1bc31bae310289886965e97a0253653f",
+  "classification": "LOCAL_INPUT_CONTRACT",
+  "evidence": [
+    {
+      "turn_count": 4,
+      "summary_chars": 2846,
+      "contract_max_chars": 2000,
+      "provider_called": false,
+      "validation_errors": [
+        {
+          "field": "session_summary",
+          "type": "string_too_long"
+        }
+      ]
+    }
+  ],
+  "provider_status": null,
+  "finish_reason": null,
+  "block_reason": null,
+  "retryable": false,
+  "production_verified": false,
+  "date": "2026-10-21",
+  "verifier": "Codex",
+  "status": "REPRODUCED",
+  "confidence": "HIGH"
+}

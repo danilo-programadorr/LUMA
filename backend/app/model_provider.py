@@ -3,8 +3,9 @@ import json,os,sys,subprocess,threading,queue
 from pathlib import Path
 from .errors import Fault
 from .generation import ModelResult
+from .provider_diagnostics import valid_metadata
 
-ERRORS={'MODEL_TIMEOUT','MODEL_UNAVAILABLE','MODEL_AUTH_ERROR','MODEL_RATE_LIMIT','MODEL_INVALID_RESPONSE','MODEL_ERROR','MODEL_SAFETY_REJECTION'}
+ERRORS={'MODEL_INVALID_REQUEST','MODEL_PROVIDER_ERROR','MODEL_TIMEOUT','MODEL_UNAVAILABLE','MODEL_AUTH_ERROR','MODEL_RATE_LIMIT','MODEL_INVALID_RESPONSE','MODEL_ERROR','MODEL_SAFETY_REJECTION'}
 
 def worker_environment(key):
     result={'GEMINI_API_KEY':key}
@@ -57,12 +58,16 @@ class GeminiModelProvider:
             if not raw.endswith(b'\n') or len(raw)>131072: raise Fault('MODEL_INVALID_RESPONSE',503)
             response=json.loads(raw)
             if response.get('correlation_id')!=correlation_id: raise Fault('MODEL_INVALID_RESPONSE',503)
-            if set(response)=={'correlation_id','error','diagnostic'}:
+            if set(response) in ({'correlation_id','error','diagnostic'},{'correlation_id','result','diagnostic'}):
                 diagnostic=response.pop('diagnostic')
-                if not isinstance(diagnostic,dict) or set(diagnostic)!={'failure_stage','credential_present','generation_attempted','safe_error_type','safe_detail'} or diagnostic['failure_stage'] not in {'model worker startup','GeminiAdapter initialization','first generation','schema validation','response validation'} or type(diagnostic['credential_present']) is not bool or type(diagnostic['generation_attempted']) is not bool:
+                if not isinstance(diagnostic,dict):raise Fault('MODEL_INVALID_RESPONSE',503)
+                metadata=diagnostic.pop('provider',None)
+                if metadata is not None and not valid_metadata(metadata):raise Fault('MODEL_INVALID_RESPONSE',503)
+                if set(diagnostic)!={'failure_stage','credential_present','generation_attempted','safe_error_type','safe_detail'} or diagnostic['failure_stage'] not in {None,'model worker startup','GeminiAdapter initialization','first generation','schema validation','response validation'} or type(diagnostic['credential_present']) is not bool or type(diagnostic['generation_attempted']) is not bool:
                     raise Fault('MODEL_INVALID_RESPONSE',503)
-                if diagnostic['safe_error_type'] not in {'Fault','InternalError','APIError','ValidationError','ValueError'} or diagnostic['safe_detail'] not in {'NONE','MAX_TOKENS','NON_STOP_FINISH','HTTP_OTHER',*(f'HTTP_{c}' for c in (400,401,403,404,429,500,502,503,504))}:
+                if diagnostic['safe_error_type'] not in {'Fault','InternalError','APIError','ValidationError','ValueError'} or diagnostic['safe_detail'] not in {'NONE','MAX_TOKENS','NON_STOP_FINISH','HTTP_OTHER',*(f'HTTP_{c}' for c in (400,401,403,404,408,429,500,502,503,504))}:
                     raise Fault('MODEL_INVALID_RESPONSE',503)
+                if metadata is not None:diagnostic['provider']=metadata
                 self.diagnostic=diagnostic
             if set(response)=={'correlation_id','error'}:
                 code=response['error']
@@ -71,7 +76,7 @@ class GeminiModelProvider:
             if set(response)!={'correlation_id','result'}: raise Fault('MODEL_INVALID_RESPONSE',503)
             result=ModelResult.model_validate_json(json.dumps(response['result']))
             if result.model_name!=self.config.model or result.instruction_version!='luma-system-2': raise Fault('MODEL_INVALID_RESPONSE',503)
-            self.diagnostic=dict(failure_stage=None,generation_attempted=True,credential_present=True)
+            self.diagnostic.update(failure_stage=None,generation_attempted=True,credential_present=True)
             self.last='READY'
             return result
         except Fault as exc: self.last=exc.code;raise

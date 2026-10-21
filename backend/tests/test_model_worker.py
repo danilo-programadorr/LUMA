@@ -41,7 +41,7 @@ def test_sanitized_environment_and_recovery(tmp_path,config,monkeypatch):
     provider.close()
     with pytest.raises(Fault,match='MODEL_UNAVAILABLE'):provider.generate(context(),'after-close')
 
-@pytest.mark.parametrize('status,code',[(401,'MODEL_AUTH_ERROR'),(403,'MODEL_AUTH_ERROR'),(429,'MODEL_RATE_LIMIT'),(503,'MODEL_UNAVAILABLE'),(400,'MODEL_ERROR')])
+@pytest.mark.parametrize('status,code',[(401,'MODEL_AUTH_ERROR'),(403,'MODEL_AUTH_ERROR'),(429,'MODEL_RATE_LIMIT'),(503,'MODEL_UNAVAILABLE'),(400,'MODEL_INVALID_REQUEST')])
 def test_real_sdk_error_mapping_without_network(config,status,code):
     calls=[]
     def handler(request):
