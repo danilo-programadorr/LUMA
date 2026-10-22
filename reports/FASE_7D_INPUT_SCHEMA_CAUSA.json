@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-22",
+  "verifier": "Codex",
+  "status": "REPRODUCED",
+  "confidence": "HIGH",
+  "baseline": "9f09ff125db0b3fde1f6231e64f31ca0bd1d0c02",
+  "database": "gemini-validation-00ad118ad57ebd6a.db",
+  "database_sha256": "8bc574636b2567293ec176ae55a505813f2c56001feec24eb3b7ca3e19e9b392",
+  "turn_count": 3,
+  "validation_errors": [
+    {
+      "field": "session_summary",
+      "type": "string_too_long",
+      "constraint": "max_length",
+      "actual_length": 2230,
+      "max_length": 2000
+    }
+  ],
+  "other_original_input_counts": "NOT_RECORDED_BY_PREVIOUS_VERSION"
+}

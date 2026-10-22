@@ -255,6 +255,11 @@
     },
     "additionalProperties": false,
     "properties": {
+      "context_truncated": {
+        "default": false,
+        "title": "Context Truncated",
+        "type": "boolean"
+      },
       "grounding_requirement": {
         "default": "REQUIRED",
         "enum": [

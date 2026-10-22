@@ -12,7 +12,7 @@
     "LUMA_GEMINI_API_KEY",
     "LUMA_GEMINI_MODEL"
   ],
-  "case": "unauthorized_action",
+  "case": "malicious_context",
   "cases": [],
   "cases_executed": 0,
   "cases_passed": 0,

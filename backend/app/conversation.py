@@ -11,6 +11,7 @@ from .control import digest,stamp,date,action_scope
 from .trust_data import append
 from .errors import Fault
 from .grounding import grounding_requirement,clarification_only
+from .input_context import bounded_summary,input_counts,validation_errors
 
 class ConversationTurn(Contract):
     session_id:str=Field(min_length=1,max_length=64)
@@ -56,7 +57,7 @@ class ConversationService:
             model_provider=self.config.provider,model_name=self.config.model,system_instruction_version='luma-system-2',
             latency_ms=max(0,int(latency*1000)),usage=usage or {}))
     def turn(self,p,body,key,correlation):
-        start=time.monotonic();rid=None;project=None;verified_sid=None
+        start=time.monotonic();rid=None;project=None;verified_sid=None;input_diagnostic=None
         try:
             self.control.safe(body.model_dump())
             if not body.user_message.strip() or len(body.user_message)>self.config.max_input_chars: raise Fault('MODEL_INPUT_TOO_LARGE',413)
@@ -69,8 +70,8 @@ class ConversationService:
                 window=repo.get('conversation_windows',body.session_id)
                 if window and window.get('active_request') and date(window['lease_expires_at'])>now(): raise Fault('SESSION_BUSY',409)
                 history=window.get('turns',[]) if window and date(window['expires_at'])>now() else []
-                summary=json.dumps(history,ensure_ascii=False)
-                if len(summary)>self.config.max_conversation_chars: summary=''
+                conversation_chars=len(json.dumps(history,ensure_ascii=False))
+                summary,truncated=bounded_summary(history,self.config.max_conversation_chars)
                 data=dict(session_id=body.session_id,principal_id=p.principal_id,project_id=project,turns=history,
                     expires_at=(now()+timedelta(hours=24)).isoformat(),active_request=rid,lease_expires_at=(now()+timedelta(seconds=self.config.timeout+20)).isoformat())
                 (repo.put if window else repo.add)('conversation_windows',body.session_id,data)
@@ -81,14 +82,18 @@ class ConversationService:
             if requirement=='REQUIRED':
                 knowledge=self.control.runtime_knowledge(runtime,body.session_id,KnowledgeRequest(project_id=project,query=body.user_message,
                     limits=Limits(max_chars=min(16000,max(256,self.config.max_knowledge_chars//2)))),correlation,self.knowledge)
-                if len(knowledge.model_dump_json())>self.config.max_knowledge_chars: raise Fault('MODEL_INPUT_TOO_LARGE',413)
             else:
                 # Do not supply factual history as a substitute for fresh authorized Knowledge.
-                summary='[]'
+                summary='[]';truncated=bool(history)
+            fields=dict(user_message=body.user_message,session_summary=summary,project_id=project,session_id=body.session_id,
+                locale=body.locale,grounding_requirement=requirement,knowledge=knowledge,available_tools=(),pending_action_ids=(),context_truncated=truncated)
+            input_diagnostic=dict(**input_counts(fields,conversation_chars),context_truncated=truncated,validation_errors=[])
+            if input_diagnostic['knowledge_context_chars']>self.config.max_knowledge_chars:raise Fault('MODEL_INPUT_TOO_LARGE',413)
             try:
-                context=ModelInputContext(user_message=body.user_message,session_summary=summary,project_id=project,session_id=body.session_id,
-                    locale=body.locale,grounding_requirement=requirement,knowledge=knowledge,available_tools=(),pending_action_ids=())
-            except ValidationError:raise Fault('MODEL_INPUT_SCHEMA_INVALID',503) from None
+                context=ModelInputContext(**fields)
+            except ValidationError as exc:
+                input_diagnostic['validation_errors']=validation_errors(exc,fields)
+                raise Fault('MODEL_INPUT_SCHEMA_INVALID',503) from None
             self.control.safe(context.model_dump(mode='json'),max_chars=65536)
             result=self.provider.generate(context,correlation)
             if not isinstance(result,ModelResult): raise Fault('MODEL_INVALID_RESPONSE',503)
@@ -135,10 +140,10 @@ class ConversationService:
                 while turns and len(json.dumps(turns,ensure_ascii=False))>self.config.max_conversation_chars: turns.pop(0)
                 window.update(turns=turns,active_request=None,expires_at=(now()+timedelta(hours=24)).isoformat())
                 repo.put('conversation_windows',body.session_id,window)
-                record=repo.get('conversation_requests',rid);record['status']='COMPLETED';repo.put('conversation_requests',rid,record)
+                record=repo.get('conversation_requests',rid);record['status']='COMPLETED';record['input_diagnostic']=input_diagnostic;repo.put('conversation_requests',rid,record)
                 self.event(repo,p,body.session_id,project,correlation,'OK',time.monotonic()-start,result.usage.model_dump())
             return ConversationAnswer(session_id=body.session_id,project_id=project,correlation_id=correlation,
-                assistant_message=decision.assistant_message,citations=citations,warnings=list(dict.fromkeys((knowledge.warnings if knowledge else [])+['NO_TOOL_EXECUTION','PRODUCTION_NOT_VERIFIED'])),
+                assistant_message=decision.assistant_message,citations=citations,warnings=list(dict.fromkeys((knowledge.warnings if knowledge else [])+(['CONVERSATION_CONTEXT_TRUNCATED'] if truncated else [])+['NO_TOOL_EXECUTION','PRODUCTION_NOT_VERIFIED'])),
                 confidence=knowledge.confidence if knowledge else 'NOT_APPLICABLE',model_confidence=decision.confidence,freshness=sorted({r.get('freshness','UNKNOWN') for r in (knowledge.results if knowledge else [])}),
                 proposed_actions=actions,learning_candidates=candidates,needs_clarification=decision.needs_clarification,
                 model_status='READY',model_name=result.model_name,system_instruction_version=result.instruction_version,usage=result.usage.model_dump())
@@ -148,7 +153,9 @@ class ConversationService:
                 if rid:
                     record=repo.get('conversation_requests',rid)
                     if record and record.get('correlation_id')==correlation:
-                        record.update(status='FAILED',error=error.code);repo.put('conversation_requests',rid,record)
+                        record.update(status='FAILED',error=error.code)
+                        if input_diagnostic is not None:record['input_diagnostic']=input_diagnostic
+                        repo.put('conversation_requests',rid,record)
                         window=repo.get('conversation_windows',body.session_id)
                         if window and window.get('active_request')==rid:
                             window['active_request']=None;repo.put('conversation_windows',body.session_id,window)

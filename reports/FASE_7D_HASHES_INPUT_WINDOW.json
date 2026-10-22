@@ -1,0 +1,24 @@
+{
+  "baseline": "9f09ff125db0b3fde1f6231e64f31ca0bd1d0c02",
+  "protected_files_unchanged": {
+    "backend/app/model_config.py": true,
+    "backend/app/grounding.py": true,
+    "backend/model_worker/system_instruction.txt": true,
+    "backend/model_worker/adapter.py": true,
+    "backend/model_worker/worker.py": true,
+    "backend/app/model_provider.py": true,
+    "backend/app/knowledge.py": true,
+    "backend/app/trust.py": true
+  },
+  "model_decision_schema_unchanged": true,
+  "files": {
+    "backend/app/input_context.py": "537d8bdf482c9e7890119da325b67bfbb082dad881c2b5828c84fe56b61766a5",
+    "backend/app/model_contracts.py": "1c3dabc8a74d00ebb716d476dd96a3d0a1a4581a7b7cacf0d18539cde6a3a50f",
+    "backend/app/conversation.py": "a8155d6b1a1e92ef50a025199087e951eb50f5f15b09cd0e2c4169c3b73f5e25",
+    "backend/validate_gemini.py": "8d62d205414a9937c731b2111d89bdcb8d461949462ae46ea9b03e7efa97995e",
+    "backend/tests/test_input_context.py": "27f5e3edb4c22b803fb3d1ec9f1d93a3e717006f0e8cc16639b973180b142d29",
+    "backend/tests/test_provider_classification.py": "9c71b07031411e903b267294153004126a7aca9f32af72b12bd321aee37fbdb6",
+    "contracts/trust-models.json": "c47e02197a680e80a5f0bd8f08620c6ab1b6914d126ffe7c49b3fa12b2d00df7",
+    "contracts/conversation-models.json": "6feb9ff47bc0fa5cd93c91e437c36d44ec80cf04f6421653e86254474466c6b5"
+  }
+}

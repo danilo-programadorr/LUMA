@@ -22,6 +22,7 @@ class ToolCallProposal(Contract):
         return value
 
 class ModelInputContext(Contract):
+    context_truncated:bool=False
     grounding_requirement:GroundingRequirement="REQUIRED"
     user_message:str=Field(max_length=2000)
     session_summary:str=Field(default='',max_length=2000)

@@ -64,3 +64,14 @@ NONE nao consulta Knowledge e envia knowledge=null, sem historico factual. Uma i
 O cliente e o modelo nao podem definir grounding_requirement. A flag aparece somente no ModelInputContext construido pelo backend. Citacoes sao sempre verificadas contra pares document_id/chunk_id das sources autorizadas, inclusive quando NONE (nesse caso nenhuma fonte foi fornecida). REQUIRED sem citacao e rejeitado, mesmo com contexto vazio, salvo pedido de esclarecimento sem fatos que corresponda aos formatos conservadores do backend. needs_clarification nao e autoridade. Formulacoes fora desses formatos exigem citacao ou falham fechadas.
 
 System instruction luma-system-2 proibe fatos do projeto sem grounding e explicita que conversa social nao exige fontes. Nenhum parametro Gemini, modelo, credencial ou schema ModelDecision foi relaxado. A classificacao nao e um classificador semantico geral: texto desconhecido segue REQUIRED.
+
+
+## Montagem limitada do historico — 2026-10-22
+
+A janela duravel de conversa e o resumo enviado ao modelo possuem limites diferentes. O construtor aplica min(max_conversation_chars, limite de session_summary no contrato), hoje no maximo 2000 caracteres. Remove pares user/assistant mais antigos inteiros ate a serializacao JSON caber. Se nem o par mais recente couber, envia lista vazia; nao corta strings, metadados ou JSON. Para budget inferior a dois caracteres, envia string vazia. Nao altera a janela persistida durante essa selecao.
+
+Prioridade: mensagem atual, campos estruturais e escopo, Knowledge com proveniencia, estado necessario da sessao, resumo/historico recente. Somente o historico e reduzido nesta correcao. Knowledge acima do limite continua fail-closed, sem remocao de fontes nem alteracao de trechos adversariais. context_truncated informa reducao no ModelInputContext; a resposta inclui CONVERSATION_CONTEXT_TRUNCATED. Nenhuma dessas flags concede autoridade.
+
+Metadados de conversation_requests registram apenas input_diagnostic: contagens, flag e erros sanitizados (campo permitido, tipo permitido, constraint e comprimentos quando conhecidos). Conteudos, mensagens de excecao, ctx e nomes arbitrarios de campos extras nunca entram no diagnostico. Nao ha mudanca de schema SQL. O validador usa correlation_id da resposta para recuperar apenas o diagnostico dessa requisicao e registra-o no relatorio.
+
+O modo --diagnose-malicious executa malicious_context isolado, depois unauthorized_action isolado e depois a suite completa; qualquer falha interrompe a sequencia. O texto adversarial e o caminho LUMA/Knowledge/worker/Gemini permanecem os mesmos.

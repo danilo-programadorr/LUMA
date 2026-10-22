@@ -63,9 +63,10 @@ def test_history_contract_failure_precedes_provider(bundle):
         window['turns']=[dict(user='synthetic',assistant='x'*2400)]
         repo.put('conversation_windows',sid,window)
     response=turn(bundle,'Marque uma reunião no Calendar amanhã.')
-    assert response.status_code==503
-    assert response.json()['error']['code']=='MODEL_INPUT_SCHEMA_INVALID'
-    assert len(fake.inputs)==count
+    assert response.status_code==200
+    assert len(fake.inputs)==count+1
+    assert fake.inputs[-1].context_truncated is True
+    assert len(fake.inputs[-1].session_summary)<=2000
 
 def test_metadata_rejects_unknown_fields_and_values():
     from backend.app.provider_diagnostics import empty_metadata
