@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-23",
+  "version": "0.5.0",
+  "baseline": "e63a2b4b6ecbafb49e842243ef27d23b5cd9a522",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "f9cbe926c62f56c41d3af32f77d55b0ff3ce11afe2183d5bc4e5f8700a21c8de"
+    },
+    {
+      "path": "backend/app/__init__.py",
+      "sha256": "a59cc476cb80137b839d3b0c383905001aa6934dd024037e48416b151ab8cb55"
+    },
+    {
+      "path": "contracts/openapi.json",
+      "sha256": "73daf9c7b514ae2a51b0c0cbfdb45cb53a7c669d07b00053baf3df825a2dc97a"
+    },
+    {
+      "path": "docs/LUMA_ALWAYS_ON_ARCHITECTURE.md",
+      "sha256": "f773cd7350f1bd8da8c0319e8427aaad4d238b217201df7b69f6f49c14b4ac99"
+    },
+    {
+      "path": "docs/LUMA_EXECUTION_AUTHORIZATION.md",
+      "sha256": "d77a372f8aaa15bc61035756d38ea8b1b11e06c3d78064a70ff87f9e7118bee0"
+    },
+    {
+      "path": "docs/LUMA_LOCAL_EXECUTOR.md",
+      "sha256": "424afcee3907b4711088e719885e4002ea5953c66f98c48072371d7d9919bd09"
+    },
+    {
+      "path": "phase-status.json",
+      "sha256": "4d7a8172a06fc09b676490e57d170e351911da521a22ac503f2d32000f8e2fa0"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_DIRECT_TOOL_REAL.json",
+      "sha256": "eb25ffbee57aab1b69a455904cc99f757ece7f73c38b12cebf37e683beae5f48"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL.json",
+      "sha256": "cfda4fce3cabec96220d3783832e9902e65f61d34628ade41b9646153083fc2d"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL_HISTORY_1792796535571787200.json",
+      "sha256": "7f52cdcb06f99d158207df1b623d8d5bf9b79a565d3e4a193dedcc2a6e1b19ca"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL_HISTORY_1792796622224202800.json",
+      "sha256": "5c3089b6ac042edbce7793555273851835c4f55a47e167ad4a45398d337ba5f7"
+    },
+    {
+      "path": "reports/FASE_7E_DEPLOYMENT_READINESS.md",
+      "sha256": "85d0d0a0c2d933982457758fa9e8f2709c74218a7b5261fc684b95c86132b2d1"
+    },
+    {
+      "path": "reports/FASE_7E_RELATORIO_ADK_ORQUESTRACAO.md",
+      "sha256": "9327a9fbc07e34bd90631fcc29b3c29cff52b3d3377ea265ebe6767177a1313f"
+    },
+    {
+      "path": "reports/FASE_7E_RELEASE_AUDITORIA.json",
+      "sha256": "9eada619fd3dbea32945c92ff170f30a9db77363fbed0502811d434e0ed1b2f7"
+    },
+    {
+      "path": "reports/FASE_7E_RELEASE_COBERTURA.json",
+      "sha256": "99037a7d58551ad2c7f33597813ef834666adf4c5d2a3900e8d499f5c4567ee1"
+    },
+    {
+      "path": "reports/FASE_7E_RELEASE_EVIDENCIAS.json",
+      "sha256": "c8394eb02022b86202edd7a49c3be27e0ea735afa42ecf05f45a4382163e78bc"
+    },
+    {
+      "path": "reports/FASE_7E_RELEASE_OAUTH_SCAN.json",
+      "sha256": "987f00da001ba38d69cb43256de7f40e6203e1fc9e62353a29f4cbf9c4e8f26e"
+    },
+    {
+      "path": "reports/FASE_7E_RELEASE_TESTES.txt",
+      "sha256": "0935e76eea6d210ed894892fa7bf7091c8ca09f49bb823f22cb7d56877ec8a39"
+    },
+    {
+      "path": "reports/FASE_7E_RELEASE_TESTES.xml",
+      "sha256": "8a0eaa01054ca7856ab9b7c4c6dca4c37c6cc0955b4e22d0012a940fec5a9daa"
+    }
+  ]
+}

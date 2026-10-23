@@ -14,3 +14,8 @@ POST /v1/action-requests, POST /v1/action-requests/{id}/authorize, GET /v1/execu
 ### Propostas e intencao (correcao 7E)
 
 ActionIntent, action_spec e approve_review nao sao HUMAN_APPROVE. Propostas completas passam por politica local de operacao, projeto, grant, agente, parametros, recurso, destino e risco no backend; sao revalidadas no commit. O catalogo local atualmente admite calendar.create e tasks.create, inclusive quando a ferramenta e PLANNED/disabled; nao habilita execucao. Security nao pode ampliar candidatos. Uma acao canonica termina WAITING_AUTHORIZATION; nenhum Approval, ExecutionAuthorization ou Job nasce desse fluxo. Autorizacao posterior permanece dependente de humano, permissao atual, step-up e ferramenta habilitada.
+
+
+## Invariantes oficiais da versao 0.5.0
+
+Agentes nao se autoaprovam. Runtime nao emite aprovacao humana. Security Agent nao substitui a Policy Engine. Modelo nao cria ExecutionAuthorization. Execucao exige autorizacao valida e revalidacao atual; kill switch/revocation prevalecem. Resultado real 10/10 valida proposta WAITING_AUTHORIZATION sem autoaprovacao, job ou efeito externo. Ferramentas externas mutaveis continuam disabled.

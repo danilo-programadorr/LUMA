@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-23",
+  "validated_commit": "e63a2b4b6ecbafb49e842243ef27d23b5cd9a522",
+  "validated_candidate_hash": "678b7f86bd963ff176608a342c8a5487042d28b26f9a03d12dedb29832b95cdf",
+  "backend_changes": [
+    "backend/app/__init__.py"
+  ],
+  "runtime_logic_unchanged": true,
+  "paid_calls_repeated": false,
+  "real_reports": [
+    {
+      "path": "reports/FASE_7E_ADK_REAL.json",
+      "sha256": "cfda4fce3cabec96220d3783832e9902e65f61d34628ade41b9646153083fc2d"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_DIRECT_TOOL_REAL.json",
+      "sha256": "eb25ffbee57aab1b69a455904cc99f757ece7f73c38b12cebf37e683beae5f48"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json",
+      "sha256": "9e5813c2c333b45a94d2d4f358766f25a6d6de117b0b01299dc6bd470a8253fd"
+    }
+  ]
+}

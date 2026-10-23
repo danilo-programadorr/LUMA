@@ -15,3 +15,8 @@ Recomendação inicial 7F: Control Plane e worker ADK em serviços/imagens separ
 Não usar SQLite efêmero em Cloud Run. Jobs, leases e atomicidade devem ser revalidados em PostgreSQL. Tracing usa correlation/task/workflow/job/authorization IDs, sem payload integral. IAM mínimo para cada serviço; credenciais externas por referências, nunca coluna plaintext. Não há preço calculado: comparar consumo medido, instâncias mínimas, storage, rede e observabilidade na autorização 7F.
 
 Fontes oficiais consultadas: https://cloud.google.com/run/docs/overview/what-is-cloud-run ; https://cloud.google.com/agent-builder/agent-engine/overview ; https://cloud.google.com/tasks/docs/dual-overview . Conclusão de escolha é avaliação técnica da LUMA, não recomendação oficial do fornecedor.
+
+
+## Estado oficial na 0.5.0
+
+Fase 7E concluida; Fase 7F nao iniciada. Executor local incorporado a arquitetura e validado com TestTool em sandbox. Cenario futuro: Owner fora de casa -> LUMA Web no celular -> autorizacao humana -> Control Plane cria Job -> Local PC Executor Windows recebe via outbound -> PC ligado e elegivel executa conforme autorizacao. LOCAL_DEVICE exige PC ligado; offline fica WAITING_FOR_DEVICE. Nao existe fallback silencioso para cloud ou outro dispositivo. Web remota, cloud e integracoes externas ainda nao implantadas. Recomendacao 7F existente preservada, sem implementacao neste fechamento.

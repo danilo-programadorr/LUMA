@@ -9,3 +9,8 @@ POST /v1/execution-devices retorna credencial aleatória de desenvolvimento uma 
 python -m backend.local_executor inicia somente conexões outbound: heartbeat e poll autenticados. HTTPS obrigatório fora de 127.0.0.1; redirects/proxies de ambiente desabilitados. Não abre listener, porta pública ou RDP. Poll é curto, repetido a cada 10s com reconexão; contrato DevicePollRequest prepara HTTPS long polling até 30s. A fila persistente é canônica, não o canal. O cliente de produção não executa TestTool nem adapters mutáveis. Testes de execução sandbox usam processo separado e DB local; testes HTTP provam a autenticação do canal. Não se afirma execução mutável remota em cloud.
 
 Windows Service/autostart, enrollment com identidade forte, rotação, mTLS/opção de device-bound keys e armazenamento DPAPI/Secret Manager são trabalho futuro. LocalResourceScope lista paths exatos e default DENY; não é acesso concedido ao filesystem nesta fase. Codex CLI/browser/desktop permanecem DISABLED. Desktop deve ser HIGH por padrão. Nenhum comando/URL arbitrário é aceito. PC precisa estar ligado para tarefas locais; tarefas cloud futuras não dependerão dele.
+
+
+## Estado oficial na 0.5.0
+
+Fase 7E concluida; Fase 7F nao iniciada. Executor local incorporado a arquitetura e validado com TestTool em sandbox. Cenario futuro: Owner fora de casa -> LUMA Web no celular -> autorizacao humana -> Control Plane cria Job -> Local PC Executor Windows recebe via outbound -> PC ligado e elegivel executa conforme autorizacao. LOCAL_DEVICE exige PC ligado; offline fica WAITING_FOR_DEVICE. Nao existe fallback silencioso para cloud ou outro dispositivo. Web remota, cloud e integracoes externas ainda nao implantadas. Recomendacao 7F existente preservada, sem implementacao neste fechamento.

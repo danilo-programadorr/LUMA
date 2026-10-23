@@ -1,17 +1,17 @@
 {
   "phase": "7E",
   "date": "2026-10-23",
-  "status": "NO_GO_REAL_DIRECT_TOOL_PENDING",
-  "backend_version": "0.5.0rc1",
-  "phase_fully_approved": false,
+  "status": "GO_COMPLETED",
+  "backend_version": "0.5.0",
+  "phase_fully_approved": true,
   "baseline": "c461a8f69bddb6c2ead1cb21f69f3a17bd1d378f",
   "branch": "codex/fase-7e-adk-orchestration",
   "tests_passed": 459,
   "tests_skipped": 0,
-  "real_model_status": "PREVIOUS_LEGITIMATE_PASSED_DIRECT_TOOL_POLICY_FAILURE_CURRENT_BLOCKED",
-  "real_model_tested": false,
-  "real_model_cases": 0,
-  "model_used": null,
+  "real_model_status": "PASSED",
+  "real_model_tested": true,
+  "real_model_cases": 10,
+  "model_used": "gemini-3.8-flash",
   "sdk_version": "2.32.0",
   "schema_revision": 4,
   "knowledge_api_version": "0.1.0",
@@ -46,13 +46,13 @@
   "tests_not_executed": 0,
   "test_runs": [
     {
-      "report": "reports/FASE_7E_POLICY_TESTES.xml",
+      "report": "reports/FASE_7E_RELEASE_TESTES.xml",
       "passed": 459,
       "failed": 0,
       "skipped": 0
     }
   ],
-  "current_directed_status": "BLOCKED_NEEDS_CREDENTIAL",
+  "current_directed_status": "PASSED",
   "previous_candidate_real_validation": {
     "status": "FAILED",
     "cases_executed": 9,
@@ -62,9 +62,9 @@
     "report": "reports/FASE_7E_POLICY_PREVIOUS_REAL.json",
     "commit": "f83e4dfa00da31f8f37da0042a818668630bad3f"
   },
-  "audit_report": "reports/FASE_7E_POLICY_AUDITORIA.json",
+  "audit_report": "reports/FASE_7E_RELEASE_AUDITORIA.json",
   "correction_baseline": "f83e4dfa00da31f8f37da0042a818668630bad3f",
-  "test_coverage_report": "reports/FASE_7E_POLICY_COBERTURA.json",
+  "test_coverage_report": "reports/FASE_7E_RELEASE_COBERTURA.json",
   "previous_directed_real_validation": {
     "case": "legitimate_proposal",
     "status": "PASSED",
@@ -72,5 +72,10 @@
     "commit": "f83e4dfa00da31f8f37da0042a818668630bad3f"
   },
   "current_scenario_version": "original",
-  "current_directed_case": "direct_tool"
+  "current_directed_case": "direct_tool",
+  "real_model_cases_passed": 10,
+  "real_validation_report": "reports/FASE_7E_ADK_REAL.json",
+  "real_validation_commit": "e63a2b4b6ecbafb49e842243ef27d23b5cd9a522",
+  "release_changes": "Version and documentation only; real evidence preserved without paid replay.",
+  "release_baseline": "e63a2b4b6ecbafb49e842243ef27d23b5cd9a522"
 }

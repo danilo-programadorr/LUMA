@@ -1,6 +1,6 @@
-# LUMA Backend 0.5.0rc1 — Fase 7E candidata
+# LUMA Backend 0.5.0 — Fase 7E concluida
 
-Plataforma web responsiva futura, backend Python/FastAPI local. SQLite + SQLAlchemy persistem identidade, controles, ações/aprovações, sessões, candidatos e auditoria. **Knowledge HTTP funciona; o adaptador Gemini foi validado localmente e em oito cenários reais com gemini-3.8-flash. A candidata 7E integra nove papéis via ADK e execução durável local; a validação real ADK + Gemini ainda está pendente. Ferramentas externas mutáveis permanecem desabilitadas.** Cérebro Meu Gestor permanece separado e intacto.
+Plataforma web responsiva futura, backend Python/FastAPI local. SQLite + SQLAlchemy persistem identidade, controles, acoes/aprovacoes, sessoes, candidatos e auditoria. **Fase 7E concluida: ADK 2.12.0 + Gemini real gemini-3.8-flash aprovados em 10/10 cenarios. Nove papeis oficiais, LUMA root e execucao duravel validada em sandbox local. Ferramentas externas mutaveis permanecem desabilitadas.** Cerebro Meu Gestor permanece separado e intacto. Fase 7F nao iniciada. As secoes de correcoes abaixo preservam o historico; o fechamento vigente esta no final do relatorio 7E.
 
 ## Instalar, migrar e iniciar no Windows
 
@@ -111,7 +111,7 @@ GET /v1/admin/grants lista autoridade durável. POST /v1/admin/grants e /grants/
 
 [Arquitetura do model layer](docs/MODEL_LAYER_7D.md) · [Relatório 7D](reports/FASE_7D_RELATORIO_GEMINI_MODEL_ADAPTER.md).
 
-A versão 0.4.0 da Fase 7D exigia schema 0003; a candidata atual exige 0004. Faça backup antes de executar a migração explícita. Não altera as migrações 0001/0002. Há janela conversacional limitada e metadados de turnos, separados do audit. Tokens e chave Gemini não são persistidos. Sem chave, admin e Knowledge continuam operacionais; geração retorna MODEL_UNAVAILABLE.
+A versão 0.4.0 da Fase 7D exigia schema 0003; a versao 0.5.0 exige 0004. Faça backup antes de executar a migração explícita. Não altera as migrações 0001/0002. Há janela conversacional limitada e metadados de turnos, separados do audit. Tokens e chave Gemini não são persistidos. Sem chave, admin e Knowledge continuam operacionais; geração retorna MODEL_UNAVAILABLE.
 
 Endpoint humano: POST /v1/conversation/turn, Authorization do owner e Idempotency-Key único. Corpo: session_id de uma sessão criada pelo humano, user_message e locale opcional. O cliente não recebe runtime token e não escolhe temperatura, tools ou teto. Resposta traz mensagem, fontes validadas, warnings, confiança de recuperação/modelo, freshness, status, uso e propostas sem execução. Se Knowledge faltar, a conversa falha fechada.
 
@@ -128,12 +128,12 @@ $env:LUMA_GEMINI_API_KEY=[Net.NetworkCredential]::new('', $geminiSecret).Passwor
 
 O validador executa no máximo sete gerações e um cenário de Knowledge indisponível, usando banco temporário e tokens locais efêmeros. Grava somente resultados/métricas em reports/FASE_7D_GEMINI_REAL.json. Sem chave, retorna BLOCKED_NEEDS_CREDENTIAL sem rede. Reexecutá-lo atualiza esse relatório; aprovação da fase exige inspeção do resultado real e novo fechamento. API/modelo e disponibilidade na conta não são presumidos a partir do nome. Uma chave configurada em outro terminal não é automaticamente herdada por este processo.
 
-A Fase 7D foi aprovada em 0.4.0 e a 7E recebeu autorização específica. A candidata 7E exige evidências próprias e não autoriza iniciar a 7F. O comando acima pertence à validação histórica 7D; para a rodada atual use backend.validate_adk abaixo.
+A Fase 7D foi aprovada em 0.4.0 e a 7E recebeu autorização específica. A Fase 7E foi concluida com evidencias proprias; isso nao autoriza iniciar a 7F. O comando acima pertence à validação histórica 7D; para a rodada atual use backend.validate_adk abaixo.
 
 
 ## Fase 7E — operação local e validação
 
-Candidata com ADK isolado, tarefas persistentes, autorizações e jobs. Fase 7D permanece aprovada no histórico; 7E exige validação própria. Nenhuma ferramenta externa mutável é habilitada. Veja docs/LUMA_ADK_ARCHITECTURE.md, docs/LUMA_LOCAL_EXECUTOR.md e docs/LUMA_JOB_RUNTIME.md.
+Versao 0.5.0 com ADK isolado, tarefas persistentes, autorizacoes e jobs. Fases 7D e 7E aprovadas no historico; ADK + Gemini real 10/10 confirmado na 7E. Nenhuma ferramenta externa mutável é habilitada. Veja docs/LUMA_ADK_ARCHITECTURE.md, docs/LUMA_LOCAL_EXECUTOR.md e docs/LUMA_JOB_RUNTIME.md.
 
 Instale o ambiente ADK separado sem alterar o lock da API:
 
@@ -160,21 +160,22 @@ Testes dirigidos (PYTEST_DISABLE_PLUGIN_AUTOLOAD=1; basetemp deve ficar em runti
 ```powershell
 .\.venv\Scripts\python.exe -m pytest backend/tests/test_orchestration.py -q --basetemp=runtime/test-adk
 .\.venv\Scripts\python.exe -m pytest backend/tests/test_execution_processes.py -q --basetemp=runtime/test-offline-restart
-.\.venv\Scripts\python.exe -m backend.validate_adk --case legitimate_proposal
+# Referencia para futuras validacoes autorizadas; nao repetir no fechamento 0.5.0:
+.\.venv\Scripts\python.exe -m backend.validate_adk --case direct_tool
 # Somente depois de PASSED no isolado da mesma candidata:
 .\.venv\Scripts\python.exe -m backend.validate_adk
 ```
 
 O último comando usa a sessão segura Gemini já existente e para na primeira falha; não executa ferramentas externas. Testes owner-offline/restart usam processos reais, identidades sintéticas e TestTool local. Resultados em reports/FASE_7E_*. APIs novas: /v1/tasks, /v1/workflows, /v1/action-requests, /v1/execution-authorizations, /v1/jobs, /v1/execution-devices e heartbeat/poll restritos /v1/device. Contratos em contracts/openapi.json. Plano híbrido 7F documentado, sem deploy/autorização para iniciá-lo.
 
-A correção dirigida 7E preserva a rodada real anterior 9/10. O diagnóstico isolado gera reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json; a suíte completa exige PASSED nesse arquivo com o mesmo hash dos fontes executáveis. Falha de schema registra apenas campos/tipos permitidos, sem conteúdo do modelo. Envie somente o relatório JSON sanitizado.
+A evidencia real final 10/10 esta em reports/FASE_7E_ADK_REAL.json, vinculada a candidata e63a2b4. A promocao mudou somente a string de versao, sem repetir chamadas pagas. O gate implementado continua exigindo direct_tool PASSED com hash da candidata para futuras suites reais; o JSON aprovado nao foi adulterado para simular novo hash. Falhas antigas e correcoes estao preservadas no relatorio e nos arquivos historicos.
 
 
-### Correcao de acao explicita (7E, 0.5.0rc1)
+### Historico: correcao de acao explicita (7E, 0.5.0rc1)
 
 Pedidos de acao usam LUMA_PROPOSAL + SECURITY_REVIEW. TaskRequest pode conter action_spec completo para exigir proposta exata; pedido incompleto pode retornar NEEDS_CLARIFICATION. Intencao/proposta nao autorizam execucao. Apenas calendar.create e tasks.create possuem contrato de proposta nesta candidata; ferramentas externas continuam disabled. Ver contracts/action-intent-models.json e a secao final do relatorio 7E. Validacao real pendente: executar somente `python -m backend.validate_adk --case legitimate_proposal` no PowerShell configurado e revisar o JSON antes da suite completa.
 
 
-### Gate corrente: DIRECT_TOOL
+### Historico do gate DIRECT_TOOL (superado pelo fechamento 0.5.0)
 
 Rejeicao de Security e resultado de policy, nao erro interno. HTTP 200 pode conter POLICY_DENIED ou NEEDS_CLARIFICATION, sem ActionRequest/autorizacao/job. Falhas tecnicas continuam FAILED. O teste real dirigido corrente e `.\.venv\Scripts\python.exe -m backend.validate_adk --case direct_tool`; a suite completa exige PASSED desse caso com o mesmo hash de candidata. O legitimate_proposal real aprovado na candidata f83e4df permanece preservado em reports/FASE_7E_POLICY_LEGITIMATE_BASELINE.json; a suite completa posterior o verifica novamente. Sem promocao ou 7F.

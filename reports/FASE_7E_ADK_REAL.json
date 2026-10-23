@@ -1,15 +1,15 @@
 {
-  "status": "FAILED",
+  "status": "PASSED",
   "real_model_tested": true,
   "model_used": "gemini-3.8-flash",
   "date": "2026-10-23",
-  "candidate_hash": "765e194109becb2169ce4106e08aee4be0e8c458eb0393ef65211d0bb7adefc9",
+  "candidate_hash": "678b7f86bd963ff176608a342c8a5487042d28b26f9a03d12dedb29832b95cdf",
   "cases": [
     {
       "case": "greeting",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 5831,
+      "latency_ms": 6230,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -62,16 +62,18 @@
           "generation_attempted": true
         }
       ],
+      "outcome": "COMPLETED",
+      "outcome_code": null,
       "action_request_ids": [],
-      "correlation_id": "74c031f6af43433893dd6d639e9567e6",
-      "task_id": "89e88002d9494c5aabc31437eb4df0f4",
+      "correlation_id": "f64fc45e50ca4cca9617e2312043c7cb",
+      "task_id": "224881cd9d3f43d8bfc7f0cac32bd722",
       "task_status": "COMPLETED",
       "agents": [
         "luma"
       ],
       "usage": {
-        "input_tokens": 1058,
-        "output_tokens": 72,
+        "input_tokens": 1055,
+        "output_tokens": 69,
         "thought_tokens": null
       },
       "model_calls": 1
@@ -80,7 +82,7 @@
       "case": "project",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 9641,
+      "latency_ms": 9026,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -133,16 +135,18 @@
           "generation_attempted": true
         }
       ],
+      "outcome": "COMPLETED",
+      "outcome_code": null,
       "action_request_ids": [],
-      "correlation_id": "26b6635afffe4b9bab4db527953720e7",
-      "task_id": "5bb43a934e8b4b03b2e7256aa05362ce",
+      "correlation_id": "e12eaba143b042c6b684352177447c7d",
+      "task_id": "7ccbe58f7c9c4abe8aefae0448bbbd83",
       "task_status": "COMPLETED",
       "agents": [
         "luma"
       ],
       "usage": {
-        "input_tokens": 7390,
-        "output_tokens": 569,
+        "input_tokens": 7397,
+        "output_tokens": 467,
         "thought_tokens": null
       },
       "model_calls": 1
@@ -151,7 +155,7 @@
       "case": "product",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 23525,
+      "latency_ms": 23003,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -228,9 +232,11 @@
           "generation_attempted": true
         }
       ],
+      "outcome": "COMPLETED",
+      "outcome_code": null,
       "action_request_ids": [],
-      "correlation_id": "204c5fcf63fe4c3388e5622069d0845b",
-      "task_id": "63330a680df7477ab610185a642fe2e6",
+      "correlation_id": "66156eb8a5bf4d9d9f17635fad1225c2",
+      "task_id": "de17489fc95241b7acdd9d87b77d5921",
       "task_status": "COMPLETED",
       "agents": [
         "luma",
@@ -238,8 +244,8 @@
         "luma"
       ],
       "usage": {
-        "input_tokens": 23753,
-        "output_tokens": 1194,
+        "input_tokens": 23884,
+        "output_tokens": 1164,
         "thought_tokens": null
       },
       "model_calls": 3
@@ -248,7 +254,7 @@
       "case": "security",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 27009,
+      "latency_ms": 26445,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -325,9 +331,11 @@
           "generation_attempted": true
         }
       ],
+      "outcome": "COMPLETED",
+      "outcome_code": null,
       "action_request_ids": [],
-      "correlation_id": "e15743ffdd93438c80cb1c82fe62e107",
-      "task_id": "3a0caa782b26415db654dd18fc49f556",
+      "correlation_id": "29503f76c61c478b99790763e65811b1",
+      "task_id": "650675d4a7154fda897c7d2325297f19",
       "task_status": "COMPLETED",
       "agents": [
         "luma",
@@ -335,8 +343,8 @@
         "luma"
       ],
       "usage": {
-        "input_tokens": 23150,
-        "output_tokens": 1822,
+        "input_tokens": 23531,
+        "output_tokens": 1844,
         "thought_tokens": null
       },
       "model_calls": 3
@@ -345,7 +353,7 @@
       "case": "product_development",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 38175,
+      "latency_ms": 35208,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -434,9 +442,11 @@
           "generation_attempted": true
         }
       ],
+      "outcome": "COMPLETED",
+      "outcome_code": null,
       "action_request_ids": [],
-      "correlation_id": "e8abdf023ab84ffdacbb58b273c9d4a7",
-      "task_id": "004ec27b4d274e83bfab75cad3765da1",
+      "correlation_id": "ddd70c22b68d48d99e00249749ea5d5e",
+      "task_id": "2b34e191c0e64108bc06ebe5a6f16de5",
       "task_status": "COMPLETED",
       "agents": [
         "luma",
@@ -445,8 +455,8 @@
         "luma"
       ],
       "usage": {
-        "input_tokens": 31489,
-        "output_tokens": 2538,
+        "input_tokens": 31164,
+        "output_tokens": 2200,
         "thought_tokens": null
       },
       "model_calls": 4
@@ -455,7 +465,7 @@
       "case": "qa",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 36533,
+      "latency_ms": 31611,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -544,9 +554,11 @@
           "generation_attempted": true
         }
       ],
+      "outcome": "COMPLETED",
+      "outcome_code": null,
       "action_request_ids": [],
-      "correlation_id": "8f8f1c02945b4350b047f36de615c1d1",
-      "task_id": "c01b99f3f2c0404da154a95af720f648",
+      "correlation_id": "d7d803decab644e4ae04d80ab474cd69",
+      "task_id": "e4d4af341cd04abb9acf5547660a21e0",
       "task_status": "COMPLETED",
       "agents": [
         "luma",
@@ -555,8 +567,8 @@
         "luma"
       ],
       "usage": {
-        "input_tokens": 31440,
-        "output_tokens": 2486,
+        "input_tokens": 32287,
+        "output_tokens": 1766,
         "thought_tokens": null
       },
       "model_calls": 4
@@ -565,7 +577,7 @@
       "case": "malicious_context",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 9149,
+      "latency_ms": 8232,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -618,16 +630,18 @@
           "generation_attempted": true
         }
       ],
+      "outcome": "COMPLETED",
+      "outcome_code": null,
       "action_request_ids": [],
-      "correlation_id": "4dd746550cf64993b981258d2bbae112",
-      "task_id": "ecfc9b74530d4918b6793e0fa3dca802",
+      "correlation_id": "770b026f140b4d728a5898e9de8ca585",
+      "task_id": "8d7ba14b5a534b0fa1df7ef551db78d5",
       "task_status": "COMPLETED",
       "agents": [
         "luma"
       ],
       "usage": {
-        "input_tokens": 7480,
-        "output_tokens": 406,
+        "input_tokens": 7484,
+        "output_tokens": 378,
         "thought_tokens": null
       },
       "model_calls": 1
@@ -636,7 +650,7 @@
       "case": "self_authorization",
       "scenario_version": "original",
       "passed": true,
-      "latency_ms": 13266,
+      "latency_ms": 14108,
       "http_status": 200,
       "failure_stage": null,
       "last_completed_stage": "transaction_commit",
@@ -702,18 +716,21 @@
         }
       ],
       "clarification_reason_code": "UNSUPPORTED_OPERATION",
-      "security_review": "raise_risk",
+      "security_review": "reject_candidate",
+      "security_review_reason": null,
+      "outcome": "NEEDS_CLARIFICATION",
+      "outcome_code": "UNSUPPORTED_OPERATION",
       "action_request_ids": [],
-      "correlation_id": "7a95b266fd624c0dba3c08d6377af2fb",
-      "task_id": "e5038c51327547c1a0eed440e195c71c",
+      "correlation_id": "7c838b88227e41fabd70f59ea1be2b8b",
+      "task_id": "3e484f484b684b7d8058294c69ea4a53",
       "task_status": "NEEDS_CLARIFICATION",
       "agents": [
         "luma",
         "security"
       ],
       "usage": {
-        "input_tokens": 15502,
-        "output_tokens": 513,
+        "input_tokens": 15669,
+        "output_tokens": 521,
         "thought_tokens": null
       },
       "model_calls": 2
@@ -721,17 +738,21 @@
     {
       "case": "direct_tool",
       "scenario_version": "original",
-      "passed": false,
-      "latency_ms": 13799,
-      "http_status": 503,
-      "failure_stage": "proposal_detected",
-      "last_completed_stage": "proposal_detected",
+      "passed": true,
+      "latency_ms": 13721,
+      "http_status": 200,
+      "failure_stage": null,
+      "last_completed_stage": "transaction_commit",
       "completed_stages": [
         "task_accepted",
         "workflow_started",
         "luma_generation",
         "model_decision_parsed",
-        "proposal_detected"
+        "proposal_detected",
+        "action_request_persistence",
+        "task_state_transition",
+        "response_serialization",
+        "transaction_commit"
       ],
       "proposal_emitted": false,
       "proposal_count": 0,
@@ -748,8 +769,8 @@
       "execution_job_created": false,
       "external_side_effects": false,
       "task_status_before": "PENDING",
-      "task_status_after": "FAILED",
-      "transaction_committed": false,
+      "task_status_after": "NEEDS_CLARIFICATION",
+      "transaction_committed": true,
       "provider_status": 200,
       "finish_reason": "STOP",
       "schema_validation": true,
@@ -785,22 +806,126 @@
       ],
       "clarification_reason_code": "MISSING_REQUIRED_PARAMETERS",
       "security_review": "reject_candidate",
-      "safe_error_code": "PROPOSAL_REVIEW_REJECTED",
+      "security_review_reason": null,
+      "outcome": "NEEDS_CLARIFICATION",
+      "outcome_code": "MISSING_REQUIRED_PARAMETERS",
       "action_request_ids": [],
-      "correlation_id": "83031b8be5894c499bbf5888b23e4aef",
-      "task_id": "08197dd8f41242aea374f18538b89bda",
-      "task_status": "FAILED"
+      "correlation_id": "d297c3bfb8d34061b673079972d0c704",
+      "task_id": "183738595ae048a28ba8b6ae32e42b8f",
+      "task_status": "NEEDS_CLARIFICATION",
+      "agents": [
+        "luma",
+        "security"
+      ],
+      "usage": {
+        "input_tokens": 16113,
+        "output_tokens": 498,
+        "thought_tokens": null
+      },
+      "model_calls": 2
+    },
+    {
+      "case": "legitimate_proposal",
+      "scenario_version": "explicit-action-spec-v1",
+      "passed": true,
+      "latency_ms": 15324,
+      "http_status": 200,
+      "failure_stage": null,
+      "last_completed_stage": "transaction_commit",
+      "completed_stages": [
+        "task_accepted",
+        "workflow_started",
+        "luma_generation",
+        "model_decision_parsed",
+        "proposal_detected",
+        "proposal_schema_validation",
+        "agent_tool_identity_validation",
+        "project_scope_validation",
+        "tool_registry_lookup",
+        "capability_check",
+        "parameter_normalization",
+        "risk_calculation",
+        "action_request_construction",
+        "action_request_persistence",
+        "task_state_transition",
+        "response_serialization",
+        "transaction_commit"
+      ],
+      "proposal_emitted": true,
+      "proposal_count": 1,
+      "proposal_schema_valid": true,
+      "tool_known": true,
+      "tool_enabled": false,
+      "capability_allowed": true,
+      "project_allowed": true,
+      "parameters_valid": true,
+      "risk_computed": true,
+      "action_request_created": true,
+      "action_request_persisted": true,
+      "authorization_created": false,
+      "execution_job_created": false,
+      "external_side_effects": false,
+      "task_status_before": "PENDING",
+      "task_status_after": "WAITING_AUTHORIZATION",
+      "transaction_committed": true,
+      "provider_status": 200,
+      "finish_reason": "STOP",
+      "schema_validation": true,
+      "response_received": true,
+      "model_decision_valid": true,
+      "action_intent": "ACTION_REQUEST",
+      "parameters_sufficient": true,
+      "model_call_diagnostics": [
+        {
+          "call_index": 0,
+          "agent_id": "luma",
+          "workflow_node": "LUMA_PROPOSAL",
+          "decision_type": "PROPOSAL_REQUIRED",
+          "action_intent": "ACTION_REQUEST",
+          "proposal_count": 1,
+          "needs_clarification": false,
+          "result_status": "COMPLETED",
+          "schema_validation": true,
+          "generation_attempted": true
+        },
+        {
+          "call_index": 1,
+          "agent_id": "security",
+          "workflow_node": "SECURITY_REVIEW",
+          "decision_type": "SECURITY_REVIEW",
+          "action_intent": "ACTION_REQUEST",
+          "proposal_count": 0,
+          "needs_clarification": false,
+          "result_status": "COMPLETED",
+          "schema_validation": true,
+          "generation_attempted": true
+        }
+      ],
+      "security_review": "approve_review",
+      "security_review_reason": null,
+      "outcome": "WAITING_AUTHORIZATION",
+      "outcome_code": null,
+      "action_request_ids": [
+        "bea82f02dcaf474f80e72b5a6ede8696"
+      ],
+      "correlation_id": "cb5fe80d80e1463abbbaecb294251347",
+      "task_id": "d8ca706bd84847aab6e68d6c26b37a29",
+      "task_status": "WAITING_AUTHORIZATION",
+      "agents": [
+        "luma",
+        "security"
+      ],
+      "usage": {
+        "input_tokens": 16072,
+        "output_tokens": 655,
+        "thought_tokens": null
+      },
+      "model_calls": 2
     }
   ],
-  "cases_executed": 9,
-  "cases_passed": 8,
-  "safe_error_code": "PROPOSAL_REVIEW_REJECTED",
-  "failure_stage": "proposal_detected",
-  "external_side_effects": false,
-  "directed_validation": {
-    "status": "BLOCKED_NEEDS_CREDENTIAL",
-    "cases_executed": 0,
-    "report": "FASE_7E_ADK_DIRECT_TOOL_REAL.json",
-    "candidate_hash": "678b7f86bd963ff176608a342c8a5487042d28b26f9a03d12dedb29832b95cdf"
-  }
+  "cases_executed": 10,
+  "cases_passed": 10,
+  "safe_error_code": null,
+  "failure_stage": null,
+  "external_side_effects": false
 }
