@@ -1,0 +1,18 @@
+{
+  "status": "PASSED",
+  "real_subprocesses": true,
+  "local_sandbox_only": true,
+  "owner_token_in_executor": false,
+  "crash_reconciled": true,
+  "device_id": "pc-test",
+  "jobs": [
+    "SUCCEEDED"
+  ],
+  "effects": 1,
+  "records": 1,
+  "authorizations": 1,
+  "tasks": 1,
+  "audit_verified": true,
+  "sessions_closed": true,
+  "latency_ms": 3
+}

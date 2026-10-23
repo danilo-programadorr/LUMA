@@ -1,6 +1,6 @@
-# LUMA Backend 0.4.0 — Fase 7D concluída
+# LUMA Backend 0.5.0rc1 — Fase 7E candidata
 
-Plataforma web responsiva futura, backend Python/FastAPI local. SQLite + SQLAlchemy persistem identidade, controles, ações/aprovações, sessões, candidatos e auditoria. **Knowledge HTTP funciona; o adaptador Gemini foi validado localmente e em oito cenários reais com gemini-3.8-flash. Nenhum agente ou executor externo foi integrado.** Cérebro Meu Gestor permanece separado e intacto.
+Plataforma web responsiva futura, backend Python/FastAPI local. SQLite + SQLAlchemy persistem identidade, controles, ações/aprovações, sessões, candidatos e auditoria. **Knowledge HTTP funciona; o adaptador Gemini foi validado localmente e em oito cenários reais com gemini-3.8-flash. A candidata 7E integra nove papéis via ADK e execução durável local; a validação real ADK + Gemini ainda está pendente. Ferramentas externas mutáveis permanecem desabilitadas.** Cérebro Meu Gestor permanece separado e intacto.
 
 ## Instalar, migrar e iniciar no Windows
 
@@ -107,11 +107,11 @@ Owner usa rotas humanas; runtime usa exclusivamente /v1/runtime e recebe 403 em 
 GET /v1/admin/grants lista autoridade durável. POST /v1/admin/grants e /grants/{id}/revoke exigem grants administrativos humanos; autoatribuição é proibida. GET /v1/admin/audit/verify verifica cadeia; /retention/preview não apaga nada. Retenção NO_AUTO_DELETE nas cinco categorias. O runtime não tem acesso ao audit administrativo.
 
 
-## Fase 7D — conversa e modelo candidato
+## Fase 7D — histórico da conversa e modelo aprovado
 
 [Arquitetura do model layer](docs/MODEL_LAYER_7D.md) · [Relatório 7D](reports/FASE_7D_RELATORIO_GEMINI_MODEL_ADAPTER.md).
 
-Esta versão exige schema 0003. Faça backup antes de executar a migração explícita. Não altera as migrações 0001/0002. Há janela conversacional limitada e metadados de turnos, separados do audit. Tokens e chave Gemini não são persistidos. Sem chave, admin e Knowledge continuam operacionais; geração retorna MODEL_UNAVAILABLE.
+A versão 0.4.0 da Fase 7D exigia schema 0003; a candidata atual exige 0004. Faça backup antes de executar a migração explícita. Não altera as migrações 0001/0002. Há janela conversacional limitada e metadados de turnos, separados do audit. Tokens e chave Gemini não são persistidos. Sem chave, admin e Knowledge continuam operacionais; geração retorna MODEL_UNAVAILABLE.
 
 Endpoint humano: POST /v1/conversation/turn, Authorization do owner e Idempotency-Key único. Corpo: session_id de uma sessão criada pelo humano, user_message e locale opcional. O cliente não recebe runtime token e não escolhe temperatura, tools ou teto. Resposta traz mensagem, fontes validadas, warnings, confiança de recuperação/modelo, freshness, status, uso e propostas sem execução. Se Knowledge faltar, a conversa falha fechada.
 
@@ -119,7 +119,7 @@ Para validar Gemini real, configure em um terminal local. Não cole a chave no c
 
 ```powershell
 $env:LUMA_MODEL_PROVIDER='gemini'
-# Opção candidata conferida na documentação oficial; não foi usada em teste real desta entrega.
+# Modelo validado em oito cenários reais da Fase 7D.
 $env:LUMA_GEMINI_MODEL='gemini-3.8-flash'
 $geminiSecret=Read-Host 'Chave Gemini' -AsSecureString
 $env:LUMA_GEMINI_API_KEY=[Net.NetworkCredential]::new('', $geminiSecret).Password
@@ -128,4 +128,39 @@ $env:LUMA_GEMINI_API_KEY=[Net.NetworkCredential]::new('', $geminiSecret).Passwor
 
 O validador executa no máximo sete gerações e um cenário de Knowledge indisponível, usando banco temporário e tokens locais efêmeros. Grava somente resultados/métricas em reports/FASE_7D_GEMINI_REAL.json. Sem chave, retorna BLOCKED_NEEDS_CREDENTIAL sem rede. Reexecutá-lo atualiza esse relatório; aprovação da fase exige inspeção do resultado real e novo fechamento. API/modelo e disponibilidade na conta não são presumidos a partir do nome. Uma chave configurada em outro terminal não é automaticamente herdada por este processo.
 
-Não há aprovação integral da Fase 7D nem autorização para 7E/ADK. A instrução de parada permanece vigente.
+A Fase 7D foi aprovada em 0.4.0 e a 7E recebeu autorização específica. A candidata 7E exige evidências próprias e não autoriza iniciar a 7F. O comando acima pertence à validação histórica 7D; para a rodada atual use backend.validate_adk abaixo.
+
+
+## Fase 7E — operação local e validação
+
+Candidata com ADK isolado, tarefas persistentes, autorizações e jobs. Fase 7D permanece aprovada no histórico; 7E exige validação própria. Nenhuma ferramenta externa mutável é habilitada. Veja docs/LUMA_ADK_ARCHITECTURE.md, docs/LUMA_LOCAL_EXECUTOR.md e docs/LUMA_JOB_RUNTIME.md.
+
+Instale o ambiente ADK separado sem alterar o lock da API:
+
+```powershell
+.\.venv\Scripts\python.exe -m venv runtime/adk-venv
+.\runtime\adk-venv\Scripts\python.exe -m pip install -r backend/requirements/adk-lock.txt
+.\runtime\adk-venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -m backend.migrate upgrade
+```
+
+Backup antes de migrar DB existente, conforme seção acima. Schema agora 0004; nenhuma migration antiga foi editada. API: python -m backend. Em processos separados com ambiente mínimo (sem OWNER/ADMIN/RUNTIME/Knowledge/Gemini tokens):
+
+```powershell
+.\.venv\Scripts\python.exe -m backend.scheduler --once
+.\.venv\Scripts\python.exe -m backend.executor_worker --once
+.\.venv\Scripts\python.exe -m backend.local_executor --once
+```
+
+Sem --once, loops locais. Scheduler/executor usam LUMA_DATABASE_URL local; local_executor usa LUMA_CONTROL_PLANE_URL, LUMA_DEVICE_ID e credencial de device obtida por enrollment humano, sem chave literal em comando. .env.example contém somente nomes/valores vazios e não é carregado automaticamente. Não iniciar executor no shell que contém credenciais privilegiadas. Clientes não habilitam TestTool; teste sandbox exclusivamente nos harnesses.
+
+Testes dirigidos (PYTEST_DISABLE_PLUGIN_AUTOLOAD=1; basetemp deve ficar em runtime):
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest backend/tests/test_orchestration.py -q --basetemp=runtime/test-adk
+.\.venv\Scripts\python.exe -m pytest backend/tests/test_execution_processes.py -q --basetemp=runtime/test-offline-restart
+.\.venv\Scripts\python.exe -m backend.validate_adk
+```
+
+O último comando usa a sessão segura Gemini já existente e para na primeira falha; não executa ferramentas externas. Testes owner-offline/restart usam processos reais, identidades sintéticas e TestTool local. Resultados em reports/FASE_7E_*. APIs novas: /v1/tasks, /v1/workflows, /v1/action-requests, /v1/execution-authorizations, /v1/jobs, /v1/execution-devices e heartbeat/poll restritos /v1/device. Contratos em contracts/openapi.json. Plano híbrido 7F documentado, sem deploy/autorização para iniciá-lo.

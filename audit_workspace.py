@@ -48,7 +48,7 @@ for file in (ROOT/'backend/app').glob('*.py'):
         if isinstance(node,ast.Import): names=[a.name for a in node.names]
         elif isinstance(node,ast.ImportFrom): names=[node.module or '']
         else: continue
-        if any(n.startswith(('google','openai','knowledge_api')) or (n.startswith('subprocess') and file.name!='model_provider.py') for n in names):
+        if any(n.startswith(('google','openai','knowledge_api')) or (n.startswith('subprocess') and file.name not in ('model_provider.py','adk_bridge.py')) for n in names):
             errors.append('FORBIDDEN_RUNTIME_IMPORT:'+file.name)
     if str(BRAIN).lower() in file.read_text(encoding='utf8').lower(): errors.append('DIRECT_CORPUS_PATH:'+file.name)
 finance=Path(r'D:\projetos\meu_gestor_financeiro')
@@ -61,11 +61,11 @@ if any(p.startswith(('runtime/','.venv/','__pycache__/','.pytest_cache/')) or p.
     errors.append('RUNTIME_OR_DATABASE_TRACKED')
 for ignored in ('runtime/luma.db','runtime/backups/example.db','.venv/pyvenv.cfg','backend/app/__pycache__/example.pyc'):
     if not git(ROOT,'check-ignore',ignored): errors.append('RUNTIME_NOT_IGNORED:'+ignored)
-for migration in ('backend/migrations/v0001_initial.py','backend/migrations/v0002_trust_boundary.py','backend/migrations/v0003_conversation.py'):
+for migration in ('backend/migrations/v0001_initial.py','backend/migrations/v0002_trust_boundary.py','backend/migrations/v0003_conversation.py','backend/migrations/v0004_execution.py'):
     if migration not in tracked: errors.append('MIGRATION_NOT_VERSIONED:'+migration)
 if git(ROOT,'hash-object','backend/migrations/v0001_initial.py')!=git(ROOT,'rev-parse','ada01cc344b9307f115069b580a52f1c55022145:backend/migrations/v0001_initial.py'):
     errors.append('HISTORICAL_MIGRATION_CHANGED')
-if git(ROOT,'branch','--show-current')!='codex/fase-7d-gemini-model-adapter': errors.append('WRONG_PHASE_BRANCH')
+if git(ROOT,'branch','--show-current')!='codex/fase-7e-adk-orchestration': errors.append('WRONG_PHASE_BRANCH')
 for requirement in (ROOT/'backend/requirements/lock.txt').read_text(encoding='utf-8-sig').splitlines():
     package=requirement.split('==')[0].lower()
     if package.startswith(('google-','google_','gemini','openai')) and package not in ('google-genai','google-auth'): errors.append('FORBIDDEN_SDK_DEPENDENCY')
@@ -92,7 +92,17 @@ for file in (ROOT/'backend/model_worker').glob('*.py'):
         else: continue
         if any(n.startswith(('sqlalchemy','backend.app.database','backend.app.control','backend.app.trust','knowledge_api','google.adk','google.generativeai')) for n in names):
             errors.append('WORKER_FORBIDDEN_IMPORT:'+file.name)
-result={'date':'2026-10-21','verifier':'Codex','status':'VERIFIED' if not errors else 'FAILED',
+adk_python=ROOT/'runtime/adk-venv/Scripts/python.exe'
+try:
+    adk_versions=json.loads(subprocess.check_output([str(adk_python),'-c',"import importlib.metadata as m,json; print(json.dumps({k:m.version(k) for k in ('google-adk','google-genai')}))"],text=True))
+    if adk_versions!={'google-adk':'2.12.0','google-genai':'2.32.0'}:errors.append('ADK_VERSION_MISMATCH')
+except Exception:
+    adk_versions={};errors.append('ADK_RUNTIME_UNAVAILABLE')
+for migration in ('backend/migrations/v0001_initial.py','backend/migrations/v0002_trust_boundary.py','backend/migrations/v0003_conversation.py'):
+    if git(ROOT,'hash-object',migration)!=git(ROOT,'rev-parse','c461a8f69bddb6c2ead1cb21f69f3a17bd1d378f:'+migration):errors.append('BASELINE_MIGRATION_CHANGED:'+migration)
+for file in ('backend/model_worker/adapter.py','backend/model_worker/worker.py','backend/model_worker/system_instruction.txt','backend/app/model_config.py','backend/app/model_provider.py','backend/requirements/lock.txt'):
+    if git(ROOT,'hash-object',file)!=git(ROOT,'rev-parse','c461a8f69bddb6c2ead1cb21f69f3a17bd1d378f:'+file):errors.append('VALIDATED_MODEL_BOUNDARY_CHANGED:'+file)
+result={'adk_runtime_versions':adk_versions,'date':'2026-10-23','verifier':'Codex','status':'VERIFIED' if not errors else 'FAILED',
     'sdk_versions':sdk_versions,'source_commit':head,'brain_unchanged_hash_counts':counts,'runtime_and_contract_files_scanned':scanned,
     'baseline_7a':'cb06235a3e7b53d097d4851d7cae34130e3c5b38','migrations_versioned':'backend/migrations/v0001_initial.py' in tracked,'runtime_ignored':True,'git_local_only':True,'production_verified':False,'finance_repository':finance_state,'errors':errors}
 print(json.dumps(result,ensure_ascii=False,indent=2))

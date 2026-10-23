@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="23.622" timestamp="2026-10-23T08:40:17.358517-03:00" hostname="DESKTOP-27HO57G"><testcase classname="backend.tests.test_live_knowledge" name="test_real_http_integration" time="22.911" /></testsuite></testsuites>
