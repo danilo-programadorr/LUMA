@@ -1,0 +1,72 @@
+{
+  "baseline": "f83e4dfa00da31f8f37da0042a818668630bad3f",
+  "date": "2026-10-23",
+  "status": "VERIFIED",
+  "files": [
+    {
+      "path": "backend/model_worker/adapter.py",
+      "git_blob": "555ed0c537c28f250e8780efc6a78804b9cf5c3e",
+      "unchanged": true
+    },
+    {
+      "path": "backend/model_worker/worker.py",
+      "git_blob": "d4a063350b53bb8144a9911ec0845c7d682ccaf8",
+      "unchanged": true
+    },
+    {
+      "path": "backend/model_worker/system_instruction.txt",
+      "git_blob": "f921c2661510dddc607ee372fe2928ad353a6d55",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/model_contracts.py",
+      "git_blob": "1747c85b9aeda8b844067af580d4c2bb11824da5",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/model_config.py",
+      "git_blob": "92d4ff00a1ee03531f0384cd6e3c8d7656937d50",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/model_provider.py",
+      "git_blob": "4c645da706a733513af0ab85e6f25f374ce1e5bc",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/knowledge.py",
+      "git_blob": "341701a65eef62c8580417b9b97fc99292581070",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/grounding.py",
+      "git_blob": "5faf2f0bae710f781d8d14941b8f640d7d43469f",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/execution.py",
+      "git_blob": "dcbb154807a98afad81761043f1bb658143a0ec9",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/devices.py",
+      "git_blob": "9237ed5784b135d90f9ad0b3759e96ee00ba3f1b",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/trust.py",
+      "git_blob": "1a248e375aee1775fb339cc4c473e60f1274818a",
+      "unchanged": true
+    },
+    {
+      "path": "backend/app/adk_bridge.py",
+      "git_blob": "e9abf3746911a5bfd0398e516445f4ec2d928f06",
+      "unchanged": true
+    },
+    {
+      "path": "backend/requirements/lock.txt",
+      "git_blob": "56f4e0862d6b1aafabadecb1efd835b5af411b16",
+      "unchanged": true
+    }
+  ]
+}

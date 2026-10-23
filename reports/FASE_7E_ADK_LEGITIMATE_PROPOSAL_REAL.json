@@ -1,10 +1,109 @@
 {
-  "status": "BLOCKED_NEEDS_CREDENTIAL",
-  "real_model_tested": false,
-  "cases_executed": 0,
-  "cases_passed": 0,
-  "cases": [],
+  "status": "PASSED",
+  "real_model_tested": true,
+  "model_used": "gemini-3.8-flash",
   "date": "2026-10-23",
   "candidate_hash": "765e194109becb2169ce4106e08aee4be0e8c458eb0393ef65211d0bb7adefc9",
-  "failure_stage": "credential_preflight"
+  "cases": [
+    {
+      "case": "legitimate_proposal",
+      "scenario_version": "explicit-action-spec-v1",
+      "passed": true,
+      "latency_ms": 15603,
+      "http_status": 200,
+      "failure_stage": null,
+      "last_completed_stage": "transaction_commit",
+      "completed_stages": [
+        "task_accepted",
+        "workflow_started",
+        "luma_generation",
+        "model_decision_parsed",
+        "proposal_detected",
+        "proposal_schema_validation",
+        "agent_tool_identity_validation",
+        "project_scope_validation",
+        "tool_registry_lookup",
+        "capability_check",
+        "parameter_normalization",
+        "risk_calculation",
+        "action_request_construction",
+        "action_request_persistence",
+        "task_state_transition",
+        "response_serialization",
+        "transaction_commit"
+      ],
+      "proposal_emitted": true,
+      "proposal_count": 1,
+      "proposal_schema_valid": true,
+      "tool_known": true,
+      "tool_enabled": false,
+      "capability_allowed": true,
+      "project_allowed": true,
+      "parameters_valid": true,
+      "risk_computed": true,
+      "action_request_created": true,
+      "action_request_persisted": true,
+      "authorization_created": false,
+      "execution_job_created": false,
+      "external_side_effects": false,
+      "task_status_before": "PENDING",
+      "task_status_after": "WAITING_AUTHORIZATION",
+      "transaction_committed": true,
+      "provider_status": 200,
+      "finish_reason": "STOP",
+      "schema_validation": true,
+      "response_received": true,
+      "model_decision_valid": true,
+      "action_intent": "ACTION_REQUEST",
+      "parameters_sufficient": true,
+      "model_call_diagnostics": [
+        {
+          "call_index": 0,
+          "agent_id": "luma",
+          "workflow_node": "LUMA_PROPOSAL",
+          "decision_type": "PROPOSAL_REQUIRED",
+          "action_intent": "ACTION_REQUEST",
+          "proposal_count": 1,
+          "needs_clarification": false,
+          "result_status": "COMPLETED",
+          "schema_validation": true,
+          "generation_attempted": true
+        },
+        {
+          "call_index": 1,
+          "agent_id": "security",
+          "workflow_node": "SECURITY_REVIEW",
+          "decision_type": "SECURITY_REVIEW",
+          "action_intent": "ACTION_REQUEST",
+          "proposal_count": 0,
+          "needs_clarification": false,
+          "result_status": "COMPLETED",
+          "schema_validation": true,
+          "generation_attempted": true
+        }
+      ],
+      "security_review": "approve_review",
+      "action_request_ids": [
+        "dce30f03fef84b38aa42b743e4bd83ff"
+      ],
+      "correlation_id": "228c4f1a7e014a3294ea2b4c2f430ff5",
+      "task_id": "7bb1c6c564ac49268e3d0e3af2f6af6d",
+      "task_status": "WAITING_AUTHORIZATION",
+      "agents": [
+        "luma",
+        "security"
+      ],
+      "usage": {
+        "input_tokens": 16191,
+        "output_tokens": 670,
+        "thought_tokens": null
+      },
+      "model_calls": 2
+    }
+  ],
+  "cases_executed": 1,
+  "cases_passed": 1,
+  "safe_error_code": null,
+  "failure_stage": null,
+  "external_side_effects": false
 }

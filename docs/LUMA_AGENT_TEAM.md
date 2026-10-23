@@ -22,3 +22,12 @@ Telemetria: diagnostic no registro da tarefa e workflow contém estágios, conta
 ### Modo de proposta explicita
 
 ActionIntent e classificado pelo backend a partir da mensagem humana atual, nunca do Knowledge. ACTION_REQUEST/AMBIGUOUS selecionam LUMA_PROPOSAL -> SECURITY_REVIEW (dois agentes existentes). action_spec completo exige minItems=1; mensagens incompletas admitem ClarificationDecision e NEEDS_CLARIFICATION. Security emite recomendacao estruturada; approve_review nao e aprovacao humana. O acumulador estruturado mantem propostas de especialistas no fan-in dos demais grafos. workflow.model_call_diagnostics guarda apenas metadados sanitizados; proposal_state guarda IDs/hashes, nunca autoridade.
+
+
+### Resultados de policy (correcao DIRECT_TOOL)
+
+A task responde HTTP 200 com outcome/status COMPLETED, NEEDS_CLARIFICATION, WAITING_AUTHORIZATION ou POLICY_DENIED. Reject_candidate e resultado de dominio: havendo esclarecimento previo, preserva a pergunta da LUMA; sem esclarecimento, nega a proposta. Rejeicao com clarification_reason_code=UNSUPPORTED_OPERATION usa o vocabulario fechado existente para indicar proibicao independente e prevalece sobre esclarecimento. Ausencia de motivo independente nao e interpretada como proibicao definitiva. Nenhuma mudanca no schema do modelo foi necessaria.
+
+Tentativa explicita de executar sem aprovacao/ignorando o control plane e detectada conservadoramente no texto humano pelo backend. Pedido incompleto permanece NEEDS_CLARIFICATION; completo e POLICY_DENIED, mesmo com review warn. Isso apenas restringe resultados, nunca concede permissao. A heuristica nao representa detector universal de linguagem maliciosa; autorizacao e executor permanecem separados e obrigatorios.
+
+Candidatos negados nao sao persistidos como ActionRequest. Outcome/code aparecem na tarefa e no diagnostico; workflow COMPLETED significa processamento concluido, nao execucao. Erros de provider, schema, banco, transacao e serializacao continuam FAILED/TECHNICAL_ERROR. Resposta negada e idempotente; erro de persistencia de uma negacao continua tecnico.

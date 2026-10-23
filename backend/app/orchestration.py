@@ -7,6 +7,7 @@ from fastapi.security import HTTPBearer
 from fastapi.responses import JSONResponse
 from .proposal_flow import Trace,prepare
 from .action_intent import classify,ActionIntent
+from .task_outcome import TaskOutcome,resolve,requests_bypass
 from .agent_team import AgentRouteProposal
 from .model_contracts import ToolCallProposal
 from .models import Contract,ident,now
@@ -126,6 +127,7 @@ class Orchestrator:
                 if mode in ('PROPOSAL','PROPOSAL_REQUIRED') and result.decision.needs_clarification:trace.data['clarification_reason_code']=result.decision.clarification_reason_code
                 if mode=='SECURITY_REVIEW':
                     trace.data['security_review']=result.decision.review_recommendation
+                    trace.data['security_review_reason']=result.decision.clarification_reason_code
                     if any(item.model_dump(mode='json') not in [raw for _,raw in pending] for item in result.decision.proposed_actions):raise Fault('SECURITY_REVIEW_OUT_OF_SCOPE',503)
                 unknown_thoughts|=result.usage.thought_tokens is None
                 for field in totals:totals[field]+=getattr(result.usage,field) or 0
@@ -147,12 +149,15 @@ class Orchestrator:
         try:
             metrics=run_workflow([{'agent_id':r,'instruction':instruction(r)} for r in roles],generate)
             if intent==ActionIntent.ACTION_REQUEST and not pending and (requested or not trace.data.get('clarification_reason_code')):raise Fault('ACTION_INTENT_UNFULFILLED',503)
-            if trace.data.get('security_review')=='reject_candidate':raise Fault('PROPOSAL_REVIEW_REJECTED',503)
-            final_answer=results[0] if trace.data.get('clarification_reason_code') else results[-1]
+            outcome,outcome_code=resolve(clarification=trace.data.get('clarification_reason_code'),review=trace.data.get('security_review'),review_reason=trace.data.get('security_review_reason'),bypass=requests_bypass(body.message),has_candidates=bool(pending),ambiguous=intent==ActionIntent.AMBIGUOUS)
+            trace.data.update(outcome=outcome.value,outcome_code=outcome_code)
+            if outcome==TaskOutcome.POLICY_DENIED:trace.data['action_request_created']=False
+            final_answer=results[0] if outcome==TaskOutcome.NEEDS_CLARIFICATION else results[-1]
+            if outcome==TaskOutcome.POLICY_DENIED:final_answer={**final_answer,'assistant_message':'Pedido bloqueado pela policy. Nenhuma acao foi autorizada ou executada.'}
             with self.store.transaction() as repo:
                 self.execution.owner(repo,p,body.project_id);validate_route(repo,proposal,body.project_id)
                 actions=[];seen=set()
-                for slot,(role,item) in enumerate(pending):
+                for slot,(role,item) in enumerate(pending if outcome!=TaskOutcome.POLICY_DENIED else []):
                     row=prepare(self.execution,repo,p,body.project_id,role,item,trace,task,slot)
                     if row['proposal_hash'] in seen:continue
                     seen.add(row['proposal_hash']);actions.append(row)
@@ -162,7 +167,7 @@ class Orchestrator:
                     self.execution.event(repo,'ACTION_PROPOSED',row)
                 trace.done('action_request_persistence')
                 trace.enter('task_state_transition')
-                task.update(status='WAITING_AUTHORIZATION' if actions else 'NEEDS_CLARIFICATION' if trace.data.get('clarification_reason_code') or intent==ActionIntent.AMBIGUOUS else 'COMPLETED',action_ids=[a['action_id'] for a in actions],result_hash=digest(final_answer),result=dict(assistant_message=final_answer['assistant_message'],citations=[{'document_id':c['document_id'],'chunk_id':c['chunk_id']} for c in final_answer['citations']],production_verified=False),finished_at=stamp())
+                task.update(status=outcome.value,outcome=outcome.value,outcome_code=outcome_code,action_ids=[a['action_id'] for a in actions],result_hash=digest(final_answer),result=dict(assistant_message=final_answer['assistant_message'],citations=[{'document_id':c['document_id'],'chunk_id':c['chunk_id']} for c in final_answer['citations']],production_verified=False),finished_at=stamp())
                 workflow.update(proposal_state={'candidate_count':len(pending),'canonical_action_ids':[a['action_id'] for a in actions],'candidate_hashes':sorted(seen)},action_intent=intent.value,model_call_diagnostics=trace.data['model_call_diagnostics'],status='COMPLETED',hop_count=max(0,calls-1),model_calls=calls,model_usage_summary={**totals,'thought_tokens':None if unknown_thoughts else totals['thought_tokens']},result_hash=task['result_hash'],finished_at=stamp(),**metrics)
                 trace.done('task_state_transition',task_status_after=task['status'])
                 trace.enter('response_serialization')
@@ -178,9 +183,10 @@ class Orchestrator:
             return response
         except Exception as error:
             code=trace.failure(error)
+            trace.data.update(outcome=TaskOutcome.TECHNICAL_ERROR.value,outcome_code=code)
             task.pop('response',None);task.pop('action_ids',None)
             with self.store.transaction() as repo:
-                task.update(status='FAILED',result_code=code,finished_at=stamp(),diagnostic=dict(trace.data));workflow.update(status='FAILED',finished_at=stamp(),model_calls=calls,diagnostic=dict(trace.data))
+                task.update(status='FAILED',outcome=TaskOutcome.TECHNICAL_ERROR.value,outcome_code=code,result_code=code,finished_at=stamp(),diagnostic=dict(trace.data));workflow.update(status='FAILED',finished_at=stamp(),model_calls=calls,diagnostic=dict(trace.data))
                 repo.put('agent_tasks',task['task_id'],task);repo.put('workflow_runs',workflow['workflow_run_id'],workflow);self.event(repo,task,'AGENT_FAILED',code=code)
             raise Fault(code,503) from None
 

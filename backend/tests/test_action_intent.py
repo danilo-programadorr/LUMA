@@ -61,10 +61,10 @@ def test_review_is_not_human_approval(proposed,review,status):
         fields={'proposed_actions':(item,)} if ctx.decision_mode!='SECURITY_REVIEW' else {'review_recommendation':review}
         return result.model_copy(update={'decision':result.decision.model_copy(update=fields)})
     bundle[3].change=change
-    r=request(bundle);assert r.status_code==status,r.text
+    r=request(bundle);assert r.status_code==200,r.text
     rows=state(bundle);no_authority(rows)
-    if status==200:assert rows['actions'][0]['risk_level']=='HIGH'
-    else:assert not rows['actions']
+    if review!='reject_candidate':assert rows['actions'][0]['risk_level']=='HIGH'
+    else:assert not rows['actions'] and r.json()['status']=='POLICY_DENIED'
 
 def test_model_cannot_change_explicit_scope(proposed):
     bundle,item=proposed
@@ -76,7 +76,7 @@ def test_model_cannot_change_explicit_scope(proposed):
 def test_action_intent_does_not_authorize(proposed,message):
     bundle,_=proposed
     r=bundle[0].post('/v1/tasks',json={'project_id':'meu-gestor','session_id':bundle[4],'message':message},headers={'Idempotency-Key':'no-auto-approval'})
-    assert r.status_code==200 and r.json()['status']=='WAITING_AUTHORIZATION';no_authority(state(bundle))
+    assert r.status_code==200 and r.json()['status']==('POLICY_DENIED' if message.startswith('Execute') else 'WAITING_AUTHORIZATION');no_authority(state(bundle))
 
 def test_mixed_action_analysis_produces_proposal(proposed):
     bundle,_=proposed

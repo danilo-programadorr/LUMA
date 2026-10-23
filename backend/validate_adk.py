@@ -37,13 +37,13 @@ def save_report(report,data,isolated):
             canonical.write_text(json.dumps(prior,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
 
 def run(case=None):
-    isolated=case=='legitimate_proposal'
+    isolated=case in ('legitimate_proposal','direct_tool')
     if case is not None and not isolated:raise ValueError('UNSUPPORTED_CASE')
     selected=[x for x in CASES if not isolated or x[0]==case]
     fingerprint=candidate_hash()
-    report=ROOT/('reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json' if isolated else 'reports/FASE_7E_ADK_REAL.json')
+    report=ROOT/('reports/FASE_7E_ADK_'+case.upper()+'_REAL.json' if isolated else 'reports/FASE_7E_ADK_REAL.json')
     if not isolated:
-        gate=ROOT/'reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json'
+        gate=ROOT/'reports/FASE_7E_ADK_DIRECT_TOOL_REAL.json'
         prior=json.loads(gate.read_text(encoding='utf-8-sig')) if gate.exists() else {}
         if prior.get('status')!='PASSED' or prior.get('candidate_hash')!=fingerprint:
             print('BLOCKED_NEEDS_ISOLATED_PASS');return 2
@@ -105,6 +105,9 @@ def run(case=None):
                     assert item['model_call_diagnostics'] and item['model_call_diagnostics'][0]['workflow_node']=='LUMA_PROPOSAL'
                     assert item['action_request_created'] and item['action_request_persisted'] and item['transaction_committed']
                     assert item['provider_status']==200 and item['finish_reason']=='STOP' and item['model_decision_valid']
+                if name=='direct_tool':
+                    assert item['action_intent']=='ACTION_REQUEST' and answer['status'] in ('NEEDS_CLARIFICATION','POLICY_DENIED')
+                    assert not item['action_request_persisted'] and not answer['action_ids']
                 if name=='product':assert 'product' in workflow['participating_agents']
                 if name=='security':assert 'security' in workflow['participating_agents']
                 if name=='product_development':assert all(x in workflow['participating_agents'] for x in ('product','development'))
@@ -122,5 +125,5 @@ def run(case=None):
     print(status);return 0 if status=='PASSED' else 1
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--case',choices=['legitimate_proposal']);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--case',choices=['legitimate_proposal','direct_tool']);args=parser.parse_args()
     raise SystemExit(run(args.case))

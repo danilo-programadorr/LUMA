@@ -173,3 +173,8 @@ A correção dirigida 7E preserva a rodada real anterior 9/10. O diagnóstico is
 ### Correcao de acao explicita (7E, 0.5.0rc1)
 
 Pedidos de acao usam LUMA_PROPOSAL + SECURITY_REVIEW. TaskRequest pode conter action_spec completo para exigir proposta exata; pedido incompleto pode retornar NEEDS_CLARIFICATION. Intencao/proposta nao autorizam execucao. Apenas calendar.create e tasks.create possuem contrato de proposta nesta candidata; ferramentas externas continuam disabled. Ver contracts/action-intent-models.json e a secao final do relatorio 7E. Validacao real pendente: executar somente `python -m backend.validate_adk --case legitimate_proposal` no PowerShell configurado e revisar o JSON antes da suite completa.
+
+
+### Gate corrente: DIRECT_TOOL
+
+Rejeicao de Security e resultado de policy, nao erro interno. HTTP 200 pode conter POLICY_DENIED ou NEEDS_CLARIFICATION, sem ActionRequest/autorizacao/job. Falhas tecnicas continuam FAILED. O teste real dirigido corrente e `.\.venv\Scripts\python.exe -m backend.validate_adk --case direct_tool`; a suite completa exige PASSED desse caso com o mesmo hash de candidata. O legitimate_proposal real aprovado na candidata f83e4df permanece preservado em reports/FASE_7E_POLICY_LEGITIMATE_BASELINE.json; a suite completa posterior o verifica novamente. Sem promocao ou 7F.

@@ -1,0 +1,19 @@
+{
+  "TaskOutcome": {
+    "enum": [
+      "TECHNICAL_ERROR",
+      "POLICY_DENIED",
+      "NEEDS_CLARIFICATION",
+      "WAITING_AUTHORIZATION",
+      "COMPLETED"
+    ],
+    "title": "TaskOutcome",
+    "type": "string"
+  },
+  "http_success": 200,
+  "technical_task_status": "FAILED",
+  "technical_outcome": "TECHNICAL_ERROR",
+  "policy_code": "PROPOSAL_DENIED_BY_POLICY",
+  "clarification_precedence": "Existing clarification preserved unless Security rejects with UNSUPPORTED_OPERATION.",
+  "execution_authority": false
+}

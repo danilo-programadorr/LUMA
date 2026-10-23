@@ -1,0 +1,95 @@
+{
+  "date": "2026-10-23",
+  "baseline": "f83e4dfa00da31f8f37da0042a818668630bad3f",
+  "version": "0.5.0rc1",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "dd326bc282d39efff33ae273208a524b7539916b5b96932f4cd8786364748510"
+    },
+    {
+      "path": "backend/app/orchestration.py",
+      "sha256": "8ce768abad353281c3a5bcdd5e37cfdcf1d841dea1239b0bfd28cf94b348f59d"
+    },
+    {
+      "path": "backend/app/task_outcome.py",
+      "sha256": "da7100c4f5d972d28cda7787a4f5cf3508729aca71efdfa892a105a7934b8568"
+    },
+    {
+      "path": "backend/tests/test_action_intent.py",
+      "sha256": "7d8b2f1bed514bde83cf3a877addea236e4554b09e538be6ec709d914ad87e29"
+    },
+    {
+      "path": "backend/tests/test_task_outcome.py",
+      "sha256": "0b26b8b4c2a9ac5353b47afb0aaf8c37f8b725cea742c79b5e0ae73cd66941e4"
+    },
+    {
+      "path": "backend/validate_adk.py",
+      "sha256": "8553906661f86ec545a92fdcd0d8e551d4420179ddeaf053a2d051022d0894bc"
+    },
+    {
+      "path": "contracts/task-outcome.json",
+      "sha256": "30082b9dcb47794e363bc157f1840ce07682db20eeac2ab85ad4bd005763ffdb"
+    },
+    {
+      "path": "docs/LUMA_AGENT_TEAM.md",
+      "sha256": "98d0b43470eb61dab3d4c49dad8dde88bf2cb3729d5a647c9b539b1a06acd4b0"
+    },
+    {
+      "path": "phase-status.json",
+      "sha256": "304123d9b76aa1a2c8bb14bed31d8d92995aa0f8199676d2420917f5d20c7a94"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_DIRECT_TOOL_REAL.json",
+      "sha256": "7f52cdcb06f99d158207df1b623d8d5bf9b79a565d3e4a193dedcc2a6e1b19ca"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json",
+      "sha256": "9e5813c2c333b45a94d2d4f358766f25a6d6de117b0b01299dc6bd470a8253fd"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL.json",
+      "sha256": "8e1ed381d8d6950a685e8344be0e751be2fa49aa9ca495fa514c66dd59ba8f33"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL_HISTORY_1792794658664526300.json",
+      "sha256": "e017ce50adeefa197330f8be4e06dbf488230306a3adb67463063a9716a46eee"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL_HISTORY_1792794760911937900.json",
+      "sha256": "00491d49c42a8c96f52233b25e3a6c46f2cb3b352500e14d3604898706bebd3b"
+    },
+    {
+      "path": "reports/FASE_7E_POLICY_AUDITORIA.json",
+      "sha256": "f6e32ad55bce094bd9571dc0e16fdfe7f1068d91233b52d5b797a6e765dd02dd"
+    },
+    {
+      "path": "reports/FASE_7E_POLICY_COBERTURA.json",
+      "sha256": "cbee3923bdb4f1cf688b938fb4611c093efda86807d42d8a9c7f14a72dc5611a"
+    },
+    {
+      "path": "reports/FASE_7E_POLICY_FRONTEIRAS.json",
+      "sha256": "bee87cb9a732f28f2002e1319cac91fef86f75d28cc9999e2aa98d4f2632684a"
+    },
+    {
+      "path": "reports/FASE_7E_POLICY_LEGITIMATE_BASELINE.json",
+      "sha256": "9e5813c2c333b45a94d2d4f358766f25a6d6de117b0b01299dc6bd470a8253fd"
+    },
+    {
+      "path": "reports/FASE_7E_POLICY_PREVIOUS_REAL.json",
+      "sha256": "c7ae9074d8a43674a6ac905c157f77dad64650db5248064c3391c2af5ce06207"
+    },
+    {
+      "path": "reports/FASE_7E_POLICY_TESTES.txt",
+      "sha256": "37adb3cc142b676fee3f3faf5f08b65f1d1091ec151783d9c2d4e22c6a625b6d"
+    },
+    {
+      "path": "reports/FASE_7E_POLICY_TESTES.xml",
+      "sha256": "b0914b7ba27be0ab3683d422ac8f9809bb84df835611b2cff6632f37d0579e93"
+    },
+    {
+      "path": "reports/FASE_7E_RELATORIO_ADK_ORQUESTRACAO.md",
+      "sha256": "993b9e7f1f9d6cf95c39601117bf46294e98b50d0f180f51c6fa1a20346ceaba"
+    }
+  ]
+}

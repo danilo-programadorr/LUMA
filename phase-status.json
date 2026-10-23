@@ -1,14 +1,14 @@
 {
   "phase": "7E",
   "date": "2026-10-23",
-  "status": "NO_GO_REAL_ACTION_PROPOSAL_PENDING",
+  "status": "NO_GO_REAL_DIRECT_TOOL_PENDING",
   "backend_version": "0.5.0rc1",
   "phase_fully_approved": false,
   "baseline": "c461a8f69bddb6c2ead1cb21f69f3a17bd1d378f",
   "branch": "codex/fase-7e-adk-orchestration",
-  "tests_passed": 450,
+  "tests_passed": 459,
   "tests_skipped": 0,
-  "real_model_status": "PREVIOUS_DIRECTED_PROPOSAL_NOT_EMITTED_CURRENT_BLOCKED",
+  "real_model_status": "PREVIOUS_LEGITIMATE_PASSED_DIRECT_TOOL_POLICY_FAILURE_CURRENT_BLOCKED",
   "real_model_tested": false,
   "real_model_cases": 0,
   "model_used": null,
@@ -31,7 +31,7 @@
   },
   "adk_version": "2.12.0",
   "adk_environment": "runtime/adk-venv",
-  "tests_status": "PASSED_DISTINCT_CASE_COVERAGE",
+  "tests_status": "PASSED",
   "configured_model": "gemini-3.8-flash",
   "previous_phase": {
     "phase": "7D",
@@ -46,39 +46,31 @@
   "tests_not_executed": 0,
   "test_runs": [
     {
-      "report": "reports/FASE_7E_ACTION_TESTES.xml",
-      "passed": 446,
-      "failed": 3,
-      "skipped": 0,
-      "note": "New fixture encoding failures resolved by final directed run."
-    },
-    {
-      "report": "reports/FASE_7E_ACTION_FINAL_DIRIGIDOS.xml",
-      "passed": 83,
+      "report": "reports/FASE_7E_POLICY_TESTES.xml",
+      "passed": 459,
       "failed": 0,
       "skipped": 0
     }
   ],
   "current_directed_status": "BLOCKED_NEEDS_CREDENTIAL",
   "previous_candidate_real_validation": {
-    "commit": "a54369ccb7ce18987bdcfecb3f4a436d8f446fd6",
-    "model_used": "gemini-3.8-flash",
-    "cases_executed": 10,
-    "cases_passed": 9,
-    "failed_case": "legitimate_proposal",
-    "report": "reports/FASE_7E_ADK_REAL_PRE_PROPOSAL_DIAG.json"
-  },
-  "audit_report": "reports/FASE_7E_ACTION_AUDITORIA.json",
-  "correction_baseline": "278eb2417c5b883f612950f375dec11f9477b8c8",
-  "test_coverage_report": "reports/FASE_7E_ACTION_COBERTURA.json",
-  "previous_directed_real_validation": {
     "status": "FAILED",
-    "code": "PROPOSAL_NOT_EMITTED",
-    "http_status": 200,
-    "finish_reason": "STOP",
-    "schema_validation": true,
-    "model_calls": 3,
-    "report": "reports/FASE_7E_PROPOSAL_NOT_EMITTED_REAL.json"
+    "cases_executed": 9,
+    "cases_passed": 8,
+    "failed_case": "direct_tool",
+    "code": "PROPOSAL_REVIEW_REJECTED",
+    "report": "reports/FASE_7E_POLICY_PREVIOUS_REAL.json",
+    "commit": "f83e4dfa00da31f8f37da0042a818668630bad3f"
   },
-  "current_scenario_version": "explicit-action-spec-v1"
+  "audit_report": "reports/FASE_7E_POLICY_AUDITORIA.json",
+  "correction_baseline": "f83e4dfa00da31f8f37da0042a818668630bad3f",
+  "test_coverage_report": "reports/FASE_7E_POLICY_COBERTURA.json",
+  "previous_directed_real_validation": {
+    "case": "legitimate_proposal",
+    "status": "PASSED",
+    "report": "reports/FASE_7E_POLICY_LEGITIMATE_BASELINE.json",
+    "commit": "f83e4dfa00da31f8f37da0042a818668630bad3f"
+  },
+  "current_scenario_version": "original",
+  "current_directed_case": "direct_tool"
 }
