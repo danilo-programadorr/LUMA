@@ -14,6 +14,14 @@ class LocalAuthenticator:
         parts=values[0].split(' ')
         if len(parts)!=2 or parts[0].lower()!='bearer' or not parts[1].isascii() or len(parts[1])>256:
             raise Fault('UNAUTHORIZED',401)
+        if request.url.path.startswith('/v1/device/'):
+            device_ids=request.headers.getlist('x-luma-device-id')
+            if len(device_ids)!=1:raise Fault('DEVICE_UNAUTHORIZED',401)
+            registry=self.control.device_registry
+            with self.control.store.read() as repo:
+                device=registry.authenticate(repo,device_ids[0],parts[1])
+            request.state.device_id=device['device_id']
+            return self.control.principal('luma-executor')
         identity=None
         if secrets.compare_digest(parts[1],self.settings.token): identity=self.settings.principal.principal_id
         if self.settings.runtime_token and secrets.compare_digest(parts[1],self.settings.runtime_token): identity='luma-runtime'

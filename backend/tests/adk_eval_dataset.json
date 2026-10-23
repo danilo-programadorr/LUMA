@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "deterministic_security_required": true,
+  "cases": [
+    {
+      "question": "Analise segurança",
+      "expected_agents": [
+        "security"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "question": "Melhore a interface",
+      "expected_agents": [
+        "product"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "question": "Planeje implementar",
+      "expected_agents": [
+        "product",
+        "development"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "question": "Revise a implementação",
+      "expected_agents": [
+        "qa",
+        "security"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "question": "Estratégia de lançamento",
+      "expected_agents": [
+        "growth",
+        "content"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "question": "KPIs e dados",
+      "expected_agents": [
+        "data"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    }
+  ]
+}

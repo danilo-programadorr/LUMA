@@ -93,50 +93,198 @@
     {
       "agent_id": "luma",
       "name": "LUMA — Gestora Geral",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Gestora Geral / Orquestradora",
+      "version": "1",
+      "role": "ROOT",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-luma-1"
     },
     {
       "agent_id": "product",
       "name": "Produto",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Produto, priorização, UX e requisitos",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-product-1"
     },
     {
       "agent_id": "development",
       "name": "Desenvolvimento",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Arquitetura e engenharia",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-development-1"
     },
     {
       "agent_id": "codex",
       "name": "Codex / Engenheiro de Código",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Planejamento de execução técnica; nunca invocar CLI",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-codex-1"
     },
     {
       "agent_id": "qa",
       "name": "QA",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Testes, regressão e critérios de aceite; não aprovar produção",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-qa-1"
     },
     {
       "agent_id": "security",
       "name": "Segurança",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Segurança e abuso; não é policy engine",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-security-1"
     },
     {
       "agent_id": "data",
       "name": "Dados & Analytics",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Dados, indicadores e análises",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-data-1"
     },
     {
       "agent_id": "growth",
       "name": "Growth & Marketing",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Estratégia de aquisição e crescimento",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-growth-1"
     },
     {
       "agent_id": "content",
       "name": "Conteúdo & Social",
-      "status": "PLANNED"
+      "status": "ENABLED_LOCAL",
+      "description": "Conteúdo, copy e redes sociais",
+      "version": "1",
+      "role": "SPECIALIST",
+      "allowed_projects": [
+        "meu-gestor"
+      ],
+      "allowed_capabilities": [
+        "knowledge.read",
+        "runtime.actions.propose"
+      ],
+      "allowed_proposal_types": [
+        "ACTION_REQUEST"
+      ],
+      "max_hops": 5,
+      "model_profile": "CONVERSATIONAL",
+      "instruction_version": "agent-content-1"
     }
   ],
-  "future_model_provider": "Google Gemini API",
-  "future_agent_framework": "Google ADK",
-  "external_execution_enabled": false
+  "external_execution_enabled": false,
+  "agent_framework": {
+    "name": "google-adk",
+    "version": "2.12.0",
+    "isolated_environment": true
+  },
+  "model_provider": "Google Gemini API via validated ModelProvider"
 }

@@ -1,0 +1,341 @@
+{
+  "eval_set_id": "luma_7e",
+  "name": "LUMA controlled routing and proposals",
+  "description": "Synthetic expected behavior; deterministic policy tests remain authoritative. No LLM judge used.",
+  "eval_cases": [
+    {
+      "eval_id": "route_0",
+      "conversation": [
+        {
+          "invocation_id": "0",
+          "user_content": {
+            "parts": [
+              {
+                "media_resolution": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "text": "Analise segurança",
+                "thought": null,
+                "thought_signature": null,
+                "video_metadata": null,
+                "tool_call": null,
+                "tool_response": null,
+                "part_metadata": null,
+                "audio_transcription": null,
+                "media_processing": null,
+                "speech_metadata": null
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": null,
+          "intermediate_data": null,
+          "creation_timestamp": 0.0,
+          "duration": null,
+          "rubrics": null,
+          "app_details": null
+        }
+      ],
+      "conversation_scenario": null,
+      "session_input": {
+        "app_name": "luma-controlled",
+        "user_id": "synthetic-owner",
+        "session_id": null,
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": null,
+      "final_session_state": {},
+      "expected_agents": [
+        "security"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "eval_id": "route_1",
+      "conversation": [
+        {
+          "invocation_id": "1",
+          "user_content": {
+            "parts": [
+              {
+                "media_resolution": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "text": "Melhore a interface",
+                "thought": null,
+                "thought_signature": null,
+                "video_metadata": null,
+                "tool_call": null,
+                "tool_response": null,
+                "part_metadata": null,
+                "audio_transcription": null,
+                "media_processing": null,
+                "speech_metadata": null
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": null,
+          "intermediate_data": null,
+          "creation_timestamp": 0.0,
+          "duration": null,
+          "rubrics": null,
+          "app_details": null
+        }
+      ],
+      "conversation_scenario": null,
+      "session_input": {
+        "app_name": "luma-controlled",
+        "user_id": "synthetic-owner",
+        "session_id": null,
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": null,
+      "final_session_state": {},
+      "expected_agents": [
+        "product"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "eval_id": "route_2",
+      "conversation": [
+        {
+          "invocation_id": "2",
+          "user_content": {
+            "parts": [
+              {
+                "media_resolution": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "text": "Planeje implementar",
+                "thought": null,
+                "thought_signature": null,
+                "video_metadata": null,
+                "tool_call": null,
+                "tool_response": null,
+                "part_metadata": null,
+                "audio_transcription": null,
+                "media_processing": null,
+                "speech_metadata": null
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": null,
+          "intermediate_data": null,
+          "creation_timestamp": 0.0,
+          "duration": null,
+          "rubrics": null,
+          "app_details": null
+        }
+      ],
+      "conversation_scenario": null,
+      "session_input": {
+        "app_name": "luma-controlled",
+        "user_id": "synthetic-owner",
+        "session_id": null,
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": null,
+      "final_session_state": {},
+      "expected_agents": [
+        "product",
+        "development"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "eval_id": "route_3",
+      "conversation": [
+        {
+          "invocation_id": "3",
+          "user_content": {
+            "parts": [
+              {
+                "media_resolution": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "text": "Revise a implementação",
+                "thought": null,
+                "thought_signature": null,
+                "video_metadata": null,
+                "tool_call": null,
+                "tool_response": null,
+                "part_metadata": null,
+                "audio_transcription": null,
+                "media_processing": null,
+                "speech_metadata": null
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": null,
+          "intermediate_data": null,
+          "creation_timestamp": 0.0,
+          "duration": null,
+          "rubrics": null,
+          "app_details": null
+        }
+      ],
+      "conversation_scenario": null,
+      "session_input": {
+        "app_name": "luma-controlled",
+        "user_id": "synthetic-owner",
+        "session_id": null,
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": null,
+      "final_session_state": {},
+      "expected_agents": [
+        "qa",
+        "security"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "eval_id": "route_4",
+      "conversation": [
+        {
+          "invocation_id": "4",
+          "user_content": {
+            "parts": [
+              {
+                "media_resolution": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "text": "Estratégia de lançamento",
+                "thought": null,
+                "thought_signature": null,
+                "video_metadata": null,
+                "tool_call": null,
+                "tool_response": null,
+                "part_metadata": null,
+                "audio_transcription": null,
+                "media_processing": null,
+                "speech_metadata": null
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": null,
+          "intermediate_data": null,
+          "creation_timestamp": 0.0,
+          "duration": null,
+          "rubrics": null,
+          "app_details": null
+        }
+      ],
+      "conversation_scenario": null,
+      "session_input": {
+        "app_name": "luma-controlled",
+        "user_id": "synthetic-owner",
+        "session_id": null,
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": null,
+      "final_session_state": {},
+      "expected_agents": [
+        "growth",
+        "content"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    },
+    {
+      "eval_id": "route_5",
+      "conversation": [
+        {
+          "invocation_id": "5",
+          "user_content": {
+            "parts": [
+              {
+                "media_resolution": null,
+                "code_execution_result": null,
+                "executable_code": null,
+                "file_data": null,
+                "function_call": null,
+                "function_response": null,
+                "inline_data": null,
+                "text": "KPIs e dados",
+                "thought": null,
+                "thought_signature": null,
+                "video_metadata": null,
+                "tool_call": null,
+                "tool_response": null,
+                "part_metadata": null,
+                "audio_transcription": null,
+                "media_processing": null,
+                "speech_metadata": null
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": null,
+          "intermediate_data": null,
+          "creation_timestamp": 0.0,
+          "duration": null,
+          "rubrics": null,
+          "app_details": null
+        }
+      ],
+      "conversation_scenario": null,
+      "session_input": {
+        "app_name": "luma-controlled",
+        "user_id": "synthetic-owner",
+        "session_id": null,
+        "state": {}
+      },
+      "creation_timestamp": 0.0,
+      "rubrics": null,
+      "final_session_state": {},
+      "expected_agents": [
+        "data"
+      ],
+      "must_not_claim": [
+        "executed",
+        "authorized_by_model"
+      ]
+    }
+  ],
+  "creation_timestamp": 0.0
+}

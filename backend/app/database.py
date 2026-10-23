@@ -36,6 +36,13 @@ for name in ('conversation_windows','conversation_requests'):
         Column('created_at',String(40),nullable=False),Column('updated_at',String(40),nullable=False),Column('data',JSON,nullable=False))
 
 
+execution_metadata=MetaData()
+for name in ('execution_devices','execution_authorizations','jobs','execution_records','execution_reconciliations','agent_tasks','workflow_runs','sandbox_effects'):
+    TABLES[name]=Table(name,execution_metadata,Column('id',String(128),primary_key=True),
+        Column('principal_id',String(64)),Column('project_id',String(64)),Column('status',String(40)),
+        Column('created_at',String(40),nullable=False),Column('updated_at',String(40),nullable=False),Column('data',JSON,nullable=False))
+
+
 def database_path(url):
     try:
         parsed=make_url(url)
@@ -96,8 +103,8 @@ class Store:
         self.engine=engine_for(url)
         try:
             with self.engine.connect() as conn:
-                if set(inspect(conn).get_table_names())!=(set(metadata.tables)|set(trust_metadata.tables)|set(conversation_metadata.tables)): raise Fault('SCHEMA_MISMATCH',503)
-                if conn.execute(select(version.c.version).where(version.c.id==1)).scalar_one()!=3: raise Fault('SCHEMA_MISMATCH',503)
+                if set(inspect(conn).get_table_names())!=(set(metadata.tables)|set(trust_metadata.tables)|set(conversation_metadata.tables)|set(execution_metadata.tables)): raise Fault('SCHEMA_MISMATCH',503)
+                if conn.execute(select(version.c.version).where(version.c.id==1)).scalar_one()!=4: raise Fault('SCHEMA_MISMATCH',503)
         except Fault:
             self.engine.dispose()
             raise
@@ -115,7 +122,7 @@ class Store:
         try:
             with self.engine.begin() as conn:
                 # A portable UPDATE takes a database row write lock before any policy reads.
-                locked=conn.execute(update(version).where(version.c.id==1,version.c.version==3).values(epoch=version.c.epoch+1))
+                locked=conn.execute(update(version).where(version.c.id==1,version.c.version==4).values(epoch=version.c.epoch+1))
                 if locked.rowcount!=1: raise Fault('SCHEMA_MISMATCH',503)
                 yield Repository(conn)
         except SQLAlchemyError: raise Fault('DATABASE_UNAVAILABLE',503) from None

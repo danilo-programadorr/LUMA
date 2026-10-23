@@ -12,6 +12,7 @@
         "enum": [
           "HUMAN_OWNER",
           "SERVICE_RUNTIME",
+          "SERVICE_EXECUTOR",
           "AGENT_SERVICE",
           "TOOL_SERVICE"
         ],

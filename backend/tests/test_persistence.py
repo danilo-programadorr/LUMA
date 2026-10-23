@@ -68,7 +68,7 @@ def test_migration_bootstrap(cfg,tmp_path):
     first=Control(cfg)
     with first.store.read() as repo:
         before={name:len(repo.rows(name)) for name in TABLES}
-        assert before['principals']==2 and before['agents']==9 and before['tools']==9
+        assert before['principals']==3 and before['agents']==9 and before['tools']==9
         assert 'token' not in json.dumps(repo.get('principals','local-owner')).lower()
     first.close()
     second=Control(cfg)

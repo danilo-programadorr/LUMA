@@ -29,7 +29,7 @@ def failure(request,error):
         status_code=error.status,headers={'WWW-Authenticate':'Bearer'} if error.status==401 else None)
 
 
-def create_app(settings=None,client=None,model_provider=None,model_settings=None):
+def create_app(settings=None,client=None,model_provider=None,model_settings=None,*,execution_sandbox=False):
     settings=settings or Settings.from_env()
     from .model_config import ModelSettings
     from .model_provider import GeminiModelProvider
@@ -59,6 +59,14 @@ def create_app(settings=None,client=None,model_provider=None,model_settings=None
     app.state.model_provider=provider
     app.state.conversation=ConversationService(control,service,provider,model_settings)
     install_conversation(app,app.state.conversation)
+    from .execution import ExecutionService
+    from .execution_api import install_execution
+    app.state.execution=ExecutionService(control,sandbox=execution_sandbox)
+    control.device_registry=app.state.execution.devices
+    install_execution(app,app.state.execution)
+    from .orchestration import Orchestrator,install_orchestration
+    app.state.orchestrator=Orchestrator(control,service,provider,model_settings,app.state.execution)
+    install_orchestration(app,app.state.orchestrator)
     app.state.control=control
     app.state.local=control
     install(app,control,settings)

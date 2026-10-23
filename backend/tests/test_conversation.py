@@ -211,7 +211,7 @@ def test_provider_credential_cannot_reuse_owner(bundle):
 
 def test_upgrade_v2_preserves_existing_rows(tmp_path):
     from sqlalchemy import select
-    from backend.app.database import engine_for,Repository,Store,metadata,trust_metadata,version
+    from backend.app.database import engine_for,Repository,Store,metadata,trust_metadata,execution_metadata,version
     from backend.app.models import Principal
     from backend.migrations.v0001_initial import upgrade as initial
     from backend.migrations.v0002_trust_boundary import upgrade as trust_upgrade
@@ -224,7 +224,7 @@ def test_upgrade_v2_preserves_existing_rows(tmp_path):
             row=dict(principal_id='local-owner',project_id='meu-gestor',status='SYNTHETIC',session_id='synthetic',marker=table)
             repo.add(table,'synthetic',row)
         trust_upgrade(conn)
-        before={table:repo.rows(table) for table in TABLES if table not in ('conversation_windows','conversation_requests')}
+        before={table:repo.rows(table) for table in TABLES if table not in ('conversation_windows','conversation_requests',*execution_metadata.tables)}
         assert conn.execute(select(version.c.version)).scalar_one()==2
     engine.dispose();assert migrate(url)
     store=Store(url)
@@ -232,7 +232,7 @@ def test_upgrade_v2_preserves_existing_rows(tmp_path):
         for table,rows in before.items():
             after=repo.rows(table)
             assert all(row in after for row in rows),table
-        assert len(repo.rows('grants'))==len(before['grants'])+2
-        assert len(repo.rows('retention_policies'))==len(before['retention_policies'])+2
+        assert len(repo.rows('grants'))==len(before['grants'])+3
+        assert len(repo.rows('retention_policies'))==len(before['retention_policies'])+2+len(execution_metadata.tables)
         assert verify(repo)
     store.close()

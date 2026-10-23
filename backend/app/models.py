@@ -18,7 +18,7 @@ class Contract(BaseModel):
 
 class Principal(Contract):
     principal_id: str = 'local-owner'
-    principal_type: Literal['HUMAN_OWNER','SERVICE_RUNTIME','AGENT_SERVICE','TOOL_SERVICE'] = 'HUMAN_OWNER'
+    principal_type: Literal['HUMAN_OWNER','SERVICE_RUNTIME','SERVICE_EXECUTOR','AGENT_SERVICE','TOOL_SERVICE'] = 'HUMAN_OWNER'
     display_name: str = 'Owner local'
     roles: tuple[str, ...] = ('OWNER',)
     project_scopes: tuple[str, ...] = ('meu-gestor',)

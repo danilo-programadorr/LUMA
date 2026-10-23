@@ -5,7 +5,8 @@ from sqlalchemy import inspect,select
 from .app.database import version
 from .migrations.v0001_initial import upgrade as initial
 from .migrations.v0002_trust_boundary import upgrade as trust_upgrade
-from .migrations.v0003_conversation import upgrade
+from .migrations.v0003_conversation import upgrade as conversation_upgrade
+from .migrations.v0004_execution import upgrade
 
 
 def migrate(url):
@@ -17,6 +18,7 @@ def migrate(url):
             try:
                 if not inspect(connection).get_table_names(): initial(connection)
                 if connection.execute(select(version.c.version)).scalar_one()==1: trust_upgrade(connection)
+                if connection.execute(select(version.c.version)).scalar_one()==2: conversation_upgrade(connection)
                 changed=upgrade(connection)
                 connection.commit()
                 return changed
@@ -31,6 +33,6 @@ def main():
     parser.add_argument('command',choices=['upgrade'])
     parser.parse_args()
     changed=migrate(os.environ.get('LUMA_DATABASE_URL',DEFAULT_URL))
-    print('Migration 0003 applied' if changed else 'Schema 0003 already current')
+    print('Migration 0004 applied' if changed else 'Schema 0004 already current')
 
 if __name__=='__main__': main()

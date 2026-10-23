@@ -14,6 +14,8 @@ class Control(LegacyControl):
                 seed(repo)
                 from backend.migrations.v0003_conversation import seed as conversation_seed
                 conversation_seed(repo)
+                from backend.migrations.v0004_execution import seed as execution_seed
+                execution_seed(repo)
             if not repo.get('principals','luma-runtime'): raise Fault('BOOTSTRAP_INCOMPLETE',503)
             verify(repo)
 

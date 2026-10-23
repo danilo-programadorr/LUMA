@@ -133,7 +133,7 @@ def test_grants_learning_retention(api,cfg):
     assert api.post('/v1/admin/grants/'+g.json()['grant_id']+'/revoke',headers=headers(cfg)).status_code==200
     assert api.post('/v1/runtime/learning/propose',json=data,headers=headers(cfg,True)).status_code==403
     preview=api.get('/v1/admin/retention/preview');assert preview.status_code==200
-    assert len(preview.json())==7 and all(r['mode']=='NO_AUTO_DELETE' and r['eligible_for_deletion']==0 for r in preview.json())
+    assert len(preview.json())==15 and all(r['mode']=='NO_AUTO_DELETE' and r['eligible_for_deletion']==0 for r in preview.json())
 
 @pytest.mark.parametrize('secret_kind',['token','runtime_token','knowledge_token','admin_confirmation_token'])
 def test_secrets_not_persisted_or_in_context(api,cfg,secret_kind):
@@ -217,7 +217,7 @@ def test_backup_schema2_and_chain(cfg,tmp_path):
     snapshot=backup(cfg.database_url);target=tmp_path/'restored.db';shutil.copyfile(snapshot,target)
     with closing(sqlite3.connect(target)) as connection:
         assert connection.execute('PRAGMA integrity_check').fetchone()[0]=='ok'
-        assert connection.execute('SELECT version FROM schema_version').fetchone()[0]==3
+        assert connection.execute('SELECT version FROM schema_version').fetchone()[0]==4
     clone=Control(replace(cfg,database_url='sqlite:///'+target.as_posix()))
     with c.store.read() as original,clone.store.read() as restored:
         for table in TABLES: assert original.rows(table)==restored.rows(table),table

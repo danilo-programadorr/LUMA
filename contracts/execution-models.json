@@ -1,0 +1,891 @@
+{
+  "CanonicalActionEnvelope": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "tool_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "operation": {
+        "maxLength": 80,
+        "minLength": 1,
+        "title": "Operation",
+        "type": "string"
+      },
+      "resource": {
+        "default": "",
+        "maxLength": 200,
+        "title": "Resource",
+        "type": "string"
+      },
+      "destination": {
+        "default": "",
+        "maxLength": 200,
+        "title": "Destination",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      },
+      "execution_target": {
+        "default": "CLOUD",
+        "enum": [
+          "CLOUD",
+          "LOCAL_DEVICE",
+          "EITHER"
+        ],
+        "title": "Execution Target",
+        "type": "string"
+      },
+      "target_device_id": {
+        "anyOf": [
+          {
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Target Device Id"
+      },
+      "allowed_paths": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 8,
+        "title": "Allowed Paths",
+        "type": "array"
+      }
+    },
+    "required": [
+      "project_id",
+      "tool_id",
+      "operation"
+    ],
+    "title": "CanonicalActionEnvelope",
+    "type": "object"
+  },
+  "ActionCandidate": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "tool_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "operation": {
+        "maxLength": 80,
+        "minLength": 1,
+        "title": "Operation",
+        "type": "string"
+      },
+      "resource": {
+        "default": "",
+        "maxLength": 200,
+        "title": "Resource",
+        "type": "string"
+      },
+      "destination": {
+        "default": "",
+        "maxLength": 200,
+        "title": "Destination",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      },
+      "execution_target": {
+        "default": "CLOUD",
+        "enum": [
+          "CLOUD",
+          "LOCAL_DEVICE",
+          "EITHER"
+        ],
+        "title": "Execution Target",
+        "type": "string"
+      },
+      "target_device_id": {
+        "anyOf": [
+          {
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Target Device Id"
+      },
+      "allowed_paths": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 8,
+        "title": "Allowed Paths",
+        "type": "array"
+      }
+    },
+    "required": [
+      "project_id",
+      "tool_id",
+      "operation"
+    ],
+    "title": "ActionCandidate",
+    "type": "object"
+  },
+  "ToolCallProposal": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "tool_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "operation": {
+        "maxLength": 80,
+        "minLength": 1,
+        "title": "Operation",
+        "type": "string"
+      },
+      "resource": {
+        "default": "",
+        "maxLength": 200,
+        "title": "Resource",
+        "type": "string"
+      },
+      "destination": {
+        "default": "",
+        "maxLength": 200,
+        "title": "Destination",
+        "type": "string"
+      },
+      "parameters": {
+        "additionalProperties": true,
+        "title": "Parameters",
+        "type": "object"
+      },
+      "execution_target": {
+        "default": "CLOUD",
+        "enum": [
+          "CLOUD",
+          "LOCAL_DEVICE",
+          "EITHER"
+        ],
+        "title": "Execution Target",
+        "type": "string"
+      },
+      "target_device_id": {
+        "anyOf": [
+          {
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Target Device Id"
+      },
+      "allowed_paths": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 8,
+        "title": "Allowed Paths",
+        "type": "array"
+      },
+      "reason": {
+        "maxLength": 500,
+        "title": "Reason",
+        "type": "string"
+      },
+      "correlation_id": {
+        "maxLength": 64,
+        "title": "Correlation Id",
+        "type": "string"
+      },
+      "agent_id": {
+        "maxLength": 64,
+        "title": "Agent Id",
+        "type": "string"
+      },
+      "requested_risk": {
+        "default": "LOW",
+        "enum": [
+          "LOW",
+          "MEDIUM",
+          "HIGH",
+          "CRITICAL"
+        ],
+        "title": "Requested Risk",
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id",
+      "tool_id",
+      "operation",
+      "reason",
+      "correlation_id",
+      "agent_id"
+    ],
+    "title": "ToolCallProposal",
+    "type": "object"
+  },
+  "AuthorizationRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "mode": {
+        "default": "ONE_SHOT",
+        "enum": [
+          "ONE_SHOT",
+          "BOUNDED_WINDOW",
+          "RECURRING_POLICY"
+        ],
+        "title": "Mode",
+        "type": "string"
+      },
+      "valid_from": {
+        "maxLength": 40,
+        "title": "Valid From",
+        "type": "string"
+      },
+      "expires_at": {
+        "maxLength": 40,
+        "title": "Expires At",
+        "type": "string"
+      },
+      "max_executions": {
+        "maximum": 100,
+        "minimum": 1,
+        "title": "Max Executions",
+        "type": "integer"
+      },
+      "interval_seconds": {
+        "anyOf": [
+          {
+            "maximum": 2592000,
+            "minimum": 60,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Interval Seconds"
+      },
+      "late_execution_policy": {
+        "default": "SKIP",
+        "enum": [
+          "SKIP",
+          "RUN_LATE_WITHIN_GRACE",
+          "REQUIRE_REAUTHORIZATION"
+        ],
+        "title": "Late Execution Policy",
+        "type": "string"
+      },
+      "grace_seconds": {
+        "default": 0,
+        "maximum": 3600,
+        "minimum": 0,
+        "title": "Grace Seconds",
+        "type": "integer"
+      },
+      "confirmation": {
+        "const": "AUTHORIZE_EXACT_ACTION",
+        "title": "Confirmation",
+        "type": "string"
+      }
+    },
+    "required": [
+      "valid_from",
+      "expires_at",
+      "max_executions",
+      "confirmation"
+    ],
+    "title": "AuthorizationRequest",
+    "type": "object"
+  },
+  "JobRequest": {
+    "$defs": {
+      "CanonicalActionEnvelope": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "operation": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Operation",
+            "type": "string"
+          },
+          "resource": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Resource",
+            "type": "string"
+          },
+          "destination": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Destination",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "execution_target": {
+            "default": "CLOUD",
+            "enum": [
+              "CLOUD",
+              "LOCAL_DEVICE",
+              "EITHER"
+            ],
+            "title": "Execution Target",
+            "type": "string"
+          },
+          "target_device_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Target Device Id"
+          },
+          "allowed_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Allowed Paths",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "tool_id",
+          "operation"
+        ],
+        "title": "CanonicalActionEnvelope",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "authorization_id": {
+        "maxLength": 64,
+        "title": "Authorization Id",
+        "type": "string"
+      },
+      "action": {
+        "$ref": "#/$defs/CanonicalActionEnvelope"
+      },
+      "trigger_type": {
+        "default": "IMMEDIATE",
+        "enum": [
+          "IMMEDIATE",
+          "SCHEDULED_AT",
+          "RECURRING",
+          "CONDITION"
+        ],
+        "title": "Trigger Type",
+        "type": "string"
+      },
+      "scheduled_for": {
+        "anyOf": [
+          {
+            "maxLength": 40,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Scheduled For"
+      },
+      "condition_id": {
+        "anyOf": [
+          {
+            "maxLength": 64,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Condition Id"
+      }
+    },
+    "required": [
+      "authorization_id",
+      "action"
+    ],
+    "title": "JobRequest",
+    "type": "object"
+  },
+  "CredentialRef": {
+    "additionalProperties": false,
+    "properties": {
+      "store": {
+        "const": "SECRET_MANAGER",
+        "title": "Store",
+        "type": "string"
+      },
+      "reference": {
+        "pattern": "^[a-zA-Z0-9/_-]{1,200}$",
+        "title": "Reference",
+        "type": "string"
+      }
+    },
+    "required": [
+      "store",
+      "reference"
+    ],
+    "title": "CredentialRef",
+    "type": "object"
+  },
+  "ExecutionReconciliation": {
+    "additionalProperties": false,
+    "properties": {
+      "job_id": {
+        "title": "Job Id",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "outcome": {
+        "enum": [
+          "CONFIRMED",
+          "NOT_FOUND",
+          "UNKNOWN"
+        ],
+        "title": "Outcome",
+        "type": "string"
+      },
+      "external_operation_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "External Operation Id"
+      }
+    },
+    "required": [
+      "job_id",
+      "idempotency_key",
+      "outcome"
+    ],
+    "title": "ExecutionReconciliation",
+    "type": "object"
+  },
+  "DeviceRegistration": {
+    "additionalProperties": false,
+    "properties": {
+      "device_id": {
+        "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+        "title": "Device Id",
+        "type": "string"
+      },
+      "name": {
+        "maxLength": 100,
+        "minLength": 1,
+        "title": "Name",
+        "type": "string"
+      },
+      "device_type": {
+        "const": "WINDOWS",
+        "default": "WINDOWS",
+        "title": "Device Type",
+        "type": "string"
+      }
+    },
+    "required": [
+      "device_id",
+      "name"
+    ],
+    "title": "DeviceRegistration",
+    "type": "object"
+  },
+  "DeviceHeartbeat": {
+    "additionalProperties": false,
+    "properties": {
+      "device_id": {
+        "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+        "title": "Device Id",
+        "type": "string"
+      },
+      "executor_version": {
+        "pattern": "^[0-9.a-z]{1,30}$",
+        "title": "Executor Version",
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "ONLINE",
+          "BUSY",
+          "OFFLINE"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "capabilities": {
+        "items": {
+          "const": "sandbox-test",
+          "type": "string"
+        },
+        "maxItems": 1,
+        "title": "Capabilities",
+        "type": "array"
+      },
+      "current_job_count": {
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Current Job Count",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "device_id",
+      "executor_version",
+      "status",
+      "current_job_count"
+    ],
+    "title": "DeviceHeartbeat",
+    "type": "object"
+  },
+  "DeviceCredential": {
+    "$defs": {
+      "CredentialRef": {
+        "additionalProperties": false,
+        "properties": {
+          "store": {
+            "const": "SECRET_MANAGER",
+            "title": "Store",
+            "type": "string"
+          },
+          "reference": {
+            "pattern": "^[a-zA-Z0-9/_-]{1,200}$",
+            "title": "Reference",
+            "type": "string"
+          }
+        },
+        "required": [
+          "store",
+          "reference"
+        ],
+        "title": "CredentialRef",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "device_id": {
+        "title": "Device Id",
+        "type": "string"
+      },
+      "credential_id": {
+        "title": "Credential Id",
+        "type": "string"
+      },
+      "secret_reference": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/CredentialRef"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "mode": {
+        "default": "LOCAL_DEVELOPMENT",
+        "enum": [
+          "LOCAL_DEVELOPMENT",
+          "SECRET_STORE"
+        ],
+        "title": "Mode",
+        "type": "string"
+      }
+    },
+    "required": [
+      "device_id",
+      "credential_id"
+    ],
+    "title": "DeviceCredential",
+    "type": "object"
+  },
+  "LocalResourceScope": {
+    "additionalProperties": false,
+    "properties": {
+      "allowed_paths": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 8,
+        "title": "Allowed Paths",
+        "type": "array"
+      },
+      "default": {
+        "const": "DENY",
+        "type": "string",
+        "default": "DENY",
+        "title": "Default"
+      }
+    },
+    "title": "LocalResourceScope",
+    "type": "object"
+  },
+  "DevicePollRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "device_id": {
+        "title": "Device Id",
+        "type": "string"
+      },
+      "timeout_seconds": {
+        "default": 20,
+        "maximum": 30,
+        "minimum": 1,
+        "title": "Timeout Seconds",
+        "type": "integer"
+      },
+      "transport": {
+        "const": "HTTPS_LONG_POLL",
+        "default": "HTTPS_LONG_POLL",
+        "title": "Transport",
+        "type": "string"
+      }
+    },
+    "required": [
+      "device_id"
+    ],
+    "title": "DevicePollRequest",
+    "type": "object"
+  },
+  "TaskAgentExecutionContext": {
+    "additionalProperties": false,
+    "properties": {
+      "agent_id": {
+        "title": "Agent Id",
+        "type": "string"
+      },
+      "runtime_principal": {
+        "const": "luma-runtime",
+        "default": "luma-runtime",
+        "title": "Runtime Principal",
+        "type": "string"
+      },
+      "project_id": {
+        "title": "Project Id",
+        "type": "string"
+      },
+      "session_id": {
+        "title": "Session Id",
+        "type": "string"
+      },
+      "correlation_id": {
+        "title": "Correlation Id",
+        "type": "string"
+      },
+      "task_id": {
+        "title": "Task Id",
+        "type": "string"
+      },
+      "capabilities": {
+        "items": {
+          "enum": [
+            "knowledge.read",
+            "runtime.actions.propose"
+          ],
+          "type": "string"
+        },
+        "title": "Capabilities",
+        "type": "array"
+      },
+      "knowledge_source_ids": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Knowledge Source Ids",
+        "type": "array"
+      },
+      "allowed_proposal_types": {
+        "default": [
+          "ACTION_REQUEST"
+        ],
+        "items": {
+          "const": "ACTION_REQUEST",
+          "type": "string"
+        },
+        "title": "Allowed Proposal Types",
+        "type": "array"
+      },
+      "deadline": {
+        "title": "Deadline",
+        "type": "string"
+      },
+      "hop_count": {
+        "maximum": 5,
+        "minimum": 0,
+        "title": "Hop Count",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "agent_id",
+      "project_id",
+      "session_id",
+      "correlation_id",
+      "task_id",
+      "capabilities",
+      "deadline",
+      "hop_count"
+    ],
+    "title": "TaskAgentExecutionContext",
+    "type": "object"
+  },
+  "AgentRouteProposal": {
+    "additionalProperties": false,
+    "properties": {
+      "requested_agents": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 4,
+        "title": "Requested Agents",
+        "type": "array"
+      },
+      "reason_code": {
+        "enum": [
+          "PRODUCT",
+          "TECHNICAL",
+          "SECURITY",
+          "REVIEW",
+          "LAUNCH",
+          "DATA",
+          "GENERAL"
+        ],
+        "title": "Reason Code",
+        "type": "string"
+      },
+      "project_id": {
+        "maxLength": 64,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "correlation_id": {
+        "maxLength": 64,
+        "title": "Correlation Id",
+        "type": "string"
+      },
+      "max_depth": {
+        "maximum": 5,
+        "minimum": 0,
+        "title": "Max Depth",
+        "type": "integer"
+      },
+      "task_classification": {
+        "maxLength": 50,
+        "title": "Task Classification",
+        "type": "string"
+      }
+    },
+    "required": [
+      "requested_agents",
+      "reason_code",
+      "project_id",
+      "correlation_id",
+      "max_depth",
+      "task_classification"
+    ],
+    "title": "AgentRouteProposal",
+    "type": "object"
+  },
+  "TaskRequest": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "message": {
+        "maxLength": 1400,
+        "minLength": 1,
+        "title": "Message",
+        "type": "string"
+      },
+      "session_id": {
+        "maxLength": 64,
+        "title": "Session Id",
+        "type": "string"
+      }
+    },
+    "required": [
+      "project_id",
+      "message",
+      "session_id"
+    ],
+    "title": "TaskRequest",
+    "type": "object"
+  }
+}
