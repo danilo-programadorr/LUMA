@@ -5,6 +5,6 @@
   "cases_passed": 0,
   "cases": [],
   "date": "2026-10-23",
-  "candidate_hash": "fd5c886c88b535e8e793d9d8e4ff03a304344dc39ae5f06199183cfc390a3f0e",
+  "candidate_hash": "765e194109becb2169ce4106e08aee4be0e8c458eb0393ef65211d0bb7adefc9",
   "failure_stage": "credential_preflight"
 }

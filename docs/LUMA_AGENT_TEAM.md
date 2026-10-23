@@ -17,3 +17,8 @@ ActionRequests, estado final de AgentTask, WorkflowRun, resposta idempotente e e
 WorkflowRun=COMPLETED significa fim do trabalho cognitivo. AgentTask=WAITING_AUTHORIZATION significa que há proposta aguardando decisão humana, sem manter processo de modelo aberto. Nenhuma Approval, ExecutionAuthorization ou Job é criada pelo agente. Uma ferramenta conhecida PLANNED/DISABLED pode receber proposta conforme a policy de candidatos existente; authorize/execute continuam exigindo ferramenta habilitada.
 
 Telemetria: diagnostic no registro da tarefa e workflow contém estágios, contagens, booleanos e vocabulário fechado de erros. null significa não observado, não sucesso nem ausência de proposta. A observação do provider não altera o schema aceito, perfil de geração, BaseLlm ou grafo ADK.
+
+
+### Modo de proposta explicita
+
+ActionIntent e classificado pelo backend a partir da mensagem humana atual, nunca do Knowledge. ACTION_REQUEST/AMBIGUOUS selecionam LUMA_PROPOSAL -> SECURITY_REVIEW (dois agentes existentes). action_spec completo exige minItems=1; mensagens incompletas admitem ClarificationDecision e NEEDS_CLARIFICATION. Security emite recomendacao estruturada; approve_review nao e aprovacao humana. O acumulador estruturado mantem propostas de especialistas no fan-in dos demais grafos. workflow.model_call_diagnostics guarda apenas metadados sanitizados; proposal_state guarda IDs/hashes, nunca autoridade.

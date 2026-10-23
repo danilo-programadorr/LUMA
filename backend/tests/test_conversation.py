@@ -25,7 +25,7 @@ class FakeModelProvider:
         self.inputs.append(context)
         if self.error:raise Fault(self.error,503)
         source=context.knowledge.sources[0] if context.knowledge and context.knowledge.sources else None
-        decision=ModelDecision(assistant_message='Contexto seguro. Há incertezas; produção não verificada.',intent='answer',confidence=.5,
+        decision=ModelDecision(review_recommendation='warn' if context.decision_mode=='SECURITY_REVIEW' else None,assistant_message='Contexto seguro. Há incertezas; produção não verificada.',intent='answer',confidence=.5,
             citations=(AnswerCitation(document_id=source['document_id'],chunk_id=source['chunk_id']),) if source else ())
         result=ModelResult(decision=decision,model_name='gemini-test',usage=ModelUsage(input_tokens=50,output_tokens=30))
         return self.change(result,context) if self.change else result

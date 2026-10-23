@@ -4,7 +4,7 @@ from pathlib import Path
 import httpx
 from google import genai
 from google.genai import types,errors
-from backend.app.model_contracts import ModelDecision
+from backend.app.model_contracts import ModelDecision,decision_contract
 from backend.app.generation import ModelResult,ModelUsage,usage_alerts
 from backend.app.errors import Fault
 from backend.app.provider_diagnostics import empty_metadata,enum_value,FINISH,BLOCK,CODES,CATEGORIES,proposal_observation,schema_fields
@@ -25,7 +25,7 @@ class GeminiAdapter:
             self.stage="first generation";self.generation_attempted=True
             response=self.client.models.generate_content(model=self.config['model'],contents=context.model_dump_json(),
                 config=types.GenerateContentConfig(system_instruction=SYSTEM_INSTRUCTION,
-                    response_mime_type='application/json',response_json_schema=ModelDecision.model_json_schema(),
+                    response_mime_type='application/json',response_json_schema=decision_contract(context.decision_mode).json_schema(),
                     thinking_config=types.ThinkingConfig(thinking_level=self.config['thinking_level']),max_output_tokens=self.config['max_output_tokens'],
                     tools=[],automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)))
             self.stage="response validation"
@@ -54,7 +54,7 @@ class GeminiAdapter:
             self.metadata['schema_validation']=False
             try:self.metadata['proposal_observation']=proposal_observation(json.loads(text))
             except ValueError:pass
-            decision=ModelDecision.model_validate_json(text)
+            decision=decision_contract(context.decision_mode).validate_json(text)
             self.metadata['proposal_observation']['proposal_schema_valid']=True
             self.metadata['schema_validation']=True
             return ModelResult(decision=decision,model_name=self.config['model'],instruction_version=INSTRUCTION_VERSION,
@@ -80,6 +80,10 @@ class GeminiAdapter:
                 observation['schema_error_fields']=schema_fields(exc.errors(include_input=False,include_context=False,include_url=False))
                 observation['proposal_schema_valid']=False if any(x.startswith('proposal.') for x in observation['schema_error_fields']) else None
             self.metadata.update(schema_validation=False,safe_schema_error='INVALID_JSON' if any(e['type']=='json_invalid' for e in exc.errors(include_input=False,include_context=False,include_url=False)) else 'SCHEMA_VALIDATION')
+            if context.decision_mode in ('PROPOSAL','PROPOSAL_REQUIRED'):
+                try:raw=json.loads(text)
+                except (ValueError,UnboundLocalError):raw=None
+                if isinstance(raw,dict) and not raw.get('proposed_actions') and raw.get('needs_clarification') is not True:raise Fault('ACTION_INTENT_UNFULFILLED',503) from None
             raise Fault('MODEL_INVALID_RESPONSE',503) from None
         except httpx.HTTPError: raise Fault('MODEL_UNAVAILABLE',503) from None
         except (ValueError,TypeError,AttributeError):

@@ -9,3 +9,8 @@ ONE_SHOT exige quota 1 e envelope exato. BOUNDED_WINDOW e RECURRING_POLICY usam 
 A sessão humana pode terminar. Execução revalida estado RUNNING, revogações, tool, projetos/principais ativos, prazo, policy version, template e grants atuais do owner e executor. Kill switch prevalece sobre qualquer autorização. Capabilities humanas admin.actions.manage e admin.approvals.manage também precisam continuar válidas. O bearer local é identidade de desenvolvimento; não serve como autenticação final de internet.
 
 POST /v1/action-requests, POST /v1/action-requests/{id}/authorize, GET /v1/execution-authorizations, GET detalhe, POST revoke e POST /v1/jobs. Mutação requer Idempotency-Key; HIGH requer X-Admin-Confirmation. Modelo não escolhe hash/idempotência final. Device enrollment/heartbeat têm autenticação distinta. Nenhuma rota executa ferramenta arbitrária.
+
+
+### Propostas e intencao (correcao 7E)
+
+ActionIntent, action_spec e approve_review nao sao HUMAN_APPROVE. Propostas completas passam por politica local de operacao, projeto, grant, agente, parametros, recurso, destino e risco no backend; sao revalidadas no commit. O catalogo local atualmente admite calendar.create e tasks.create, inclusive quando a ferramenta e PLANNED/disabled; nao habilita execucao. Security nao pode ampliar candidatos. Uma acao canonica termina WAITING_AUTHORIZATION; nenhum Approval, ExecutionAuthorization ou Job nasce desse fluxo. Autorizacao posterior permanece dependente de humano, permissao atual, step-up e ferramenta habilitada.

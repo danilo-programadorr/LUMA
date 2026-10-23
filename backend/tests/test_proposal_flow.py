@@ -20,8 +20,8 @@ def proposed(bundle,monkeypatch):
         for i,role in enumerate(roles):generate(role['agent_id'],i)
         return {'agent_calls':len(roles),'workflow_latency_ms':1}
     monkeypatch.setattr(orchestration,'run_workflow',workflow)
-    item=ToolCallProposal(tool_id='google_calendar',capability='calendar.create',parameters={'title':'synthetic'},reason='proposal',correlation_id='untrusted-model-id')
-    bundle[3].change=lambda result,ctx:result.model_copy(update={'decision':result.decision.model_copy(update={'proposed_actions':(item,)})})
+    item=ToolCallProposal(tool_id='google_calendar',capability='calendar.create',parameters={'title':'synthetic','start':'2030-01-15T09:00:00-03:00','end':'2030-01-15T10:00:00-03:00','time_zone':'America/Sao_Paulo','calendar_id':'synthetic-calendar'},reason='proposal',correlation_id='untrusted-model-id')
+    bundle[3].change=lambda result,ctx:result.model_copy(update={'decision':result.decision.model_copy(update={'proposed_actions':() if ctx.decision_mode=='SECURITY_REVIEW' else (item,)})})
     return bundle,item
 
 def request(bundle,key='proposal-request-key',**extra):
@@ -92,7 +92,7 @@ def test_response_failure_after_commit_retry_restart(proposed,monkeypatch):
     assert request(bundle).status_code==503
     rows=state(bundle);assert len(rows['actions'])==1 and rows['agent_tasks'][0]['status']=='WAITING_AUTHORIZATION'
     monkeypatch.setattr(orchestration,'deliver_response',original)
-    response=request(bundle);assert response.status_code==200 and len(fake.inputs)==1
+    response=request(bundle);assert response.status_code==200 and len(fake.inputs)==2
     assert response.json()['action_ids']==[rows['actions'][0]['action_id']]
     other=FakeModelProvider();app=create_app(cfg,KnowledgeClient(cfg,httpx.MockTransport(transport)),other,model)
     with TestClient(app,base_url='http://127.0.0.1',headers={'Authorization':'Bearer '+cfg.token}) as client:
@@ -122,8 +122,8 @@ def test_owner_approval_is_separate_and_tool_remains_disabled(proposed):
 
 def test_missing_proposal_is_not_persistence_failure(proposed):
     bundle,_=proposed;bundle[3].change=None
-    r=request(bundle);assert r.status_code==200 and r.json()['status']=='COMPLETED'
-    d=r.json()['diagnostic'];assert d['proposal_emitted'] is False and d['proposal_count']==0
+    r=request(bundle);assert r.status_code==503 and r.json()['error']['code']=='ACTION_INTENT_UNFULFILLED'
+    d=state(bundle)['agent_tasks'][0]['diagnostic']
     assert not d['action_request_created'] and not d['action_request_persisted']
 
 def test_duplicate_proposals_from_roles_deduplicated(proposed,monkeypatch):
@@ -167,7 +167,7 @@ def test_adk_specialist_proposal_survives_root_synthesis(proposed,monkeypatch):
     def change(result,ctx):
         return result.model_copy(update={'decision':result.decision.model_copy(update={'proposed_actions':(item,) if len(fake.inputs)==2 else ()})})
     fake.change=change
-    response=bundle[0].post('/v1/tasks',json={'project_id':'meu-gestor','session_id':bundle[4],'message':'Analise segurança e proponha uma reunião.'},headers={'Idempotency-Key':'specialist-proposal'})
+    response=bundle[0].post('/v1/tasks',json={'project_id':'meu-gestor','session_id':bundle[4],'message':'Analise segurança do projeto.'},headers={'Idempotency-Key':'specialist-proposal'})
     assert response.status_code==200,response.text
     assert response.json()['status']=='WAITING_AUTHORIZATION'
     assert len(fake.inputs)==3 and len(state(bundle)['actions'])==1

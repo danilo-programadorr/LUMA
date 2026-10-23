@@ -100,9 +100,11 @@ except Exception:
     adk_versions={};errors.append('ADK_RUNTIME_UNAVAILABLE')
 for migration in ('backend/migrations/v0001_initial.py','backend/migrations/v0002_trust_boundary.py','backend/migrations/v0003_conversation.py'):
     if git(ROOT,'hash-object',migration)!=git(ROOT,'rev-parse','c461a8f69bddb6c2ead1cb21f69f3a17bd1d378f:'+migration):errors.append('BASELINE_MIGRATION_CHANGED:'+migration)
-# Directed 7E correction changes adapter diagnostics only; pin the reviewed file exactly.
-if sha(ROOT/'backend/model_worker/adapter.py')!='7875407986369c43347d56f474cfb82f2e016ced404c93b3c17a6d2b7a7557b0':errors.append('REVIEWED_ADAPTER_DIAGNOSTIC_CHANGED')
-for file in ('backend/app/model_contracts.py','backend/model_worker/worker.py','backend/model_worker/system_instruction.txt','backend/app/model_config.py','backend/app/model_provider.py','backend/requirements/lock.txt'):
+# Authorized action-mode protocol; generation settings remain pinned to validated 7D.
+reviewed_action_protocol={'backend/model_worker/adapter.py': '1d0991c54d03c67f1272ab1da76363edcfde93ab557fa51fe9d337ae4d5074fe', 'backend/app/model_contracts.py': '78299113cc7a6f6f037a19b8537d1f36c55401ab5a6c1bc7008cee8e06a77a20', 'backend/app/model_provider.py': '9a44844416f534cb5fa156bd6b148be93af4940664d6c71ff389959b0c946c03'}
+for file,expected in reviewed_action_protocol.items():
+    if sha(ROOT/file)!=expected:errors.append('REVIEWED_ACTION_PROTOCOL_CHANGED:'+file)
+for file in ('backend/model_worker/worker.py','backend/model_worker/system_instruction.txt','backend/app/model_config.py','backend/requirements/lock.txt'):
     if git(ROOT,'hash-object',file)!=git(ROOT,'rev-parse','c461a8f69bddb6c2ead1cb21f69f3a17bd1d378f:'+file):errors.append('VALIDATED_MODEL_BOUNDARY_CHANGED:'+file)
 result={'adk_runtime_versions':adk_versions,'date':'2026-10-23','verifier':'Codex','status':'VERIFIED' if not errors else 'FAILED',
     'sdk_versions':sdk_versions,'source_commit':head,'brain_unchanged_hash_counts':counts,'runtime_and_contract_files_scanned':scanned,

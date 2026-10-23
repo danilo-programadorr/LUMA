@@ -168,3 +168,8 @@ Testes dirigidos (PYTEST_DISABLE_PLUGIN_AUTOLOAD=1; basetemp deve ficar em runti
 O último comando usa a sessão segura Gemini já existente e para na primeira falha; não executa ferramentas externas. Testes owner-offline/restart usam processos reais, identidades sintéticas e TestTool local. Resultados em reports/FASE_7E_*. APIs novas: /v1/tasks, /v1/workflows, /v1/action-requests, /v1/execution-authorizations, /v1/jobs, /v1/execution-devices e heartbeat/poll restritos /v1/device. Contratos em contracts/openapi.json. Plano híbrido 7F documentado, sem deploy/autorização para iniciá-lo.
 
 A correção dirigida 7E preserva a rodada real anterior 9/10. O diagnóstico isolado gera reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json; a suíte completa exige PASSED nesse arquivo com o mesmo hash dos fontes executáveis. Falha de schema registra apenas campos/tipos permitidos, sem conteúdo do modelo. Envie somente o relatório JSON sanitizado.
+
+
+### Correcao de acao explicita (7E, 0.5.0rc1)
+
+Pedidos de acao usam LUMA_PROPOSAL + SECURITY_REVIEW. TaskRequest pode conter action_spec completo para exigir proposta exata; pedido incompleto pode retornar NEEDS_CLARIFICATION. Intencao/proposta nao autorizam execucao. Apenas calendar.create e tasks.create possuem contrato de proposta nesta candidata; ferramentas externas continuam disabled. Ver contracts/action-intent-models.json e a secao final do relatorio 7E. Validacao real pendente: executar somente `python -m backend.validate_adk --case legitimate_proposal` no PowerShell configurado e revisar o JSON antes da suite completa.

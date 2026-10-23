@@ -29,3 +29,12 @@ class Projects:
         if project_id not in principal.project_scopes: raise Fault('FORBIDDEN_SCOPE',403)
         if not project.enabled or project.status!='ACTIVE': raise Fault('PROJECT_SUSPENDED',403)
         return project
+
+
+# Local proposal contracts only. These are NOT provider execution adapters.
+# Unknown operations stay unavailable for model proposal planning until specified.
+PROPOSAL_OPERATIONS={
+    'google_calendar':{'calendar.create':{'title':'string','start':'datetime','end':'datetime','time_zone':'string','calendar_id':'string'}},
+    'google_tasks':{'tasks.create':{'title':'string','due':'datetime','task_list_id':'string'}},
+}
+PROPOSAL_POLICIES={key:{'proposal_eligible':key in PROPOSAL_OPERATIONS,'operations':PROPOSAL_OPERATIONS.get(key,{})} for key in TOOLS}

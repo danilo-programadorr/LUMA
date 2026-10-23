@@ -861,6 +861,86 @@
     "type": "object"
   },
   "TaskRequest": {
+    "$defs": {
+      "CanonicalActionEnvelope": {
+        "additionalProperties": false,
+        "properties": {
+          "project_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Project Id",
+            "type": "string"
+          },
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "operation": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Operation",
+            "type": "string"
+          },
+          "resource": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Resource",
+            "type": "string"
+          },
+          "destination": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Destination",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "execution_target": {
+            "default": "CLOUD",
+            "enum": [
+              "CLOUD",
+              "LOCAL_DEVICE",
+              "EITHER"
+            ],
+            "title": "Execution Target",
+            "type": "string"
+          },
+          "target_device_id": {
+            "anyOf": [
+              {
+                "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Target Device Id"
+          },
+          "allowed_paths": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Allowed Paths",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project_id",
+          "tool_id",
+          "operation"
+        ],
+        "title": "CanonicalActionEnvelope",
+        "type": "object"
+      }
+    },
     "additionalProperties": false,
     "properties": {
       "project_id": {
@@ -878,6 +958,17 @@
         "maxLength": 64,
         "title": "Session Id",
         "type": "string"
+      },
+      "action_spec": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/CanonicalActionEnvelope"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
       }
     },
     "required": [

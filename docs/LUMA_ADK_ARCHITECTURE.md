@@ -11,3 +11,8 @@ Workflow oficial é um grafo limitado, root luma. Product→Development e QA→S
 Uma sessão mínima por invocação reaproveita ConversationService e seus checks antes/depois de gerar, Knowledge HTTP, citações e prevenção de alegação de execução. Resultados intermediários são dados não confiáveis limitados; não passam contextos completos entre papéis. Histórico ADK é efêmero; tarefas, workflows, resultados estruturados e auditoria são duráveis na LUMA. Não se persiste chain-of-thought. Falha de processo pode deixar tarefa RUNNING como evidência interrompida; não há replay automático de modelo nem promessa de retomada transparente de inferência. Jobs autorizados são independentes e recuperáveis.
 
 Fontes: https://adk.dev/2.0/ ; https://adk.dev/graphs/ ; https://github.com/google/adk-python/tree/v2.12.0 . A interface BaseLlm é oficial. Não usamos web UI, ADK server ou confirmação ADK como autoridade.
+
+
+### Protocolo por modo (correcao 7E)
+
+ModelInputContext v2 declara action_intent, decision_mode, requested_action, proposal_catalog e proposal_candidates. Host seleciona o modo; o modelo nao escolhe privilegios. GeminiAdapter seleciona o schema correspondente e valida a resposta antes do host revalidar. BaseLlm e isolamento IPC permanecem; nenhum SDK tool e fornecido. O SDK foi exercitado com transporte simulado, sem comprovar aceitacao remota do schema. Sem mudanca de ADK 2.12.0, low/32768 ou sampling. Schemas exportados em contracts/action-intent-models.json.

@@ -1,0 +1,696 @@
+{
+  "ProposalDecision": {
+    "$defs": {
+      "AnswerCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Document Id",
+            "type": "string"
+          },
+          "chunk_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Chunk Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "chunk_id"
+        ],
+        "title": "AnswerCitation",
+        "type": "object"
+      },
+      "LearningProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Claim",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "evidence"
+        ],
+        "title": "LearningProposal",
+        "type": "object"
+      },
+      "ToolCallProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "capability": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Capability",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "correlation_id": {
+            "maxLength": 64,
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool_id",
+          "capability",
+          "reason",
+          "correlation_id"
+        ],
+        "title": "ToolCallProposal",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "clarification_reason_code": {
+        "default": null,
+        "title": "Clarification Reason Code",
+        "type": "null"
+      },
+      "review_recommendation": {
+        "anyOf": [
+          {
+            "enum": [
+              "approve_review",
+              "warn",
+              "raise_risk",
+              "reject_candidate"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Review Recommendation"
+      },
+      "assistant_message": {
+        "maxLength": 4000,
+        "title": "Assistant Message",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "title": "Intent",
+        "type": "string"
+      },
+      "proposed_actions": {
+        "items": {
+          "$ref": "#/$defs/ToolCallProposal"
+        },
+        "maxItems": 3,
+        "minItems": 1,
+        "title": "Proposed Actions",
+        "type": "array"
+      },
+      "requested_knowledge": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Requested Knowledge",
+        "type": "array"
+      },
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Confidence",
+        "type": "number"
+      },
+      "needs_clarification": {
+        "const": false,
+        "default": false,
+        "title": "Needs Clarification",
+        "type": "boolean"
+      },
+      "citations": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/AnswerCitation"
+        },
+        "maxItems": 5,
+        "title": "Citations",
+        "type": "array"
+      },
+      "learning_candidates": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/LearningProposal"
+        },
+        "maxItems": 2,
+        "title": "Learning Candidates",
+        "type": "array"
+      }
+    },
+    "required": [
+      "assistant_message",
+      "intent",
+      "proposed_actions",
+      "confidence"
+    ],
+    "title": "ProposalDecision",
+    "type": "object"
+  },
+  "ClarificationDecision": {
+    "$defs": {
+      "AnswerCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Document Id",
+            "type": "string"
+          },
+          "chunk_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Chunk Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "chunk_id"
+        ],
+        "title": "AnswerCitation",
+        "type": "object"
+      },
+      "LearningProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Claim",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "evidence"
+        ],
+        "title": "LearningProposal",
+        "type": "object"
+      },
+      "ToolCallProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "capability": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Capability",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "correlation_id": {
+            "maxLength": 64,
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool_id",
+          "capability",
+          "reason",
+          "correlation_id"
+        ],
+        "title": "ToolCallProposal",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "clarification_reason_code": {
+        "enum": [
+          "MISSING_REQUIRED_PARAMETERS",
+          "UNSUPPORTED_OPERATION",
+          "AMBIGUOUS_REQUEST"
+        ],
+        "title": "Clarification Reason Code",
+        "type": "string"
+      },
+      "review_recommendation": {
+        "anyOf": [
+          {
+            "enum": [
+              "approve_review",
+              "warn",
+              "raise_risk",
+              "reject_candidate"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Review Recommendation"
+      },
+      "assistant_message": {
+        "maxLength": 4000,
+        "title": "Assistant Message",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "title": "Intent",
+        "type": "string"
+      },
+      "proposed_actions": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/ToolCallProposal"
+        },
+        "maxItems": 0,
+        "title": "Proposed Actions",
+        "type": "array"
+      },
+      "requested_knowledge": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Requested Knowledge",
+        "type": "array"
+      },
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Confidence",
+        "type": "number"
+      },
+      "needs_clarification": {
+        "const": true,
+        "title": "Needs Clarification",
+        "type": "boolean"
+      },
+      "citations": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/AnswerCitation"
+        },
+        "maxItems": 5,
+        "title": "Citations",
+        "type": "array"
+      },
+      "learning_candidates": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/LearningProposal"
+        },
+        "maxItems": 2,
+        "title": "Learning Candidates",
+        "type": "array"
+      }
+    },
+    "required": [
+      "clarification_reason_code",
+      "assistant_message",
+      "intent",
+      "confidence",
+      "needs_clarification"
+    ],
+    "title": "ClarificationDecision",
+    "type": "object"
+  },
+  "SecurityReviewDecision": {
+    "$defs": {
+      "AnswerCitation": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Document Id",
+            "type": "string"
+          },
+          "chunk_id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Chunk Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "chunk_id"
+        ],
+        "title": "AnswerCitation",
+        "type": "object"
+      },
+      "LearningProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Claim",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "evidence"
+        ],
+        "title": "LearningProposal",
+        "type": "object"
+      },
+      "ToolCallProposal": {
+        "additionalProperties": false,
+        "properties": {
+          "tool_id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Tool Id",
+            "type": "string"
+          },
+          "capability": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Capability",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "title": "Parameters",
+            "type": "object"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "title": "Reason",
+            "type": "string"
+          },
+          "correlation_id": {
+            "maxLength": 64,
+            "title": "Correlation Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tool_id",
+          "capability",
+          "reason",
+          "correlation_id"
+        ],
+        "title": "ToolCallProposal",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "clarification_reason_code": {
+        "anyOf": [
+          {
+            "enum": [
+              "MISSING_REQUIRED_PARAMETERS",
+              "UNSUPPORTED_OPERATION",
+              "AMBIGUOUS_REQUEST"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Clarification Reason Code"
+      },
+      "review_recommendation": {
+        "enum": [
+          "approve_review",
+          "warn",
+          "raise_risk",
+          "reject_candidate"
+        ],
+        "title": "Review Recommendation",
+        "type": "string"
+      },
+      "assistant_message": {
+        "maxLength": 4000,
+        "title": "Assistant Message",
+        "type": "string"
+      },
+      "intent": {
+        "maxLength": 1000,
+        "title": "Intent",
+        "type": "string"
+      },
+      "proposed_actions": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/ToolCallProposal"
+        },
+        "maxItems": 3,
+        "title": "Proposed Actions",
+        "type": "array"
+      },
+      "requested_knowledge": {
+        "default": [],
+        "items": {
+          "type": "string"
+        },
+        "title": "Requested Knowledge",
+        "type": "array"
+      },
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "title": "Confidence",
+        "type": "number"
+      },
+      "needs_clarification": {
+        "default": false,
+        "title": "Needs Clarification",
+        "type": "boolean"
+      },
+      "citations": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/AnswerCitation"
+        },
+        "maxItems": 5,
+        "title": "Citations",
+        "type": "array"
+      },
+      "learning_candidates": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/LearningProposal"
+        },
+        "maxItems": 2,
+        "title": "Learning Candidates",
+        "type": "array"
+      }
+    },
+    "required": [
+      "review_recommendation",
+      "assistant_message",
+      "intent",
+      "confidence"
+    ],
+    "title": "SecurityReviewDecision",
+    "type": "object"
+  },
+  "ProposalCatalogEntry": {
+    "$defs": {
+      "OperationProposalSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "maxLength": 100,
+            "title": "Operation",
+            "type": "string"
+          },
+          "required_parameters": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 12,
+            "title": "Required Parameters",
+            "type": "array"
+          },
+          "parameter_types": {
+            "additionalProperties": {
+              "enum": [
+                "string",
+                "datetime"
+              ],
+              "type": "string"
+            },
+            "title": "Parameter Types",
+            "type": "object"
+          }
+        },
+        "required": [
+          "operation",
+          "required_parameters",
+          "parameter_types"
+        ],
+        "title": "OperationProposalSchema",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "tool_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Tool Id",
+        "type": "string"
+      },
+      "capabilities": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 32,
+        "minItems": 1,
+        "title": "Capabilities",
+        "type": "array"
+      },
+      "execution_allowed": {
+        "const": false,
+        "default": false,
+        "title": "Execution Allowed",
+        "type": "boolean"
+      },
+      "proposal_eligible": {
+        "const": true,
+        "default": true,
+        "title": "Proposal Eligible",
+        "type": "boolean"
+      },
+      "execution_enabled": {
+        "default": false,
+        "title": "Execution Enabled",
+        "type": "boolean"
+      },
+      "operation_schemas": {
+        "default": [],
+        "items": {
+          "$ref": "#/$defs/OperationProposalSchema"
+        },
+        "maxItems": 32,
+        "title": "Operation Schemas",
+        "type": "array"
+      }
+    },
+    "required": [
+      "tool_id",
+      "capabilities"
+    ],
+    "title": "ProposalCatalogEntry",
+    "type": "object"
+  },
+  "OperationProposalSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "operation": {
+        "maxLength": 100,
+        "title": "Operation",
+        "type": "string"
+      },
+      "required_parameters": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 12,
+        "title": "Required Parameters",
+        "type": "array"
+      },
+      "parameter_types": {
+        "additionalProperties": {
+          "enum": [
+            "string",
+            "datetime"
+          ],
+          "type": "string"
+        },
+        "title": "Parameter Types",
+        "type": "object"
+      }
+    },
+    "required": [
+      "operation",
+      "required_parameters",
+      "parameter_types"
+    ],
+    "title": "OperationProposalSchema",
+    "type": "object"
+  },
+  "ActionIntent": {
+    "enum": [
+      "INFORMATIONAL",
+      "ACTION_REQUEST",
+      "AMBIGUOUS"
+    ],
+    "title": "ActionIntent",
+    "type": "string"
+  }
+}

@@ -286,5 +286,57 @@
     "version": "2.12.0",
     "isolated_environment": true
   },
-  "model_provider": "Google Gemini API via validated ModelProvider"
+  "model_provider": "Google Gemini API via validated ModelProvider",
+  "proposal_policies": {
+    "knowledge": {
+      "proposal_eligible": false,
+      "operations": {}
+    },
+    "google_calendar": {
+      "proposal_eligible": true,
+      "operations": {
+        "calendar.create": {
+          "title": "string",
+          "start": "datetime",
+          "end": "datetime",
+          "time_zone": "string",
+          "calendar_id": "string"
+        }
+      }
+    },
+    "google_tasks": {
+      "proposal_eligible": true,
+      "operations": {
+        "tasks.create": {
+          "title": "string",
+          "due": "datetime",
+          "task_list_id": "string"
+        }
+      }
+    },
+    "github": {
+      "proposal_eligible": false,
+      "operations": {}
+    },
+    "firebase": {
+      "proposal_eligible": false,
+      "operations": {}
+    },
+    "codex": {
+      "proposal_eligible": false,
+      "operations": {}
+    },
+    "analytics": {
+      "proposal_eligible": false,
+      "operations": {}
+    },
+    "ads": {
+      "proposal_eligible": false,
+      "operations": {}
+    },
+    "pc_runner": {
+      "proposal_eligible": false,
+      "operations": {}
+    }
+  }
 }

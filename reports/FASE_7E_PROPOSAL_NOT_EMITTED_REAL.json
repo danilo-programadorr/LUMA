@@ -1,0 +1,71 @@
+{
+  "status": "FAILED",
+  "real_model_tested": true,
+  "model_used": "gemini-3.8-flash",
+  "date": "2026-10-23",
+  "candidate_hash": "fd5c886c88b535e8e793d9d8e4ff03a304344dc39ae5f06199183cfc390a3f0e",
+  "cases": [
+    {
+      "case": "legitimate_proposal",
+      "passed": false,
+      "latency_ms": 47174,
+      "http_status": 200,
+      "failure_stage": "proposal_detected",
+      "last_completed_stage": "transaction_commit",
+      "completed_stages": [
+        "task_accepted",
+        "workflow_started",
+        "luma_generation",
+        "model_decision_parsed",
+        "proposal_detected",
+        "action_request_persistence",
+        "task_state_transition",
+        "response_serialization",
+        "transaction_commit"
+      ],
+      "proposal_emitted": false,
+      "proposal_count": 0,
+      "proposal_schema_valid": null,
+      "tool_known": null,
+      "tool_enabled": null,
+      "capability_allowed": null,
+      "project_allowed": null,
+      "parameters_valid": null,
+      "risk_computed": null,
+      "action_request_created": false,
+      "action_request_persisted": false,
+      "authorization_created": false,
+      "execution_job_created": false,
+      "external_side_effects": false,
+      "task_status_before": "PENDING",
+      "task_status_after": "COMPLETED",
+      "transaction_committed": true,
+      "provider_status": 200,
+      "finish_reason": "STOP",
+      "schema_validation": true,
+      "response_received": true,
+      "model_decision_valid": true,
+      "action_request_ids": [],
+      "correlation_id": "2831721c62d742079243ad1f8d27da0b",
+      "task_id": "84f572b2fd6c474db9cf9d7dc4840d2c",
+      "task_status": "COMPLETED",
+      "agents": [
+        "luma",
+        "security",
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 22440,
+        "output_tokens": 957,
+        "thought_tokens": null
+      },
+      "model_calls": 3,
+      "safe_error_code": "PROPOSAL_NOT_EMITTED"
+    }
+  ],
+  "cases_executed": 1,
+  "cases_passed": 0,
+  "safe_error_code": "PROPOSAL_NOT_EMITTED",
+  "failure_stage": "proposal_detected",
+  "external_side_effects": false
+}

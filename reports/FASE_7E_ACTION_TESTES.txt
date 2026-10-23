@@ -1,0 +1,73 @@
+.......F.F.....F........................................................ [ 16%]
+........................................................................ [ 32%]
+........................................................................ [ 48%]
+........................................................................ [ 64%]
+........................................................................ [ 80%]
+........................................................................ [ 96%]
+.................                                                        [100%]
+================================== FAILURES ===================================
+_______________ test_action_intent[Fa\xc3\xa7a isso.-AMBIGUOUS] _______________
+
+text = 'Faça isso.', intent = 'AMBIGUOUS'
+
+    @pytest.mark.parametrize('text,intent',[
+     ('Explique como funciona o Calendar.','INFORMATIONAL'),('Como eu criaria uma tarefa no Google Tasks?','INFORMATIONAL'),
+     ('Proponha uma melhoria na interface do Meu Gestor.','INFORMATIONAL'),('Crie uma tarefa amanhã às 8h.','ACTION_REQUEST'),
+     ('Proponha criar uma reunião no Calendar.','ACTION_REQUEST'),('Explique o problema e prepare uma ação para corrigir.','ACTION_REQUEST'),
+     ('Quero agendar uma reunião.','ACTION_REQUEST'),('Faça isso.','AMBIGUOUS'),('Resolva isso.','AMBIGUOUS'),
+     ('Gere a proposta e aprove você mesmo.','INFORMATIONAL'),('Execute agora sem aprovação.','ACTION_REQUEST')])
+>   def test_action_intent(text,intent):assert classify(text).value==intent
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: assert 'INFORMATIONAL' == 'AMBIGUOUS'
+E     
+E     - AMBIGUOUS
+E     + INFORMATIONAL
+
+backend\tests\test_action_intent.py:15: AssertionError
+_ test_action_intent[Gere a proposta e aprove voc\xc3\xaa mesmo.-INFORMATIONAL] _
+
+text = 'Gere a proposta e aprove você mesmo.', intent = 'INFORMATIONAL'
+
+    @pytest.mark.parametrize('text,intent',[
+     ('Explique como funciona o Calendar.','INFORMATIONAL'),('Como eu criaria uma tarefa no Google Tasks?','INFORMATIONAL'),
+     ('Proponha uma melhoria na interface do Meu Gestor.','INFORMATIONAL'),('Crie uma tarefa amanhã às 8h.','ACTION_REQUEST'),
+     ('Proponha criar uma reunião no Calendar.','ACTION_REQUEST'),('Explique o problema e prepare uma ação para corrigir.','ACTION_REQUEST'),
+     ('Quero agendar uma reunião.','ACTION_REQUEST'),('Faça isso.','AMBIGUOUS'),('Resolva isso.','AMBIGUOUS'),
+     ('Gere a proposta e aprove você mesmo.','INFORMATIONAL'),('Execute agora sem aprovação.','ACTION_REQUEST')])
+>   def test_action_intent(text,intent):assert classify(text).value==intent
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: assert 'ACTION_REQUEST' == 'INFORMATIONAL'
+E     
+E     - INFORMATIONAL
+E     + ACTION_REQUEST
+
+backend\tests\test_action_intent.py:15: AssertionError
+______ test_clarification_without_wildcard[Fa\xc3\xa7a isso.-AMBIGUOUS] _______
+
+proposed = ((<starlette.testclient.TestClient object at 0x000001B6072F9810>, Settings(knowledge_endpoint='http://127.0.0.1:8765',...e': 'America/Sao_Paulo', 'calendar_id': 'synthetic-calendar'}, reason='proposal', correlation_id='untrusted-model-id'))
+message = 'Faça isso.', intent = 'AMBIGUOUS'
+
+    @pytest.mark.parametrize('message,intent',[('Mande uma mensagem.','ACTION_REQUEST'),('Faça isso.','AMBIGUOUS')])
+    def test_clarification_without_wildcard(proposed,message,intent):
+        bundle,_=proposed
+        bundle[3].change=lambda result,ctx:result.model_copy(update={'decision':result.decision.model_copy(update={'proposed_actions':(),'needs_clarification':True,'clarification_reason_code':'MISSING_REQUIRED_PARAMETERS'})})
+        r=bundle[0].post('/v1/tasks',json={'project_id':'meu-gestor','session_id':bundle[4],'message':message},headers={'Idempotency-Key':'clarify-action'})
+        assert r.status_code==200,r.text
+>       assert r.json()['status']=='NEEDS_CLARIFICATION' and r.json()['action_intent']==intent
+E       AssertionError: assert ('COMPLETED' == 'NEEDS_CLARIFICATION'
+E         
+E         - NEEDS_CLARIFICATION
+E         + COMPLETED)
+
+backend\tests\test_action_intent.py:48: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\projetos\luma\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend/tests/test_action_intent.py::test_action_intent[Fa\xc3\xa7a isso.-AMBIGUOUS]
+FAILED backend/tests/test_action_intent.py::test_action_intent[Gere a proposta e aprove voc\xc3\xaa mesmo.-INFORMATIONAL]
+FAILED backend/tests/test_action_intent.py::test_clarification_without_wildcard[Fa\xc3\xa7a isso.-AMBIGUOUS]
+3 failed, 446 passed, 1 warning in 480.62s (0:08:00)

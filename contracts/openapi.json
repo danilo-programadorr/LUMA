@@ -4449,6 +4449,16 @@
             "type": "string",
             "maxLength": 64,
             "title": "Session Id"
+          },
+          "action_spec": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CanonicalActionEnvelope"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,

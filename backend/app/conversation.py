@@ -5,7 +5,7 @@ from fastapi import APIRouter,Request,Security
 from fastapi.security import HTTPBearer
 from pydantic import Field,ValidationError
 from .models import Contract,KnowledgeRequest,Limits,now,ident
-from .model_contracts import ModelInputContext,ModelDecision
+from .model_contracts import ModelInputContext,ModelDecision,decision_contract
 from .generation import ModelResult,ModelUsage,usage_alerts
 from .control import digest,stamp,date,action_scope
 from .trust_data import append
@@ -57,7 +57,7 @@ class ConversationService:
             runtime_principal='luma-runtime',event_type='MODEL_GENERATION',result=result,correlation_id=correlation,
             model_provider=self.config.provider,model_name=self.config.model,system_instruction_version='luma-system-2',
             latency_ms=max(0,int(latency*1000)),usage=usage or {},usage_alerts=usage_alerts(ModelUsage.model_validate(usage or {}))))
-    def turn(self,p,body,key,correlation):
+    def turn(self,p,body,key,correlation,*,proposal_agent_id=None,action_intent='INFORMATIONAL',decision_mode='GENERAL',proposal_candidates=(),requested_action=None):
         start=time.monotonic();rid=None;project=None;verified_sid=None;input_diagnostic=None
         try:
             self.control.safe(body.model_dump())
@@ -86,7 +86,13 @@ class ConversationService:
             else:
                 # Do not supply factual history as a substitute for fresh authorized Knowledge.
                 summary='[]';truncated=bool(history)
-            fields=dict(user_message=body.user_message,session_summary=summary,project_id=project,session_id=body.session_id,
+            catalog=()
+            if self.defer_proposals and proposal_agent_id:
+                from .proposal_flow import proposal_catalog
+                with self.control.store.read() as repo:
+                    runtime,_=self.authorize(repo,p,body.session_id)
+                    catalog=proposal_catalog(self.control,repo,runtime,project,proposal_agent_id)
+            fields=dict(requested_action=requested_action,action_intent=action_intent,decision_mode=decision_mode,proposal_candidates=proposal_candidates,proposal_catalog=catalog,user_message=body.user_message,session_summary=summary,project_id=project,session_id=body.session_id,
                 locale=body.locale,grounding_requirement=requirement,knowledge=knowledge,available_tools=(),pending_action_ids=(),context_truncated=truncated)
             input_diagnostic=dict(**input_counts(fields,conversation_chars),context_truncated=truncated,validation_errors=[])
             if input_diagnostic['knowledge_context_chars']>self.config.max_knowledge_chars:raise Fault('MODEL_INPUT_TOO_LARGE',413)
@@ -103,6 +109,10 @@ class ConversationService:
                 if self.defer_proposals and any('proposed_actions' in e['loc'] for e in exc.errors(include_input=False,include_context=False,include_url=False)):raise Fault('PROPOSAL_SCHEMA_INVALID',503) from None
                 raise
             decision=result.decision
+            if decision_mode!='GENERAL':
+                if decision_mode in ('PROPOSAL','PROPOSAL_REQUIRED') and not decision.proposed_actions and (decision_mode=='PROPOSAL_REQUIRED' or not decision.needs_clarification):raise Fault('ACTION_INTENT_UNFULFILLED',503)
+                try:decision_contract(decision_mode).validate_json(decision.model_dump_json())
+                except ValidationError:raise Fault('PROPOSAL_DECISION_INVALID',503) from None
             if self.observer:self.observer(decision)
             self.control.safe(result.model_dump(mode='json',exclude={'usage'}),max_chars=131072)
             sources={(s['document_id'],s['chunk_id']):s for s in knowledge.sources} if knowledge else {}

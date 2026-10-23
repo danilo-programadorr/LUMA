@@ -7,6 +7,7 @@ from .models import ident
 from .control import stamp,digest
 from .errors import Fault
 from .provider_diagnostics import valid_metadata
+from .registry import PROPOSAL_POLICIES
 
 STAGES=('task_accepted','workflow_started','luma_generation','model_decision_parsed','proposal_detected','proposal_schema_validation','agent_tool_identity_validation','project_scope_validation','tool_registry_lookup','capability_check','parameter_normalization','risk_calculation','action_request_construction','action_request_persistence','task_state_transition','response_serialization','transaction_commit')
 ERRORS={'proposal_schema_validation':'PROPOSAL_SCHEMA_INVALID','agent_tool_identity_validation':'PROPOSAL_IDENTITY_DENIED','project_scope_validation':'PROPOSAL_PROJECT_SCOPE_DENIED','tool_registry_lookup':'PROPOSAL_TOOL_UNKNOWN','capability_check':'PROPOSAL_CAPABILITY_DENIED','parameter_normalization':'PROPOSAL_PARAMETER_INVALID','risk_calculation':'PROPOSAL_RISK_INVALID','action_request_construction':'ACTION_REQUEST_BUILD_FAILED','action_request_persistence':'ACTION_REQUEST_PERSIST_FAILED','task_state_transition':'TASK_STATE_TRANSITION_FAILED','response_serialization':'RESPONSE_SERIALIZATION_FAILED','transaction_commit':'ACTION_REQUEST_COMMIT_FAILED'}
@@ -49,6 +50,8 @@ class Trace:
             if stage=='schema validation':self.enter('proposal_schema_validation' if self.data['proposal_schema_valid'] is False else 'model_decision_parsed')
     def failure(self,error):
         code=error.code if isinstance(error,Fault) else ERRORS.get(self.stage,'WORKFLOW_FAILED')
+        if code=='ACTION_INTENT_UNFULFILLED':
+            self.enter('proposal_detected');self.data['proposal_emitted']=bool(self.data.get('proposal_count'));self.data['proposal_count']=self.data.get('proposal_count') or 0
         if code=='PROPOSAL_SCHEMA_INVALID':
             self.enter('proposal_schema_validation');self.data['proposal_schema_valid']=False
         if code=='DATABASE_UNAVAILABLE':code=ERRORS.get(self.stage,code)
@@ -84,7 +87,7 @@ def prepare(execution,repo,p,project,role,item,trace,task,slot):
         raise Fault('PROPOSAL_TOOL_UNKNOWN',503)
     trace.done('tool_registry_lookup',tool_known=True,tool_enabled=tool['enabled'])
     trace.enter('capability_check')
-    if item.capability not in tool['capabilities'] or 'runtime.actions.propose' not in agent['allowed_capabilities'] or 'ACTION_REQUEST' not in agent['allowed_proposal_types'] or not execution.control.granted(repo,runtime,'runtime.actions.propose',project,item.tool_id):
+    if item.capability not in PROPOSAL_POLICIES.get(item.tool_id,{}).get('operations',{}) or item.capability not in tool['capabilities'] or 'runtime.actions.propose' not in agent['allowed_capabilities'] or 'ACTION_REQUEST' not in agent['allowed_proposal_types'] or not execution.control.granted(repo,runtime,'runtime.actions.propose',project,item.tool_id):
         trace.data['capability_allowed']=False
         raise Fault('PROPOSAL_CAPABILITY_DENIED',403)
     trace.done('capability_check',capability_allowed=True)
@@ -92,13 +95,14 @@ def prepare(execution,repo,p,project,role,item,trace,task,slot):
     # authorize/execute still require enabled=True. No tool state is mutated.
     trace.enter('parameter_normalization')
     try:
-        parameters(item.parameters);normalized=json.loads(json.dumps(item.parameters,sort_keys=True,allow_nan=False))
+        parameters(item.parameters);normalized=normalize_operation(item.tool_id,item.capability,item.parameters)
         execution.control.safe(normalized)
     except (Fault,ValueError,TypeError):
         trace.data['parameters_valid']=False
         raise Fault('PROPOSAL_PARAMETER_INVALID',503) from None
     trace.done('parameter_normalization',parameters_valid=True)
-    envelope=CanonicalActionEnvelope(project_id=project,tool_id=item.tool_id,operation=item.capability,parameters=normalized).model_dump(mode='json')
+    resource=normalized.get('calendar_id',normalized.get('task_list_id',''))
+    envelope=CanonicalActionEnvelope(project_id=project,tool_id=item.tool_id,operation=item.capability,resource=resource,destination=resource,parameters=normalized).model_dump(mode='json')
     trace.enter('risk_calculation');_,risk=execution.definition(repo,envelope)
     if risk not in ('LOW','MEDIUM','HIGH','CRITICAL'):raise Fault('PROPOSAL_RISK_INVALID',503)
     trace.done('risk_calculation',risk_computed=True)
@@ -106,3 +110,42 @@ def prepare(execution,repo,p,project,role,item,trace,task,slot):
     row=dict(action_id=ident(),principal_id=p.principal_id,project_id=project,envelope=envelope,risk_level=risk,origin_type='AGENT_PROPOSED',origin_id=role,status='WAITING_AUTHORIZATION',created_at=stamp(),correlation_id=task['correlation_id'],task_id=task['task_id'],workflow_run_id=task['workflow_run_id'],proposal_hash=digest(envelope),proposal_slot=slot)
     trace.done('action_request_construction',action_request_created=True)
     return row
+
+
+def proposal_catalog(control,repo,runtime,project,role):
+    """Only trusted backend calls this; never reads a client-supplied allowlist."""
+    from .model_contracts import ProposalCatalogEntry,OperationProposalSchema
+    from .registry import TOOLS
+    agent=repo.get('agents',role)
+    if not agent or agent['status']!='ENABLED_LOCAL' or project not in agent['allowed_projects'] or 'ACTION_REQUEST' not in agent['allowed_proposal_types'] or 'runtime.actions.propose' not in agent['allowed_capabilities']:return ()
+    control._project(repo,project,runtime)
+    if repo.get('system_state','global')['state']!='RUNNING':return ()
+    entries=[]
+    for tool in repo.rows('tools'):
+        known=TOOLS.get(tool['tool_id'])
+        if not known or not control.granted(repo,runtime,'runtime.actions.propose',project,tool['tool_id']):continue
+        operations=PROPOSAL_POLICIES.get(tool['tool_id'],{}).get('operations',{})
+        caps=tuple(sorted(set(tool['capabilities'])&set(known.capabilities)&set(operations)))
+        if caps:entries.append(ProposalCatalogEntry(tool_id=tool['tool_id'],capabilities=caps,execution_enabled=tool['enabled'],operation_schemas=tuple(OperationProposalSchema(operation=cap,required_parameters=tuple(operations[cap]),parameter_types=operations[cap]) for cap in caps)))
+    return tuple(entries)
+
+
+def normalize_operation(tool,operation,values):
+    from datetime import datetime
+    import re
+    spec=PROPOSAL_POLICIES.get(tool,{}).get('operations',{}).get(operation)
+    if not spec or set(values)!=set(spec):raise Fault('PROPOSAL_PARAMETER_INVALID',503)
+    normalized={}
+    for key,kind in spec.items():
+        value=values[key]
+        if not isinstance(value,str) or not value.strip() or len(value)>200:raise Fault('PROPOSAL_PARAMETER_INVALID',503)
+        value=value.strip()
+        if key in ('calendar_id','task_list_id') and any(x in value for x in ('*','?')):raise Fault('PROPOSAL_PARAMETER_INVALID',503)
+        if kind=='datetime':
+            parsed=datetime.fromisoformat(value.replace('Z','+00:00'))
+            if parsed.tzinfo is None:raise Fault('PROPOSAL_PARAMETER_INVALID',503)
+            value=parsed.isoformat()
+        normalized[key]=value
+    if 'start' in normalized and datetime.fromisoformat(normalized['end'])<=datetime.fromisoformat(normalized['start']):raise Fault('PROPOSAL_PARAMETER_INVALID',503)
+    if 'time_zone' in normalized and not re.fullmatch(r'UTC|[A-Za-z_]+(?:/[A-Za-z_+-]+)+',normalized['time_zone']):raise Fault('PROPOSAL_PARAMETER_INVALID',503)
+    return normalized

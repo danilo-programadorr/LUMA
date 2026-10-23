@@ -1,0 +1,46 @@
+{
+  "correlation_id": "2831721c62d742079243ad1f8d27da0b",
+  "task_id": "84f572b2fd6c474db9cf9d7dc4840d2c",
+  "database_sha256": "bec496098ff08adb163d8c3200d98fb11a4eb16a00f16612cf4fe98f78d5ed23",
+  "calls": [
+    {
+      "call_index": 0,
+      "agent_id": "luma",
+      "workflow_node": "luma_0",
+      "decision_type": null,
+      "action_intent": null,
+      "proposal_count": 0,
+      "needs_clarification": null,
+      "result_status": "COMPLETED",
+      "schema_validation": true
+    },
+    {
+      "call_index": 1,
+      "agent_id": "security",
+      "workflow_node": "security_1",
+      "decision_type": null,
+      "action_intent": null,
+      "proposal_count": 0,
+      "needs_clarification": null,
+      "result_status": "COMPLETED",
+      "schema_validation": true
+    },
+    {
+      "call_index": 2,
+      "agent_id": "luma",
+      "workflow_node": "luma_2",
+      "decision_type": null,
+      "action_intent": null,
+      "proposal_count": 0,
+      "needs_clarification": false,
+      "result_status": "COMPLETED",
+      "schema_validation": true
+    }
+  ],
+  "evidence_basis": "Reconstructed from persisted completed workflow, aggregate proposal_count=0, ConversationService validation path and final response metadata. Original per-call intent/decision type/clarification for earlier calls were not recorded; null means unknown.",
+  "conclusions": [
+    "No proposal existed in any of the three calls; zero aggregate counts cannot hide a positive call count in this accumulator.",
+    "No evidence of proposal loss in fan-in.",
+    "Why the model chose text instead of a proposal is not observable from these records."
+  ]
+}

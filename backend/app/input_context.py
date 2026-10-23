@@ -20,7 +20,7 @@ def input_counts(fields,conversation_chars):
     knowledge=fields.get('knowledge')
     return dict(user_message_chars=size('user_message'),session_summary_chars=size('session_summary'),
         knowledge_context_chars=len(knowledge.model_dump_json()) if isinstance(knowledge,KnowledgeContext) else 0,
-        conversation_context_chars=conversation_chars,tools_count=size('available_tools'),pending_actions_count=size('pending_action_ids'))
+        conversation_context_chars=conversation_chars,tools_count=size('available_tools'),proposal_tools_count=size('proposal_catalog'),pending_actions_count=size('pending_action_ids'))
 
 def validation_errors(exc,fields):
     # Never serialize input, ctx, messages, arbitrary extra-field names or nested keys.
