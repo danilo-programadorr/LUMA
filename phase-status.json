@@ -1,14 +1,14 @@
 {
   "phase": "7D",
   "date": "2026-10-22",
-  "status": "INPUT_WINDOW_FIXED_LOCAL_VALIDATED_AWAITING_REAL_RUN",
+  "status": "CONVERSATIONAL_PROFILE_LOCAL_VALIDATED_AWAITING_REAL_RUN",
   "backend_version": "0.4.0rc1",
   "phase_fully_approved": false,
   "baseline": "b9c435c6c5d55833c9027a74bc45c81c0da57741",
   "branch": "codex/fase-7d-gemini-model-adapter",
-  "tests_passed": 285,
+  "tests_passed": 304,
   "tests_skipped": 0,
-  "real_model_status": "MALICIOUS_ISOLATED_BLOCKED_NEEDS_CREDENTIAL_IN_CODEX_PROCESS",
+  "real_model_status": "FOLLOW_UP_BLOCKED_NEEDS_CREDENTIAL_IN_CODEX_PROCESS",
   "real_model_tested": false,
   "real_model_cases": 0,
   "model_used": null,
@@ -28,17 +28,23 @@
   "previous_owner_real_run": {
     "model_used": "gemini-3.8-flash",
     "real_model_tested": true,
-    "cases_executed": 4,
-    "cases_passed": 3,
-    "error": "MODEL_INPUT_SCHEMA_INVALID",
-    "case": "malicious_context",
-    "report": "reports/FASE_7D_GEMINI_REAL_ANTES_INPUT_WINDOW.json"
+    "cases_executed": 3,
+    "cases_passed": 2,
+    "finish_reason": "MAX_TOKENS",
+    "case": "follow_up",
+    "report": "reports/FASE_7D_GEMINI_REAL_ANTES_CONVERSATIONAL.json"
   },
-  "diagnosed_cause": "SESSION_SUMMARY_BOUND_CORRECTED_WITH_WHOLE_TURN_SELECTION",
+  "diagnosed_cause": "PROVIDER_MAX_TOKENS_WITH_PREVIOUS_2048_LIMIT",
   "previous_unauthorized_isolated_run": {
     "status": "PASSED",
     "cases_executed": 1,
     "cases_passed": 1,
     "report": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792617445908615800.json"
+  },
+  "generation_config": {
+    "profile": "CONVERSATIONAL",
+    "thinking_level": "low",
+    "max_output_tokens": 32768,
+    "sampling_parameters": []
   }
 }

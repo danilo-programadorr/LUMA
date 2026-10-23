@@ -18,7 +18,7 @@ SDK oficial: google-genai; versão instalada/testada no lock. Backend lê LUMA_G
 
 Model name deve corresponder ao padrão gemini-* seguro; isso valida formato, não disponibilidade na conta. Sem chave/modelo/provider configurado, a chamada falha MODEL_UNAVAILABLE e o control plane/Knowledge seguem disponíveis. Status não faz chamada de modelo; inicialmente NOT_PROBED, depois reflete a última tentativa, sem promessa de disponibilidade futura.
 
-Defaults: input 2.000 caracteres; KnowledgeContext serializado 24.000; janela conversacional 8.000; saída 2.048 tokens; temperature 0,2; timeout 30s incluindo início do worker; uma única tentativa, sem retry automático nem no SDK. Tetos: 2.000/32.000/8.000 caracteres, 4.096 tokens e 60s. O contexto excedente falha fechado; não remove fontes arbitrariamente. Modelo tem que produzir JSON completo dentro do limite; resposta truncada é inválida.
+Defaults: input 2.000 caracteres; KnowledgeContext serializado 24.000; janela conversacional 8.000; saída limitada a 32.768 tokens; thinking_level low; sem temperature/top_p/top_k; timeout 30s incluindo início do worker; uma única tentativa, sem retry automático nem no SDK. Tetos: 2.000/32.000/8.000 caracteres, 32.768 tokens fixos e 60s. O contexto excedente falha fechado; não remove fontes arbitrariamente. Modelo tem que produzir JSON completo dentro do limite; resposta truncada é inválida.
 
 Fontes oficiais consultadas em 2026-10-21: [SDK Python](https://googleapis.github.io/python-genai/), [saída estruturada](https://ai.google.dev/gemini-api/docs/structured-output), [Gemini 3.8 Flash](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash). A página oficial identifica gemini-3.8-flash como estável e com saída estruturada; é uma opção candidata para o teste futuro. Não foi usado em chamada real nesta entrega sem credencial. Nenhum preço ou acesso da conta foi presumido.
 
@@ -75,3 +75,16 @@ Prioridade: mensagem atual, campos estruturais e escopo, Knowledge com provenien
 Metadados de conversation_requests registram apenas input_diagnostic: contagens, flag e erros sanitizados (campo permitido, tipo permitido, constraint e comprimentos quando conhecidos). Conteudos, mensagens de excecao, ctx e nomes arbitrarios de campos extras nunca entram no diagnostico. Nao ha mudanca de schema SQL. O validador usa correlation_id da resposta para recuperar apenas o diagnostico dessa requisicao e registra-o no relatorio.
 
 O modo --diagnose-malicious executa malicious_context isolado, depois unauthorized_action isolado e depois a suite completa; qualquer falha interrompe a sequencia. O texto adversarial e o caminho LUMA/Knowledge/worker/Gemini permanecem os mesmos.
+
+
+## Perfil CONVERSATIONAL — 2026-10-22
+
+Somente CONVERSATIONAL está implementado: thinking_level="low" e max_output_tokens=32768, fixos no servidor. AGENTIC e DEEP_REASONING são nomes reservados, rejeitados como configuração atual. O cliente não seleciona perfil, thinking ou teto. As antigas variáveis LUMA_MODEL_TEMPERATURE e LUMA_MODEL_MAX_OUTPUT_TOKENS são ignoradas; não há substituto de sampling. O teto não é meta de consumo. Timeout e limites de entrada permanecem inalterados.
+
+O SDK google-genai 2.32.0 recebe ThinkingConfig(thinking_level="low") e serializa thinkingConfig com thinking_level: LOW. Teste com transporte simulado verifica esse payload, JSON Schema, MIME, ausência de sampling e de ferramentas. A validação real permanece necessária para comprovar o resultado no provedor.
+
+ModelUsage preserva input_tokens (prompt_token_count), output_tokens (candidates_token_count) e thought_tokens (thoughts_token_count), nulos quando indisponíveis. Auditoria registra modelo, latência e uso sem conteúdo integral. A soma output_tokens + thought_tokens >=8192 ativa HIGH_MODEL_TOKEN_USAGE localmente, inclusive em falhas com métricas disponíveis. É um limiar operacional inicial, não cobrança, preço ou estimativa de custo. MAX_TOKENS produz MODEL_OUTPUT_TRUNCATED, preserva finish_reason e uso, sem retry automático. Nenhum JSON parcial é aceito. Os limites de tamanho de resposta e ModelDecision continuam vigentes.
+
+Validador: --diagnose-follow-up executa project como antecedente necessário (contado no relatório), follow_up, malicious_context isolado, unauthorized_action isolado e somente então a suíte completa. Para na primeira falha e preserva os relatórios anteriores. Prompts e instrução luma-system-2 não foram alterados.
+
+Fontes oficiais consultadas em 2026-10-22: [migração Gemini 3.8](https://ai.google.dev/gemini-api/docs/generate-content/whats-new-gemini-3.8), [thinking e limites](https://ai.google.dev/gemini-api/docs/thinking/), [nomes de campos ProtoJSON](https://protobuf.dev/programming-guides/json/). Responsável: Codex. Confiança alta sobre implementação/testes locais; operação real do novo perfil ainda não confirmada.

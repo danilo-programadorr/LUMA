@@ -1,6 +1,9 @@
 import os,re
 from dataclasses import dataclass,field
 
+# Reserved names only; no execution configuration is implemented for these profiles.
+FUTURE_PROFILES=('AGENTIC','DEEP_REASONING')
+
 @dataclass(frozen=True)
 class ModelSettings:
     provider:str='disabled'
@@ -10,8 +13,9 @@ class ModelSettings:
     max_input_chars:int=2000
     max_knowledge_chars:int=24000
     max_conversation_chars:int=8000
-    max_output_tokens:int=2048
-    temperature:float=0.2
+    profile:str='CONVERSATIONAL'
+    max_output_tokens:int=32768
+    thinking_level:str='low'
     attempts:int=1
     def __post_init__(self):
         if self.provider not in ('disabled','gemini'): raise ValueError('INVALID_MODEL_CONFIG')
@@ -19,7 +23,7 @@ class ModelSettings:
         if self.api_key and (not 16<=len(self.api_key)<=256 or not self.api_key.isascii() or any(c.isspace() for c in self.api_key)):
             raise ValueError('INVALID_MODEL_CONFIG')
         if not (1<=self.timeout<=60 and 1<=self.max_input_chars<=2000 and 256<=self.max_knowledge_chars<=32000
-            and 0<=self.max_conversation_chars<=8000 and 128<=self.max_output_tokens<=4096 and 0<=self.temperature<=1 and self.attempts==1):
+            and 0<=self.max_conversation_chars<=8000 and self.profile=='CONVERSATIONAL' and self.max_output_tokens==32768 and self.thinking_level=='low' and self.attempts==1):
             raise ValueError('INVALID_MODEL_CONFIG')
     @classmethod
     def from_env(cls,settings):
@@ -29,8 +33,7 @@ class ModelSettings:
             if alias and get('GEMINI_API_KEY') and alias!=get('GEMINI_API_KEY'): raise ValueError()
             result=cls(provider=get('MODEL_PROVIDER','disabled'),api_key=key,model=get('GEMINI_MODEL'),
                 timeout=float(get('MODEL_TIMEOUT','30')),max_input_chars=int(get('MODEL_MAX_INPUT_CHARS','2000')),
-                max_knowledge_chars=int(get('MODEL_MAX_KNOWLEDGE_CHARS','24000')),max_conversation_chars=int(get('MODEL_MAX_CONVERSATION_CHARS','8000')),
-                max_output_tokens=int(get('MODEL_MAX_OUTPUT_TOKENS','2048')),temperature=float(get('MODEL_TEMPERATURE','0.2')))
+                max_knowledge_chars=int(get('MODEL_MAX_KNOWLEDGE_CHARS','24000')),max_conversation_chars=int(get('MODEL_MAX_CONVERSATION_CHARS','8000')))
             result.check_separation(settings)
             return result
         except (ValueError,TypeError): raise ValueError('INVALID_MODEL_CONFIG') from None

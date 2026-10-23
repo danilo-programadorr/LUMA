@@ -20,7 +20,7 @@ def main():
         correlation=request['correlation_id']
         if not isinstance(correlation,str) or not 1<=len(correlation)<=64: raise Fault('MODEL_INVALID_RESPONSE',503)
         config=request['config']
-        if set(config)!={'model','timeout','max_output_tokens','temperature'}: raise Fault('MODEL_INVALID_RESPONSE',503)
+        if set(config)!={'model','timeout','max_output_tokens','thinking_level','profile'}: raise Fault('MODEL_INVALID_RESPONSE',503)
         ModelSettings(provider='gemini',api_key=os.environ.get('GEMINI_API_KEY',''),**config)
         context=ModelInputContext.model_validate_json(json.dumps(request['context']))
         stage='GeminiAdapter initialization'

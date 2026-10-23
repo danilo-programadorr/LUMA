@@ -5,7 +5,7 @@ import httpx
 from google import genai
 from google.genai import types,errors
 from backend.app.model_contracts import ModelDecision
-from backend.app.generation import ModelResult,ModelUsage
+from backend.app.generation import ModelResult,ModelUsage,usage_alerts
 from backend.app.errors import Fault
 from backend.app.provider_diagnostics import empty_metadata,enum_value,FINISH,BLOCK,CODES,CATEGORIES
 from pydantic import ValidationError
@@ -26,10 +26,12 @@ class GeminiAdapter:
             response=self.client.models.generate_content(model=self.config['model'],contents=context.model_dump_json(),
                 config=types.GenerateContentConfig(system_instruction=SYSTEM_INSTRUCTION,
                     response_mime_type='application/json',response_json_schema=ModelDecision.model_json_schema(),
-                    temperature=self.config['temperature'],max_output_tokens=self.config['max_output_tokens'],
+                    thinking_config=types.ThinkingConfig(thinking_level=self.config['thinking_level']),max_output_tokens=self.config['max_output_tokens'],
                     tools=[],automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True)))
             self.stage="response validation"
-            self.metadata.update(provider_status=200,response_received=True)
+            raw_usage=response.usage_metadata
+            usage=ModelUsage(input_tokens=getattr(raw_usage,'prompt_token_count',None),output_tokens=getattr(raw_usage,'candidates_token_count',None),thought_tokens=getattr(raw_usage,'thoughts_token_count',None))
+            self.metadata.update(provider_status=200,response_received=True,usage=usage.model_dump(),usage_alerts=usage_alerts(usage))
             feedback=getattr(response,'prompt_feedback',None)
             block=enum_value(getattr(feedback,'block_reason',None),BLOCK)
             self.metadata.update(block_reason=block,blocked=block not in (None,'BLOCK_REASON_UNSPECIFIED'))
@@ -44,7 +46,7 @@ class GeminiAdapter:
             if reason in ('SAFETY','BLOCKLIST','PROHIBITED_CONTENT','SPII','RECITATION','JAILBREAK','IMAGE_SAFETY','IMAGE_PROHIBITED_CONTENT','IMAGE_RECITATION'): raise Fault('MODEL_SAFETY_REJECTION',503)
             if reason!='STOP':
                 self.safe_detail='MAX_TOKENS' if reason=='MAX_TOKENS' else 'NON_STOP_FINISH'
-                raise Fault('MODEL_INVALID_RESPONSE',503)
+                raise Fault('MODEL_OUTPUT_TRUNCATED' if reason=='MAX_TOKENS' else 'MODEL_INVALID_RESPONSE',503)
             if getattr(response,'function_calls',None): raise Fault('MODEL_INVALID_RESPONSE',503)
             text=response.text
             if not text or len(text.encode('utf8'))>131072: raise Fault('MODEL_INVALID_RESPONSE',503)
@@ -52,9 +54,8 @@ class GeminiAdapter:
             self.metadata['schema_validation']=False
             decision=ModelDecision.model_validate_json(text)
             self.metadata['schema_validation']=True
-            usage=response.usage_metadata
             return ModelResult(decision=decision,model_name=self.config['model'],instruction_version=INSTRUCTION_VERSION,
-                usage=ModelUsage(input_tokens=getattr(usage,'prompt_token_count',None),output_tokens=getattr(usage,'candidates_token_count',None)))
+                usage=usage)
         except Fault: raise
         except httpx.TimeoutException:
             self.metadata['retryable']=True

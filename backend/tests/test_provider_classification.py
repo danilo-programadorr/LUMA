@@ -14,7 +14,7 @@ from backend.tests.test_conversation import bundle,turn
 def test_http_classification_sanitized(config,status,code,retryable):
     transport=httpx.Client(transport=httpx.MockTransport(lambda request:httpx.Response(status,json={'error':{'code':status,'status':'sensitive-arbitrary-value','message':'secret-not-for-diagnostic'}})))
     client=genai.Client(api_key=config.api_key,http_options=types.HttpOptions(httpx_client=transport,retry_options=types.HttpRetryOptions(attempts=1)))
-    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=2048,temperature=.2),client=client)
+    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=32768,thinking_level='low',profile='CONVERSATIONAL'),client=client)
     try:
         with pytest.raises(Fault,match=code):adapter.generate(context())
         assert adapter.metadata['provider_status']==status
@@ -27,13 +27,13 @@ def test_http_classification_sanitized(config,status,code,retryable):
 
 @pytest.mark.parametrize('finish,text,code,schema',[
     ('SAFETY','{}','MODEL_SAFETY_REJECTION',None),('BLOCKLIST','{}','MODEL_SAFETY_REJECTION',None),
-    ('MAX_TOKENS','{}','MODEL_INVALID_RESPONSE',None),('LANGUAGE','{}','MODEL_INVALID_RESPONSE',None),
+    ('MAX_TOKENS','{}','MODEL_OUTPUT_TRUNCATED',None),('LANGUAGE','{}','MODEL_INVALID_RESPONSE',None),
     ('MALFORMED_FUNCTION_CALL','{}','MODEL_INVALID_RESPONSE',None),('OTHER','{}','MODEL_INVALID_RESPONSE',None),
     ('STOP','not json','MODEL_INVALID_RESPONSE',False),('STOP','{"extra":"secret-not-for-diagnostic"}','MODEL_INVALID_RESPONSE',False)])
 def test_finish_and_schema(config,finish,text,code,schema):
     transport=httpx.Client(transport=httpx.MockTransport(lambda request:httpx.Response(200,json={'candidates':[{'content':{'role':'model','parts':[{'text':text}]},'finishReason':finish}]})))
     client=genai.Client(api_key=config.api_key,http_options=types.HttpOptions(httpx_client=transport))
-    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=2048,temperature=.2),client=client)
+    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=32768,thinking_level='low',profile='CONVERSATIONAL'),client=client)
     try:
         with pytest.raises(Fault,match=code):adapter.generate(context())
         assert adapter.metadata['finish_reason']==finish
@@ -47,7 +47,7 @@ def test_finish_and_schema(config,finish,text,code,schema):
 def test_prompt_block(config,reason):
     transport=httpx.Client(transport=httpx.MockTransport(lambda request:httpx.Response(200,json={'promptFeedback':{'blockReason':reason}})))
     client=genai.Client(api_key=config.api_key,http_options=types.HttpOptions(httpx_client=transport))
-    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=2048,temperature=.2),client=client)
+    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=32768,thinking_level='low',profile='CONVERSATIONAL'),client=client)
     try:
         with pytest.raises(Fault,match='MODEL_SAFETY_REJECTION'):adapter.generate(context())
         assert adapter.metadata['blocked'] is True and adapter.metadata['block_reason']==reason

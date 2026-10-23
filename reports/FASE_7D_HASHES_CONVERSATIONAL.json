@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-22",
+  "baseline": "670ace87e654875bfe6df3262ec9a8cdda4df030",
+  "verifier": "Codex",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "095a9302d9868fab36ac9ddce4bd491c758c35efb849f9be288e7d83010d0ec7"
+    },
+    {
+      "path": "backend/app/conversation.py",
+      "sha256": "58563c863c676947d2c2c553c1b1c6a1f0f6da4723f210d251b7063ea314e85b"
+    },
+    {
+      "path": "backend/app/generation.py",
+      "sha256": "fff8e0a37356a21141fbc09895c41a0bb93ad842a40315c863575cb4c3e37e70"
+    },
+    {
+      "path": "backend/app/model_config.py",
+      "sha256": "df870627a195b832340cfe5947cdbd596cc87273cbd8d1a30d9f973f61bef287"
+    },
+    {
+      "path": "backend/app/model_provider.py",
+      "sha256": "9f42dca8fd4d4681935898065b883fa036418889e1a1130f589697bc517fb4aa"
+    },
+    {
+      "path": "backend/app/provider_diagnostics.py",
+      "sha256": "ec2ddbbf4bd34f9743c92651cf4173aaf8dae81a12d8d749c9ea0945033d5f0b"
+    },
+    {
+      "path": "backend/model_worker/adapter.py",
+      "sha256": "11dc6c334b4e87464bdb49a295c7350ea790d5bd87f0ba57c0b0df833e8df32e"
+    },
+    {
+      "path": "backend/model_worker/worker.py",
+      "sha256": "45cc5d577158260214b0c81af2d2aab3c412bf411133a7fafc04d92d7bae9d72"
+    },
+    {
+      "path": "backend/tests/test_conversational_profile.py",
+      "sha256": "93c67f2c60286ed98e7b3f72b02a6531008bacba0ec16cd6eb26cffc90dc6d48"
+    },
+    {
+      "path": "backend/tests/test_model_diagnostics.py",
+      "sha256": "faffaa07a8f0eefce914b15a20087cab4f02e3e6874528d83aac1db3efaf1010"
+    },
+    {
+      "path": "backend/tests/test_model_worker.py",
+      "sha256": "d6c7e080c3c0d72743ec0b12542b40452317a27e29ce273710cf84a1394babca"
+    },
+    {
+      "path": "backend/tests/test_provider_classification.py",
+      "sha256": "c2411c6d78bb48c2d4dffdbd52045ff7f590fa3eaa930374cf2ccd1438a8f836"
+    },
+    {
+      "path": "backend/validate_gemini.py",
+      "sha256": "dd4d22440b4e0a2901645a8d7c5e3cf39b8cb7681ff43ba1e5affdc552311b31"
+    },
+    {
+      "path": "contracts/conversation-models.json",
+      "sha256": "ab788ba0106b7445e982e69306efbf0ab22248b07f4b372329b10fa2b2a59a44"
+    },
+    {
+      "path": "docs/MODEL_LAYER_7D.md",
+      "sha256": "4ad84b3c5fb92b0df0ff5cd04fc1234f7df096bae53f466938fb4ca63ad90b60"
+    },
+    {
+      "path": "phase-status.json",
+      "sha256": "80b9d6ad6b129b73e6a262acab73276f3383dc306cb92508a63ddd9418241279"
+    },
+    {
+      "path": "reports/FASE_7D_AUDITORIA_CONVERSATIONAL.json",
+      "sha256": "65420843b784c33dd8dd178c2f8ab80afafed19af1a06add1d5766eade0fdb32"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL.json",
+      "sha256": "c3b36d19983d8c3b27c98898f58784b9655778a8c9fc4c61bd88191c10fc510b"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_ANTES_CONVERSATIONAL.json",
+      "sha256": "c711f248d36cd68a282f99a5567a52ef0c49ed480e825c642eb63116c67811a8"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792713026074753400.json",
+      "sha256": "87afe0f03914dd9a31db09e7f6f59d140ffa3a9cbb5fbe6da46cdc31eb68729e"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792716047812298800.json",
+      "sha256": "87afe0f03914dd9a31db09e7f6f59d140ffa3a9cbb5fbe6da46cdc31eb68729e"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792716066529837700.json",
+      "sha256": "949bf53e5c69a70259307d46efb3303c023fc7583483b29edce81d1f8b314444"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792716082132824400.json",
+      "sha256": "666dd6d66500bbdae5ada934102150bbd1ca06e8778b59ed0df64716aad39f96"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792716767232165500.json",
+      "sha256": "c711f248d36cd68a282f99a5567a52ef0c49ed480e825c642eb63116c67811a8"
+    },
+    {
+      "path": "reports/FASE_7D_RELATORIO_GEMINI_MODEL_ADAPTER.md",
+      "sha256": "17ead4317f3a116191ecd85fcb71eb3f4223eaf521c446a330090b7b78c16fa4"
+    },
+    {
+      "path": "reports/FASE_7D_TESTES_CONVERSATIONAL.txt",
+      "sha256": "fc5f4218b4e5a5a3579ebdca1ba9d628eb2d147066eece62502b9e9d9a0ade4b"
+    },
+    {
+      "path": "reports/FASE_7D_TESTES_CONVERSATIONAL.xml",
+      "sha256": "47566fdb3bb325ec716064187923a45934631c412931cff17276aed17fe88e9e"
+    }
+  ]
+}

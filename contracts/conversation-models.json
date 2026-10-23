@@ -589,6 +589,20 @@
             ],
             "default": null,
             "title": "Output Tokens"
+          },
+          "thought_tokens": {
+            "anyOf": [
+              {
+                "maximum": 10000000,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Thought Tokens"
           }
         },
         "title": "ModelUsage",
@@ -833,6 +847,20 @@
         ],
         "default": null,
         "title": "Output Tokens"
+      },
+      "thought_tokens": {
+        "anyOf": [
+          {
+            "maximum": 10000000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Thought Tokens"
       }
     },
     "title": "ModelUsage",

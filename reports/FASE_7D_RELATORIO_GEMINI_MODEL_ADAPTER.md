@@ -169,3 +169,43 @@ Resultado final local: 285 passed, zero skips, zero falhas, 249.89s. Os 266 test
 Uma tentativa de executar o validador foi impedida antes da execucao por falha tecnica de limite de uso na revisao automatica de aprovacao. Apos o proprietario solicitar continuar, a mesma solicitacao autorizada foi aceita e o comando executou. Resultado: BLOCKED_NEEDS_CREDENTIAL, configuration, credential_present=false neste processo Codex, malicious_context 0 executados / 0 aprovados. Unauthorized_action e suite completa nao foram iniciados nessa rodada. Nao houve nova resposta Gemini nem alteracao da credencial. O ultimo unauthorized_action real isolado aprovado (1/1) esta preservado em FASE_7D_GEMINI_REAL_HISTORY_1792617445908615800.json; a ultima suite real falhou em malicious_context (4 executados / 3 aprovados), preservada em FASE_7D_GEMINI_REAL_ANTES_INPUT_WINDOW.json.
 
 A causa estrutural foi corrigida e validada localmente; a verificacao real apos a correcao permanece pendente. Versao 0.4.0rc1, NO-GO para promocao. Executar no PowerShell configurado: python -m backend.validate_gemini --diagnose-malicious. Ordem: malicious_context, unauthorized_action, suite completa; parar em qualquer falha. Nenhuma nova fase iniciada.
+
+
+## Perfil Gemini CONVERSATIONAL — correção dirigida, 2026-10-22
+
+Base local: 670ace87e654875bfe6df3262ec9a8cdda4df030. Responsável: Codex. Estado: IMPLEMENTADO e VALIDADO LOCALMENTE; operação real do novo perfil NÃO CONFIRMADA. Confiança alta nas evidências locais, sem inferir sucesso real.
+
+A evidência fornecida pelo proprietário está preservada em FASE_7D_GEMINI_REAL_ANTES_CONVERSATIONAL.json. Follow_up recebeu HTTP 200 e finish_reason MAX_TOKENS, sem bloqueio de safety, após greeting/project aprovados. Configuração anterior: temperature=0.2, max_output_tokens=2048, thinking não explícito. A causa observada é esgotamento do limite de geração; não prova falha de credencial, Knowledge ou schema de entrada. Resumo 997 caracteres e Knowledge 16113 caracteres na tentativa anterior.
+
+Nova configuração: CONVERSATIONAL, thinking_level="low", max_output_tokens=32768, sem temperature/top_p/top_k. AGENTIC/DEEP_REASONING permanecem futuros, não implementados. Overrides pelo cliente são rejeitados; antigas variáveis de sampling/teto não alteram o perfil. ModelDecision, system instruction, MIME JSON, JSON Schema, tools vazio e AFC desabilitado preservados. Nenhuma alteração em grounding, fontes, permissões, approvals ou Knowledge. MAX_TOKENS agora retorna MODEL_OUTPUT_TRUNCATED (HTTP 503), com finish_reason e uso preservados, sem retry.
+
+Telemetria: input/output/thought_tokens separados quando o SDK os fornece, modelo e latência em milissegundos. HIGH_MODEL_TOKEN_USAGE indica soma de output + thought >=8192; limiar local inicial, sem cobrança. 32768 é teto, não meta nem expectativa de consumo. Logs e relatórios não recebem prompt integral. Mantidos limites de saída em bytes e de ModelDecision.
+
+Referências oficiais: [Gemini 3.8 e sampling/thinking](https://ai.google.dev/gemini-api/docs/generate-content/whats-new-gemini-3.8), [thinking e max_output_tokens](https://ai.google.dev/gemini-api/docs/thinking/). O SDK 2.32.0 envia thinkingConfig.thinking_level=LOW; a grafia original do campo é aceita pelo [ProtoJSON](https://protobuf.dev/programming-guides/json/). Verificação local com transporte simulado confirma o corpo enviado, sem substituir o teste real.
+
+### Comparação de uso disponível
+
+| Caso | Entrada anterior | Saída anterior | Pensamento anterior | Latência anterior | Novo perfil |
+|---|---:|---:|---|---|---|
+| greeting | 536 | 42 | não registrado | não registrada | não executado |
+| project | 6907 | 443 | não registrado | não registrada | não executado |
+| follow_up (falha MAX_TOKENS) | não registrado no JSON; ~6940 informado pelo proprietário | não registrado | não registrado | não registrada | não executado |
+| malicious_context isolado | 6773 | 346 | não registrado | não registrada | não executado |
+| unauthorized_action isolado | 3692 | 205 | não registrado | não registrada | não executado |
+| citation / uncertainty / knowledge_unavailable | não alcançados na última suíte completa | não disponível | não disponível | não disponível | não executado |
+
+Fontes: snapshot ANTES_CONVERSATIONAL e históricos 1792716066529837700/1792716082132824400. São execuções diferentes; não constituem comparação controlada de custo. A ausência de métrica não significa zero consumo. O teste sintético com 8500 tokens de pensamento comprova telemetria/alerta, não consumo real.
+
+O comando --diagnose-follow-up retornou BLOCKED_NEEDS_CREDENTIAL, zero casos, sem chamada externa neste processo. O proprietário já confirmou que executará no PowerShell configurado. A sequência preparada é project (antecedente contado) + follow_up, malicious_context isolado, unauthorized_action isolado, suíte completa; interrompe qualquer falha e preserva históricos, sem alterar prompts.
+
+Versão permanece 0.4.0rc1. NO-GO para promoção da Fase 7D até a suíte real completa passar e seus resultados serem revisados. Nenhuma etapa 7E iniciada; sem ADK, agentes, Calendar/Tasks, frontend, voz, deploy, push ou remote.
+
+Comando no PowerShell configurado, em D:\projetos\luma:
+
+```powershell
+.\.venv\Scripts\python.exe -m backend.validate_gemini --diagnose-follow-up
+```
+
+Enviar somente reports/FASE_7D_GEMINI_REAL.json sanitizado; nunca a chave.
+
+Resultado final local: 304 testes aprovados (285 preservados + 19 novos), zero falhas/erros/skips, em 202.38s. Um aviso preexistente de depreciação Starlette/httpx. Evidências: FASE_7D_TESTES_CONVERSATIONAL.txt/.xml. Auditoria FASE_7D_AUDITORIA_CONVERSATIONAL.json: VERIFIED, sem erros; 203 hashes do Cérebro e 763 arquivos da fonte preservados. Fonte main@9fe7fd3a69a537f9e67953b7028e64c676a48547; repositório financeiro limpo no mesmo HEAD. Contratos de decisão/entrada, grounding e instrução sem diff. Novo commit apenas local para a correção validada; promoção real permanece bloqueada.

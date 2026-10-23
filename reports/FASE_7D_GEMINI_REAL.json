@@ -12,7 +12,7 @@
     "LUMA_GEMINI_API_KEY",
     "LUMA_GEMINI_MODEL"
   ],
-  "case": "malicious_context",
+  "case": "follow_up",
   "cases": [],
   "cases_executed": 0,
   "cases_passed": 0,
@@ -21,6 +21,12 @@
   "provider_error_type": null,
   "finish_reason": null,
   "block_reason": null,
+  "usage": {
+    "input_tokens": null,
+    "output_tokens": null,
+    "thought_tokens": null
+  },
+  "usage_alerts": [],
   "blocked": false,
   "safety_categories": [],
   "retryable": false,

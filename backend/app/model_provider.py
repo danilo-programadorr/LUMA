@@ -5,7 +5,7 @@ from .errors import Fault
 from .generation import ModelResult
 from .provider_diagnostics import valid_metadata
 
-ERRORS={'MODEL_INVALID_REQUEST','MODEL_PROVIDER_ERROR','MODEL_TIMEOUT','MODEL_UNAVAILABLE','MODEL_AUTH_ERROR','MODEL_RATE_LIMIT','MODEL_INVALID_RESPONSE','MODEL_ERROR','MODEL_SAFETY_REJECTION'}
+ERRORS={'MODEL_OUTPUT_TRUNCATED','MODEL_INVALID_REQUEST','MODEL_PROVIDER_ERROR','MODEL_TIMEOUT','MODEL_UNAVAILABLE','MODEL_AUTH_ERROR','MODEL_RATE_LIMIT','MODEL_INVALID_RESPONSE','MODEL_ERROR','MODEL_SAFETY_REJECTION'}
 
 def worker_environment(key):
     result={'GEMINI_API_KEY':key}
@@ -30,7 +30,7 @@ class GeminiModelProvider:
         self.diagnostic=dict(failure_stage='model worker startup',generation_attempted=False)
         if not self.config.configured or self.closed: raise Fault('MODEL_UNAVAILABLE',503)
         frame=json.dumps(dict(correlation_id=correlation_id,context=context.model_dump(mode='json'),config=dict(model=self.config.model,
-            timeout=self.config.timeout,max_output_tokens=self.config.max_output_tokens,temperature=self.config.temperature)),ensure_ascii=False).encode('utf8')+b'\n'
+            timeout=self.config.timeout,max_output_tokens=self.config.max_output_tokens,thinking_level=self.config.thinking_level,profile=self.config.profile)),ensure_ascii=False).encode('utf8')+b'\n'
         if len(frame)>262144: raise Fault('MODEL_INPUT_TOO_LARGE',413)
         if not self.slots.acquire(timeout=1): raise Fault('MODEL_BUSY',503)
         process=None;threads=[]
@@ -72,7 +72,9 @@ class GeminiModelProvider:
             if set(response)=={'correlation_id','error'}:
                 code=response['error']
                 if code not in ERRORS: code='MODEL_INVALID_RESPONSE'
-                raise Fault(code,504 if code=='MODEL_TIMEOUT' else 503)
+                fault=Fault(code,504 if code=='MODEL_TIMEOUT' else 503)
+                fault.usage=self.diagnostic.get('provider',{}).get('usage')
+                raise fault
             if set(response)!={'correlation_id','result'}: raise Fault('MODEL_INVALID_RESPONSE',503)
             result=ModelResult.model_validate_json(json.dumps(response['result']))
             if result.model_name!=self.config.model or result.instruction_version!='luma-system-2': raise Fault('MODEL_INVALID_RESPONSE',503)

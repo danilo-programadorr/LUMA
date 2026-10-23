@@ -1,0 +1,122 @@
+{
+  "status": "FAILED",
+  "failure_stage": "response validation",
+  "safe_error_code": "MODEL_INVALID_RESPONSE",
+  "safe_error_type": "Fault",
+  "credential_present": true,
+  "real_model_tested": true,
+  "model_used": "gemini-3.8-flash",
+  "generation_config": {
+    "temperature": 0.2,
+    "max_output_tokens": 2048,
+    "timeout": 30.0,
+    "response_mime_type": "application/json",
+    "tools": [],
+    "automatic_function_calling": false,
+    "instruction_version": "luma-system-2",
+    "schema_sha256": "3156b15269d4ceab7901ff1fc5c1074656db7a1b7e070d161f601cb0f58d099e"
+  },
+  "directed_worker_probe_passed": true,
+  "worker_diagnostic": {
+    "safe_error_type": "Fault",
+    "safe_detail": "MAX_TOKENS",
+    "failure_stage": "response validation",
+    "credential_present": true,
+    "generation_attempted": true,
+    "provider": {
+      "provider_status": 200,
+      "provider_code": null,
+      "provider_error_type": null,
+      "finish_reason": "MAX_TOKENS",
+      "block_reason": null,
+      "blocked": false,
+      "safety_categories": [],
+      "retryable": false,
+      "response_received": true,
+      "schema_validation": null,
+      "safe_schema_error": null
+    }
+  },
+  "stages_reached": [
+    "Knowledge startup",
+    "database/migration",
+    "configuration",
+    "ModelProvider startup",
+    "model worker startup",
+    "LUMA startup",
+    "session bootstrap",
+    "first generation",
+    "response validation",
+    "first generation",
+    "response validation",
+    "first generation",
+    "cleanup"
+  ],
+  "case": "follow_up",
+  "user_message_chars": 37,
+  "session_summary_chars": 997,
+  "knowledge_context_chars": 16113,
+  "conversation_context_chars": 997,
+  "tools_count": 0,
+  "pending_actions_count": 0,
+  "context_truncated": false,
+  "validation_errors": [],
+  "provider_status": 200,
+  "provider_code": null,
+  "provider_error_type": null,
+  "finish_reason": "MAX_TOKENS",
+  "block_reason": null,
+  "blocked": false,
+  "safety_categories": [],
+  "retryable": false,
+  "response_received": true,
+  "schema_validation": null,
+  "safe_schema_error": null,
+  "cases": [
+    {
+      "case": "greeting",
+      "passed": true,
+      "citations": 0,
+      "usage": {
+        "input_tokens": 536,
+        "output_tokens": 42
+      },
+      "input_diagnostic": {
+        "user_message_chars": 10,
+        "session_summary_chars": 2,
+        "knowledge_context_chars": 0,
+        "conversation_context_chars": 2,
+        "tools_count": 0,
+        "pending_actions_count": 0,
+        "context_truncated": false,
+        "validation_errors": []
+      }
+    },
+    {
+      "case": "project",
+      "passed": true,
+      "citations": 3,
+      "usage": {
+        "input_tokens": 6907,
+        "output_tokens": 443
+      },
+      "input_diagnostic": {
+        "user_message_chars": 36,
+        "session_summary_chars": 99,
+        "knowledge_context_chars": 16904,
+        "conversation_context_chars": 99,
+        "tools_count": 0,
+        "pending_actions_count": 0,
+        "context_truncated": false,
+        "validation_errors": []
+      }
+    },
+    {
+      "case": "follow_up",
+      "passed": false
+    }
+  ],
+  "cases_executed": 3,
+  "cases_passed": 2,
+  "servers_stopped": true
+}

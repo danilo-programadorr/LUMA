@@ -49,7 +49,7 @@ def test_real_sdk_error_mapping_without_network(config,status,code):
         return httpx.Response(status,json={'error':{'code':status,'message':'synthetic','status':'UNAVAILABLE'}})
     transport=httpx.Client(transport=httpx.MockTransport(handler))
     client=genai.Client(api_key=config.api_key,http_options=types.HttpOptions(httpx_client=transport,retry_options=types.HttpRetryOptions(attempts=1)))
-    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=2048,temperature=.2),client=client)
+    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=32768,thinking_level='low',profile='CONVERSATIONAL'),client=client)
     try:
         with pytest.raises(Fault,match=code):adapter.generate(context())
         assert len(calls)==1
@@ -63,12 +63,12 @@ def test_real_sdk_structured_request_without_tools(config):
             'usageMetadata':{'promptTokenCount':10,'candidatesTokenCount':20}})
     transport=httpx.Client(transport=httpx.MockTransport(handler))
     client=genai.Client(api_key=config.api_key,http_options=types.HttpOptions(httpx_client=transport,retry_options=types.HttpRetryOptions(attempts=1)))
-    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=2048,temperature=.2),client=client)
+    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=32768,thinking_level='low',profile='CONVERSATIONAL'),client=client)
     try:
         response=adapter.generate(context());assert response.usage.input_tokens==10
         body=captured[0];assert not body.get('tools')
         assert body['generationConfig']['responseMimeType']=='application/json'
-        assert body['generationConfig']['maxOutputTokens']==2048
+        assert body['generationConfig']['maxOutputTokens']==32768
         assert config.api_key not in json.dumps(body)
     finally:adapter.close();transport.close()
 

@@ -41,7 +41,7 @@ def test_adapter_failure_detail(config,finish,text,stage,detail):
     from backend.model_worker.adapter import GeminiAdapter
     transport=httpx.Client(transport=httpx.MockTransport(lambda request:httpx.Response(200,json={'candidates':[{'content':{'role':'model','parts':[{'text':text}]},'finishReason':finish}]})))
     client=genai.Client(api_key=config.api_key,http_options=types.HttpOptions(httpx_client=transport))
-    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=2048,temperature=.2),client=client)
+    adapter=GeminiAdapter(config.api_key,dict(model=config.model,timeout=1,max_output_tokens=32768,thinking_level='low',profile='CONVERSATIONAL'),client=client)
     try:
         with pytest.raises(Fault) as caught:adapter.generate(context())
         assert adapter.stage==stage and adapter.safe_detail==detail

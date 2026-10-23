@@ -6,7 +6,7 @@ from fastapi.security import HTTPBearer
 from pydantic import Field,ValidationError
 from .models import Contract,KnowledgeRequest,Limits,now,ident
 from .model_contracts import ModelInputContext,ModelDecision
-from .generation import ModelResult
+from .generation import ModelResult,ModelUsage,usage_alerts
 from .control import digest,stamp,date,action_scope
 from .trust_data import append
 from .errors import Fault
@@ -55,7 +55,7 @@ class ConversationService:
         append(repo,dict(event_id=ident(),timestamp=stamp(),principal_id=p.principal_id,session_id=sid,project_id=project,
             runtime_principal='luma-runtime',event_type='MODEL_GENERATION',result=result,correlation_id=correlation,
             model_provider=self.config.provider,model_name=self.config.model,system_instruction_version='luma-system-2',
-            latency_ms=max(0,int(latency*1000)),usage=usage or {}))
+            latency_ms=max(0,int(latency*1000)),usage=usage or {},usage_alerts=usage_alerts(ModelUsage.model_validate(usage or {}))))
     def turn(self,p,body,key,correlation):
         start=time.monotonic();rid=None;project=None;verified_sid=None;input_diagnostic=None
         try:
@@ -143,7 +143,7 @@ class ConversationService:
                 record=repo.get('conversation_requests',rid);record['status']='COMPLETED';record['input_diagnostic']=input_diagnostic;repo.put('conversation_requests',rid,record)
                 self.event(repo,p,body.session_id,project,correlation,'OK',time.monotonic()-start,result.usage.model_dump())
             return ConversationAnswer(session_id=body.session_id,project_id=project,correlation_id=correlation,
-                assistant_message=decision.assistant_message,citations=citations,warnings=list(dict.fromkeys((knowledge.warnings if knowledge else [])+(['CONVERSATION_CONTEXT_TRUNCATED'] if truncated else [])+['NO_TOOL_EXECUTION','PRODUCTION_NOT_VERIFIED'])),
+                assistant_message=decision.assistant_message,citations=citations,warnings=list(dict.fromkeys((knowledge.warnings if knowledge else [])+(['CONVERSATION_CONTEXT_TRUNCATED'] if truncated else [])+usage_alerts(result.usage)+['NO_TOOL_EXECUTION','PRODUCTION_NOT_VERIFIED'])),
                 confidence=knowledge.confidence if knowledge else 'NOT_APPLICABLE',model_confidence=decision.confidence,freshness=sorted({r.get('freshness','UNKNOWN') for r in (knowledge.results if knowledge else [])}),
                 proposed_actions=actions,learning_candidates=candidates,needs_clarification=decision.needs_clarification,
                 model_status='READY',model_name=result.model_name,system_instruction_version=result.instruction_version,usage=result.usage.model_dump())
@@ -159,7 +159,7 @@ class ConversationService:
                         window=repo.get('conversation_windows',body.session_id)
                         if window and window.get('active_request')==rid:
                             window['active_request']=None;repo.put('conversation_windows',body.session_id,window)
-                self.event(repo,p,verified_sid,project,correlation,error.code,time.monotonic()-start)
+                self.event(repo,p,verified_sid,project,correlation,error.code,time.monotonic()-start,provider_usage if (provider_usage:=getattr(error,'usage',None)) else None)
             raise error from None
     def parameters(self,value,depth=0):
         if depth>4 or len(json.dumps(value))>4096: raise Fault('MODEL_INVALID_PROPOSAL',503)

@@ -11,7 +11,7 @@ def enum_value(value,allowed):
 
 def empty_metadata():
     return dict(provider_status=None,provider_code=None,provider_error_type=None,finish_reason=None,block_reason=None,
-        blocked=False,safety_categories=[],retryable=False,response_received=False,schema_validation=None,safe_schema_error=None)
+        usage=dict(input_tokens=None,output_tokens=None,thought_tokens=None),usage_alerts=[],blocked=False,safety_categories=[],retryable=False,response_received=False,schema_validation=None,safe_schema_error=None)
 
 def valid_metadata(value):
     if not isinstance(value,dict) or set(value)!=set(empty_metadata()):return False
@@ -21,5 +21,9 @@ def valid_metadata(value):
         if item is not None and (not isinstance(item,str) or item not in allowed):return False
     if any(type(value[k]) is not bool for k in ('blocked','retryable','response_received')):return False
     if value['schema_validation'] is not None and type(value['schema_validation']) is not bool:return False
+    usage=value['usage']
+    if not isinstance(usage,dict) or set(usage)!={'input_tokens','output_tokens','thought_tokens'}:return False
+    if any(v is not None and (type(v) is not int or not 0<=v<=10000000) for v in usage.values()):return False
+    if value['usage_alerts'] not in ([],['HIGH_MODEL_TOKEN_USAGE']):return False
     cats=value['safety_categories']
     return isinstance(cats,list) and len(cats)<=len(CATEGORIES) and all(isinstance(c,str) and c in CATEGORIES for c in cats)

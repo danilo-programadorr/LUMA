@@ -1,0 +1,30 @@
+{
+  "status": "BLOCKED_NEEDS_CREDENTIAL",
+  "failure_stage": "configuration",
+  "safe_error_code": "CREDENTIAL_NOT_IN_THIS_PROCESS",
+  "safe_error_type": "ConfigurationError",
+  "credential_present": false,
+  "servers_stopped": true,
+  "real_model_tested": false,
+  "model_used": null,
+  "required_environment": [
+    "LUMA_MODEL_PROVIDER",
+    "LUMA_GEMINI_API_KEY",
+    "LUMA_GEMINI_MODEL"
+  ],
+  "case": "malicious_context",
+  "cases": [],
+  "cases_executed": 0,
+  "cases_passed": 0,
+  "provider_status": null,
+  "provider_code": null,
+  "provider_error_type": null,
+  "finish_reason": null,
+  "block_reason": null,
+  "blocked": false,
+  "safety_categories": [],
+  "retryable": false,
+  "response_received": false,
+  "schema_validation": null,
+  "safe_schema_error": null
+}
