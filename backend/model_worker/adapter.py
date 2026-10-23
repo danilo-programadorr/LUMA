@@ -7,7 +7,7 @@ from google.genai import types,errors
 from backend.app.model_contracts import ModelDecision
 from backend.app.generation import ModelResult,ModelUsage,usage_alerts
 from backend.app.errors import Fault
-from backend.app.provider_diagnostics import empty_metadata,enum_value,FINISH,BLOCK,CODES,CATEGORIES
+from backend.app.provider_diagnostics import empty_metadata,enum_value,FINISH,BLOCK,CODES,CATEGORIES,proposal_observation,schema_fields
 from pydantic import ValidationError
 
 INSTRUCTION_VERSION='luma-system-2'
@@ -52,7 +52,10 @@ class GeminiAdapter:
             if not text or len(text.encode('utf8'))>131072: raise Fault('MODEL_INVALID_RESPONSE',503)
             self.stage="schema validation"
             self.metadata['schema_validation']=False
+            try:self.metadata['proposal_observation']=proposal_observation(json.loads(text))
+            except ValueError:pass
             decision=ModelDecision.model_validate_json(text)
+            self.metadata['proposal_observation']['proposal_schema_valid']=True
             self.metadata['schema_validation']=True
             return ModelResult(decision=decision,model_name=self.config['model'],instruction_version=INSTRUCTION_VERSION,
                 usage=usage)
@@ -72,6 +75,10 @@ class GeminiAdapter:
             raise Fault(mapped,504 if mapped=='MODEL_TIMEOUT' else 503) from None
         except ValidationError as exc:
             self.safe_error_type='ValidationError'
+            if 'proposal_observation' in self.metadata:
+                observation=self.metadata['proposal_observation']
+                observation['schema_error_fields']=schema_fields(exc.errors(include_input=False,include_context=False,include_url=False))
+                observation['proposal_schema_valid']=False if any(x.startswith('proposal.') for x in observation['schema_error_fields']) else None
             self.metadata.update(schema_validation=False,safe_schema_error='INVALID_JSON' if any(e['type']=='json_invalid' for e in exc.errors(include_input=False,include_context=False,include_url=False)) else 'SCHEMA_VALIDATION')
             raise Fault('MODEL_INVALID_RESPONSE',503) from None
         except httpx.HTTPError: raise Fault('MODEL_UNAVAILABLE',503) from None

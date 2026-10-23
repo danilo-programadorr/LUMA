@@ -1,0 +1,10 @@
+{
+  "status": "BLOCKED_NEEDS_CREDENTIAL",
+  "real_model_tested": false,
+  "cases_executed": 0,
+  "cases_passed": 0,
+  "cases": [],
+  "date": "2026-10-23",
+  "candidate_hash": "d0052999e6ee508c7e7d6a90c2117c708d8358bb10606a64319aed1ed526b937",
+  "failure_stage": "credential_preflight"
+}

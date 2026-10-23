@@ -1,0 +1,29 @@
+.........F............................................................   [100%]
+================================== FAILURES ===================================
+_________________ test_forbidden_parameter[authorization_id] __________________
+
+proposed = ((<starlette.testclient.TestClient object at 0x00000152A7ED0380>, Settings(knowledge_endpoint='http://127.0.0.1:8765',..., parameters={'title': 'synthetic', 'authorization_id': True}, reason='proposal', correlation_id='untrusted-model-id'))
+field = 'authorization_id'
+
+    @pytest.mark.parametrize('field',['approved','authorized','owner','execute_now','risk_level','authorization_id','approval_id','grant','kill_switch','project_id','effective_risk','requested_risk'])
+    def test_forbidden_parameter(proposed,field):
+        bundle,item=proposed
+        item.parameters[field]=True
+>       response=request(bundle);assert response.status_code==503 and response.json()['error']['code']=='PROPOSAL_PARAMETER_INVALID'
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert (503 == 503 and 'SENSITIVE_PAYLOAD' == 'PROPOSAL_PARAMETER_INVALID'
+E        +  where 503 = <Response [503 Service Unavailable]>.status_code
+E         
+E         - PROPOSAL_PARAMETER_INVALID
+E         + SENSITIVE_PAYLOAD)
+
+backend\tests\test_proposal_flow.py:62: AssertionError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\projetos\luma\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED backend/tests/test_proposal_flow.py::test_forbidden_parameter[authorization_id]
+1 failed, 69 passed, 1 warning in 69.61s (0:01:09)

@@ -1,0 +1,116 @@
+{
+  "database_sha256": "7211386905e7725eb949a518b8f9b40b69649448001b65e733e3ebaa7dac02dc",
+  "read_only_verified": true,
+  "conclusion": "No ActionRequest, Approval, ExecutionAuthorization, Job or ExecutionRecord created. Provider rejected before decision returned; original detailed provider diagnostic was not persisted. Exact schema cause unknown.",
+  "failed_tasks": [
+    {
+      "task": {
+        "task_id": "b7b49074b300404aa2715f00c670a0e1",
+        "workflow_run_id": "13e51899f1114343b2b085a4ae94b9b3",
+        "correlation_id": "5524ad532d314aeca59ab1c29e2b82ee",
+        "status": "FAILED",
+        "result_code": "MODEL_INVALID_RESPONSE",
+        "message_hash": "9290fa2f7b61874c5e60e6b64912d26d7e83eed52446c8bdfce008803c34ff13"
+      },
+      "records": {
+        "workflow_runs": {
+          "total": 10,
+          "matching": [
+            {
+              "task_id": "b7b49074b300404aa2715f00c670a0e1",
+              "workflow_run_id": "13e51899f1114343b2b085a4ae94b9b3",
+              "status": "FAILED"
+            }
+          ]
+        },
+        "conversation_requests": {
+          "total": 20,
+          "matching": [
+            {
+              "status": "FAILED",
+              "error": "MODEL_INVALID_RESPONSE",
+              "session_id": "c272d746945b4438b00c64991f889440"
+            }
+          ]
+        },
+        "actions": {
+          "total": 0,
+          "matching": []
+        },
+        "approvals": {
+          "total": 0,
+          "matching": []
+        },
+        "execution_authorizations": {
+          "total": 0,
+          "matching": []
+        },
+        "jobs": {
+          "total": 0,
+          "matching": []
+        },
+        "execution_records": {
+          "total": 0,
+          "matching": []
+        },
+        "audit_events": {
+          "total": 170,
+          "matching": [
+            {
+              "task_id": "b7b49074b300404aa2715f00c670a0e1",
+              "workflow_run_id": "13e51899f1114343b2b085a4ae94b9b3",
+              "event_type": "AGENT_TASK_CREATED",
+              "result": "OK",
+              "event_id": "4530fe35b4e8430b83a08b76717ae9ac"
+            },
+            {
+              "task_id": "b7b49074b300404aa2715f00c670a0e1",
+              "workflow_run_id": "13e51899f1114343b2b085a4ae94b9b3",
+              "event_type": "AGENT_SELECTED",
+              "result": "OK",
+              "event_id": "69ea714374294759bffd08b44ba5e8b9"
+            },
+            {
+              "task_id": "b7b49074b300404aa2715f00c670a0e1",
+              "workflow_run_id": "13e51899f1114343b2b085a4ae94b9b3",
+              "event_type": "AGENT_STARTED",
+              "result": "OK",
+              "event_id": "e5702dcff87c497f8fd7df24452e201f"
+            },
+            {
+              "action_id": null,
+              "event_type": "ADMIN_SESSION",
+              "result": "COMMITTED",
+              "event_id": "e509c060b1c8480099aec579bf332056"
+            },
+            {
+              "event_type": "MODEL_GENERATION",
+              "result": "MODEL_INVALID_RESPONSE",
+              "event_id": "8c9edcd18b8046eea9b03d2511463ffe",
+              "session_id": "c272d746945b4438b00c64991f889440"
+            },
+            {
+              "action_id": null,
+              "event_type": "ADMIN_CLOSE_SESSION",
+              "result": "COMMITTED",
+              "event_id": "15dde217b500484680db127d00030477"
+            },
+            {
+              "task_id": "b7b49074b300404aa2715f00c670a0e1",
+              "workflow_run_id": "13e51899f1114343b2b085a4ae94b9b3",
+              "event_type": "AGENT_FAILED",
+              "result": "MODEL_INVALID_RESPONSE",
+              "event_id": "ff25c7d607d947ed998c009afcc9a9f7"
+            },
+            {
+              "action_id": null,
+              "event_type": "HTTP",
+              "result": "MODEL_INVALID_RESPONSE",
+              "event_id": "7a74ec24884f4671b4c92a8d56ea4e44"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

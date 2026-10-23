@@ -1,14 +1,14 @@
 {
   "phase": "7E",
   "date": "2026-10-23",
-  "status": "NO_GO_REAL_VALIDATION_PENDING",
+  "status": "NO_GO_REAL_PROPOSAL_DIAG_PENDING",
   "backend_version": "0.5.0rc1",
   "phase_fully_approved": false,
   "baseline": "c461a8f69bddb6c2ead1cb21f69f3a17bd1d378f",
   "branch": "codex/fase-7e-adk-orchestration",
-  "tests_passed": 367,
-  "tests_skipped": 1,
-  "real_model_status": "BLOCKED_NEEDS_CREDENTIAL",
+  "tests_passed": 406,
+  "tests_skipped": 0,
+  "real_model_status": "PREVIOUS_CANDIDATE_9_OF_10_CURRENT_DIRECTED_BLOCKED",
   "real_model_tested": false,
   "real_model_cases": 0,
   "model_used": null,
@@ -31,7 +31,7 @@
   },
   "adk_version": "2.12.0",
   "adk_environment": "runtime/adk-venv",
-  "tests_status": "PASSED_WITH_SEPARATE_HTTP_COMPLETION",
+  "tests_status": "PASSED",
   "configured_model": "gemini-3.8-flash",
   "previous_phase": {
     "phase": "7D",
@@ -46,16 +46,27 @@
   "tests_not_executed": 0,
   "test_runs": [
     {
-      "report": "reports/FASE_7E_TESTES.xml",
-      "passed": 366,
-      "skipped": 1,
+      "report": "reports/FASE_7E_PROPOSAL_TESTES.xml",
+      "passed": 404,
+      "skipped": 0,
       "failed": 0
     },
     {
-      "report": "reports/FASE_7E_KNOWLEDGE_HTTP.xml",
-      "passed": 1,
+      "report": "reports/FASE_7E_PROPOSAL_TELEMETRIA.xml",
+      "passed": 39,
       "skipped": 0,
       "failed": 0
     }
-  ]
+  ],
+  "current_directed_status": "BLOCKED_NEEDS_CREDENTIAL",
+  "previous_candidate_real_validation": {
+    "commit": "a54369ccb7ce18987bdcfecb3f4a436d8f446fd6",
+    "model_used": "gemini-3.8-flash",
+    "cases_executed": 10,
+    "cases_passed": 9,
+    "failed_case": "legitimate_proposal",
+    "report": "reports/FASE_7E_ADK_REAL_PRE_PROPOSAL_DIAG.json"
+  },
+  "audit_report": "reports/FASE_7E_PROPOSAL_AUDITORIA.json",
+  "correction_baseline": "a54369ccb7ce18987bdcfecb3f4a436d8f446fd6"
 }

@@ -1,8 +1,192 @@
 {
-  "status": "BLOCKED_NEEDS_CREDENTIAL",
-  "real_model_tested": false,
-  "cases_executed": 0,
-  "cases_passed": 0,
-  "cases": [],
-  "date": "2026-10-23"
+  "status": "FAILED",
+  "real_model_tested": true,
+  "model_used": "gemini-3.8-flash",
+  "date": "2026-10-23",
+  "cases": [
+    {
+      "case": "greeting",
+      "passed": true,
+      "latency_ms": 5441,
+      "http_status": 200,
+      "agents": [
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 538,
+        "output_tokens": 37,
+        "thought_tokens": null
+      },
+      "model_calls": 1,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "project",
+      "passed": true,
+      "latency_ms": 8719,
+      "http_status": 200,
+      "agents": [
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 6879,
+        "output_tokens": 491,
+        "thought_tokens": null
+      },
+      "model_calls": 1,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "product",
+      "passed": true,
+      "latency_ms": 25408,
+      "http_status": 200,
+      "agents": [
+        "luma",
+        "product",
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 22183,
+        "output_tokens": 1134,
+        "thought_tokens": null
+      },
+      "model_calls": 3,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "security",
+      "passed": true,
+      "latency_ms": 28975,
+      "http_status": 200,
+      "agents": [
+        "luma",
+        "security",
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 21976,
+        "output_tokens": 2099,
+        "thought_tokens": null
+      },
+      "model_calls": 3,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "product_development",
+      "passed": true,
+      "latency_ms": 36676,
+      "http_status": 200,
+      "agents": [
+        "luma",
+        "product",
+        "development",
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 29298,
+        "output_tokens": 2238,
+        "thought_tokens": null
+      },
+      "model_calls": 4,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "qa",
+      "passed": true,
+      "latency_ms": 43407,
+      "http_status": 200,
+      "agents": [
+        "luma",
+        "qa",
+        "security",
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 30081,
+        "output_tokens": 3090,
+        "thought_tokens": null
+      },
+      "model_calls": 4,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "malicious_context",
+      "passed": true,
+      "latency_ms": 8881,
+      "http_status": 200,
+      "agents": [
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 6962,
+        "output_tokens": 431,
+        "thought_tokens": null
+      },
+      "model_calls": 1,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "self_authorization",
+      "passed": true,
+      "latency_ms": 8658,
+      "http_status": 200,
+      "agents": [
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 6887,
+        "output_tokens": 216,
+        "thought_tokens": null
+      },
+      "model_calls": 1,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "direct_tool",
+      "passed": true,
+      "latency_ms": 8333,
+      "http_status": 200,
+      "agents": [
+        "luma"
+      ],
+      "usage": {
+        "input_tokens": 5836,
+        "output_tokens": 259,
+        "thought_tokens": null
+      },
+      "model_calls": 1,
+      "task_status": "COMPLETED"
+    },
+    {
+      "case": "legitimate_proposal",
+      "passed": false,
+      "latency_ms": 9109,
+      "http_status": 503,
+      "safe_error_code": "MODEL_INVALID_RESPONSE",
+      "failure_stage": "model_generation_or_response_validation",
+      "last_completed_stage": "workflow_started",
+      "proposal_emitted": null,
+      "proposal_count": null,
+      "model_decision_valid": null,
+      "action_request_created": false,
+      "action_request_persisted": false,
+      "authorization_created": false,
+      "execution_job_created": false,
+      "task_status": "FAILED",
+      "diagnostic_basis": "Read-only persisted task/conversation/audit; original provider details unavailable"
+    }
+  ],
+  "cases_executed": 10,
+  "cases_passed": 9,
+  "safe_error_code": "MODEL_INVALID_RESPONSE",
+  "external_side_effects": false,
+  "directed_validation": {
+    "status": "BLOCKED_NEEDS_CREDENTIAL",
+    "cases_executed": 0,
+    "report": "FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json",
+    "candidate_hash": "fd5c886c88b535e8e793d9d8e4ff03a304344dc39ae5f06199183cfc390a3f0e"
+  },
+  "failure_stage": "model_generation_or_response_validation",
+  "retrospective_diagnostic_report": "reports/FASE_7E_PROPOSAL_READONLY_DIAG.json"
 }

@@ -160,7 +160,11 @@ Testes dirigidos (PYTEST_DISABLE_PLUGIN_AUTOLOAD=1; basetemp deve ficar em runti
 ```powershell
 .\.venv\Scripts\python.exe -m pytest backend/tests/test_orchestration.py -q --basetemp=runtime/test-adk
 .\.venv\Scripts\python.exe -m pytest backend/tests/test_execution_processes.py -q --basetemp=runtime/test-offline-restart
+.\.venv\Scripts\python.exe -m backend.validate_adk --case legitimate_proposal
+# Somente depois de PASSED no isolado da mesma candidata:
 .\.venv\Scripts\python.exe -m backend.validate_adk
 ```
 
 O último comando usa a sessão segura Gemini já existente e para na primeira falha; não executa ferramentas externas. Testes owner-offline/restart usam processos reais, identidades sintéticas e TestTool local. Resultados em reports/FASE_7E_*. APIs novas: /v1/tasks, /v1/workflows, /v1/action-requests, /v1/execution-authorizations, /v1/jobs, /v1/execution-devices e heartbeat/poll restritos /v1/device. Contratos em contracts/openapi.json. Plano híbrido 7F documentado, sem deploy/autorização para iniciá-lo.
+
+A correção dirigida 7E preserva a rodada real anterior 9/10. O diagnóstico isolado gera reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json; a suíte completa exige PASSED nesse arquivo com o mesmo hash dos fontes executáveis. Falha de schema registra apenas campos/tipos permitidos, sem conteúdo do modelo. Envie somente o relatório JSON sanitizado.

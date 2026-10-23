@@ -7,3 +7,13 @@ Roteamento conservador determinístico do backend gera AgentRouteProposal. Não 
 TaskAgentExecutionContext separa runtime principal, projeto, sessão mínima, correlation/task IDs, capabilities de proposta/leitura, deadline e hops. Contexto factual chega somente pela Knowledge API com as mesmas restrições da 7D. Mensagem atual é preservada; resultados anteriores são resumidos em tamanho e tratados como UNTRUSTED_DATA. O modelo pode produzir ModelDecision.proposed_actions: o backend valida parâmetros e cria candidato AGENT_PROPOSED em WAITING_AUTHORIZATION. Não cria autorização ou Job. Todas as ferramentas externas permanecem PLANNED/DISABLED.
 
 AgentTask sobrevive à sessão por persistência; WorkflowRun contém papéis, status, uso, contagem, hashes e resultado mínimo. Não contém raciocínio privado. Os papéis podem analisar informações; nenhuma invocação atesta operação em produção.
+
+## Propostas e conclusão da tarefa — correção dirigida 7E
+
+O caminho /v1/tasks reutiliza validação e grounding da conversa, mas adia a persistência das propostas. Não grava os registros DENIED históricos da rota /v1/conversation/turn. Todos os ModelDecision dos especialistas e do root alimentam uma coleção interna de propostas; a síntese final não apaga uma proposta anterior válida. Validação final considera identidade de agente/runtime, projeto, grants atuais, registro/capability e parâmetros. O envelope exato deduplica propostas repetidas na mesma tarefa; risco e IDs pertencem ao backend.
+
+ActionRequests, estado final de AgentTask, WorkflowRun, resposta idempotente e eventos de proposta são gravados juntos. Falha antes do commit remove todas as ações desta tarefa; o registro de falha preserva apenas diagnóstico seguro. Depois do commit, retry com a mesma chave e corpo devolve a resposta persistida sem nova geração ou ActionRequest. Exige ainda identidade, projeto e sessão humana válidos; uma sessão revogada não é reativada pelo retry.
+
+WorkflowRun=COMPLETED significa fim do trabalho cognitivo. AgentTask=WAITING_AUTHORIZATION significa que há proposta aguardando decisão humana, sem manter processo de modelo aberto. Nenhuma Approval, ExecutionAuthorization ou Job é criada pelo agente. Uma ferramenta conhecida PLANNED/DISABLED pode receber proposta conforme a policy de candidatos existente; authorize/execute continuam exigindo ferramenta habilitada.
+
+Telemetria: diagnostic no registro da tarefa e workflow contém estágios, contagens, booleanos e vocabulário fechado de erros. null significa não observado, não sucesso nem ausência de proposta. A observação do provider não altera o schema aceito, perfil de geração, BaseLlm ou grafo ADK.

@@ -1,0 +1,109 @@
+{
+  "baseline": "a54369ccb7ce18987bdcfecb3f4a436d8f446fd6",
+  "date": "2026-10-23",
+  "version": "0.5.0rc1",
+  "status": "NO_GO_REAL_PROPOSAL_DIAG_PENDING",
+  "scope": "Changed files for directed proposal correction; excludes this manifest and ignored runtime",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "68d8cf775705940e9531ff8ddb31c0e74c623db11549da0802d345a98305b229"
+    },
+    {
+      "path": "audit_workspace.py",
+      "sha256": "40177f488865b79d0c2513aeed1a69d3790d5c65840db90e8b2c9a8946636568"
+    },
+    {
+      "path": "backend/app/conversation.py",
+      "sha256": "8e7d7b9d69970554cc6b5b8b96c91a3bb22656f32d7f81e920920aab4d9c6fab"
+    },
+    {
+      "path": "backend/app/orchestration.py",
+      "sha256": "05406412330a06c425f0ae80508b05215ee4bedfb4e96440e710a8ffee848d60"
+    },
+    {
+      "path": "backend/app/proposal_flow.py",
+      "sha256": "6de3bfc37fce3afe565da3913a0f3bed4759a2bc3dee60d9387a26795b50478e"
+    },
+    {
+      "path": "backend/app/provider_diagnostics.py",
+      "sha256": "654a66ce49842e49172819fb8ae39b2f0c23883e0ef9f446d1ea1398db6c8808"
+    },
+    {
+      "path": "backend/model_worker/adapter.py",
+      "sha256": "7875407986369c43347d56f474cfb82f2e016ced404c93b3c17a6d2b7a7557b0"
+    },
+    {
+      "path": "backend/tests/test_proposal_flow.py",
+      "sha256": "3c4419daa3cb6f59831aaf4898947ec049ae73ea033abfa1bb89da514ac24db5"
+    },
+    {
+      "path": "backend/validate_adk.py",
+      "sha256": "b1ecc85110f53a2d25391a4caf1f47ff69520c3e986018073e72d84c88063031"
+    },
+    {
+      "path": "docs/LUMA_AGENT_TEAM.md",
+      "sha256": "aa767e330b03c5285da60c0b117f853babdc20bbd6651680ceef68272bb89a55"
+    },
+    {
+      "path": "phase-status.json",
+      "sha256": "c987cae3ca9a716640143adce04231ea48aea72d993803ff6ecebbbb9bc7366b"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_LEGITIMATE_PROPOSAL_REAL.json",
+      "sha256": "ff1c275efe3c60fe4ef353b3fcba923abe44ff7c3cbbd7ecadb65967cb3afce8"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL.json",
+      "sha256": "752595c29c09577144f11e458f48f883a8ddbb03e165983ade3142a72ea0a623"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL_HISTORY_1792757883309614600.json",
+      "sha256": "fad33f187058aeb22fc9afd64c22c618194b1611ec7f42091c9380c1beb321b1"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL_HISTORY_1792759666539871300.json",
+      "sha256": "63deec2bdf57cbeb1041965203df3696d828d54ebefed443d4ab0881b165263e"
+    },
+    {
+      "path": "reports/FASE_7E_ADK_REAL_PRE_PROPOSAL_DIAG.json",
+      "sha256": "d9f0ddcdb477f4c41608f7094f72a012c2940c47d08b4ca87183e25bd3978b15"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_AUDITORIA.json",
+      "sha256": "d3c6893164ff06785653e77bb4ab6cf221e9f5c847fb827f9b8b31fe43211c4e"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_READONLY_DIAG.json",
+      "sha256": "d2484c937f6016dace602990f6a0fca8e0cdb4a265cb9c2660b26fa10f02ef87"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_TELEMETRIA.txt",
+      "sha256": "5859d7e7db68613d9875b3128852500545dae0a71fb0b48c5e2189f0a237bdc6"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_TELEMETRIA.xml",
+      "sha256": "3b26180c98f98973829feef02c0b785214b29324c3e9af70bf705a1befae7f91"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_TESTES.txt",
+      "sha256": "fc4d06febbf05daba49c6acb0ae281939f630abe5df1f8f404c3002f733363f8"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_TESTES.xml",
+      "sha256": "c8c09fcf57e89a531d84f5b0c2c8fddebf17243917bc63cf7a918c82779a5780"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_TESTES_DIRIGIDOS.txt",
+      "sha256": "97bc299847d59eaeb198064b18b36fe79e5db51b4aa4299569ef57a4ebc94831"
+    },
+    {
+      "path": "reports/FASE_7E_PROPOSAL_TESTES_DIRIGIDOS_2.txt",
+      "sha256": "fcd71b7fd4ed09a96353bd1e3b904b0d37ef9e8f5b882234a672e1047618194d"
+    },
+    {
+      "path": "reports/FASE_7E_RELATORIO_ADK_ORQUESTRACAO.md",
+      "sha256": "56b819c1a22aad5a0c13b81ef144335c1be2821f1dc1d048b3dc2c870ec3834f"
+    }
+  ]
+}

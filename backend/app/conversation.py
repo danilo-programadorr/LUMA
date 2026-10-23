@@ -38,8 +38,9 @@ class ConversationAnswer(Contract):
     usage:dict
 
 class ConversationService:
-    def __init__(self,control,knowledge,provider,config):
+    def __init__(self,control,knowledge,provider,config,*,defer_proposals=False,observer=None):
         self.control,self.knowledge,self.provider,self.config=control,knowledge,provider,config
+        self.defer_proposals=defer_proposals;self.observer=observer
     def authorize(self,repo,p,sid):
         human=self.control._principal(repo,p.principal_id)
         if human.principal_type!='HUMAN_OWNER': raise Fault('HUMAN_IDENTITY_REQUIRED',403)
@@ -97,9 +98,13 @@ class ConversationService:
             self.control.safe(context.model_dump(mode='json'),max_chars=65536)
             result=self.provider.generate(context,correlation)
             if not isinstance(result,ModelResult): raise Fault('MODEL_INVALID_RESPONSE',503)
-            result=ModelResult.model_validate_json(result.model_dump_json())
-            self.control.safe(result.model_dump(mode='json',exclude={'usage'}),max_chars=131072)
+            try:result=ModelResult.model_validate_json(result.model_dump_json())
+            except ValidationError as exc:
+                if self.defer_proposals and any('proposed_actions' in e['loc'] for e in exc.errors(include_input=False,include_context=False,include_url=False)):raise Fault('PROPOSAL_SCHEMA_INVALID',503) from None
+                raise
             decision=result.decision
+            if self.observer:self.observer(decision)
+            self.control.safe(result.model_dump(mode='json',exclude={'usage'}),max_chars=131072)
             sources={(s['document_id'],s['chunk_id']):s for s in knowledge.sources} if knowledge else {}
             citations=[]
             for c in decision.citations:
@@ -116,7 +121,7 @@ class ConversationService:
                 window=repo.get('conversation_windows',body.session_id)
                 if window['active_request']!=rid: raise Fault('TURN_LEASE_EXPIRED',409)
                 actions=[]
-                for proposal in decision.proposed_actions:
+                for proposal in (() if self.defer_proposals else decision.proposed_actions):
                     self.parameters(proposal.parameters)
                     tool=repo.get('tools',proposal.tool_id)
                     if not tool or proposal.capability not in tool['capabilities']: raise Fault('MODEL_INVALID_PROPOSAL',503)
