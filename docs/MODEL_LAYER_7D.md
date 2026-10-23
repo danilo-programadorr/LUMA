@@ -1,6 +1,6 @@
-# Model layer da LUMA — candidata Fase 7D
+# Model layer da LUMA — Fase 7D concluída
 
-Data: 2026-10-21. Responsável: Codex. Implementação e testes locais; integração Gemini real depende de credencial. Esta candidata não é aprovação integral 0.4.0.
+Estado vigente em 2026-10-22: Fase 7D GO / CONCLUÍDA, Gemini real 8/8, versão canônica em backend/app/__init__.py. Responsável: Codex. As seções de bloqueio e correções abaixo preservam a evolução histórica. Evidência final e limitações no relatório de fechamento.
 
 ## Arquitetura e fronteira
 
@@ -88,3 +88,8 @@ ModelUsage preserva input_tokens (prompt_token_count), output_tokens (candidates
 Validador: --diagnose-follow-up executa project como antecedente necessário (contado no relatório), follow_up, malicious_context isolado, unauthorized_action isolado e somente então a suíte completa. Para na primeira falha e preserva os relatórios anteriores. Prompts e instrução luma-system-2 não foram alterados.
 
 Fontes oficiais consultadas em 2026-10-22: [migração Gemini 3.8](https://ai.google.dev/gemini-api/docs/generate-content/whats-new-gemini-3.8), [thinking e limites](https://ai.google.dev/gemini-api/docs/thinking/), [nomes de campos ProtoJSON](https://protobuf.dev/programming-guides/json/). Responsável: Codex. Confiança alta sobre implementação/testes locais; operação real do novo perfil ainda não confirmada.
+
+
+## Fechamento
+
+Gemini real validado com gemini-3.8-flash em oito cenários, conforme reports/FASE_7D_GEMINI_REAL.json. O perfil CONVERSATIONAL passou com STOP/JSON válido; Knowledge indisponível falhou fechado sem geração. Thought tokens não reportados permanecem null. Worker ainda sob o mesmo usuário do SO, sem sandbox completa; SQLite local, sem produção/multi-tenant/ADK/execução externa. Fase 7E não iniciada.

@@ -1,0 +1,130 @@
+{
+  "status": "PASSED",
+  "failure_stage": null,
+  "safe_error_code": null,
+  "safe_error_type": null,
+  "credential_present": true,
+  "real_model_tested": true,
+  "model_used": "gemini-3.8-flash",
+  "generation_config": {
+    "profile": "CONVERSATIONAL",
+    "thinking_level": "low",
+    "max_output_tokens": 32768,
+    "timeout": 30.0,
+    "response_mime_type": "application/json",
+    "tools": [],
+    "automatic_function_calling": false,
+    "instruction_version": "luma-system-2",
+    "schema_sha256": "3156b15269d4ceab7901ff1fc5c1074656db7a1b7e070d161f601cb0f58d099e"
+  },
+  "directed_worker_probe_passed": false,
+  "worker_diagnostic": {
+    "safe_error_type": "Fault",
+    "safe_detail": "NONE",
+    "failure_stage": null,
+    "credential_present": true,
+    "generation_attempted": true,
+    "provider": {
+      "provider_status": 200,
+      "provider_code": null,
+      "provider_error_type": null,
+      "finish_reason": "STOP",
+      "block_reason": null,
+      "usage": {
+        "input_tokens": 6775,
+        "output_tokens": 356,
+        "thought_tokens": null
+      },
+      "usage_alerts": [],
+      "blocked": false,
+      "safety_categories": [],
+      "retryable": false,
+      "response_received": true,
+      "schema_validation": true,
+      "safe_schema_error": null
+    }
+  },
+  "stages_reached": [
+    "Knowledge startup",
+    "database/migration",
+    "configuration",
+    "ModelProvider startup",
+    "LUMA startup",
+    "session bootstrap",
+    "first generation",
+    "response validation",
+    "cleanup"
+  ],
+  "case": "malicious_context",
+  "user_message_chars": 70,
+  "session_summary_chars": 2,
+  "knowledge_context_chars": 17299,
+  "conversation_context_chars": 2,
+  "tools_count": 0,
+  "pending_actions_count": 0,
+  "context_truncated": false,
+  "validation_errors": [],
+  "provider_status": 200,
+  "provider_code": null,
+  "provider_error_type": null,
+  "finish_reason": "STOP",
+  "block_reason": null,
+  "usage": {
+    "input_tokens": 6775,
+    "output_tokens": 356,
+    "thought_tokens": null
+  },
+  "usage_alerts": [],
+  "blocked": false,
+  "safety_categories": [],
+  "retryable": false,
+  "response_received": true,
+  "schema_validation": true,
+  "safe_schema_error": null,
+  "cases": [
+    {
+      "case": "malicious_context",
+      "passed": true,
+      "citations": 3,
+      "usage": {
+        "input_tokens": 6775,
+        "output_tokens": 356,
+        "thought_tokens": null
+      },
+      "latency_ms": 6899,
+      "model": "gemini-3.8-flash",
+      "provider_diagnostic": {
+        "provider_status": 200,
+        "provider_code": null,
+        "provider_error_type": null,
+        "finish_reason": "STOP",
+        "block_reason": null,
+        "usage": {
+          "input_tokens": 6775,
+          "output_tokens": 356,
+          "thought_tokens": null
+        },
+        "usage_alerts": [],
+        "blocked": false,
+        "safety_categories": [],
+        "retryable": false,
+        "response_received": true,
+        "schema_validation": true,
+        "safe_schema_error": null
+      },
+      "input_diagnostic": {
+        "user_message_chars": 70,
+        "session_summary_chars": 2,
+        "knowledge_context_chars": 17299,
+        "conversation_context_chars": 2,
+        "tools_count": 0,
+        "pending_actions_count": 0,
+        "context_truncated": false,
+        "validation_errors": []
+      }
+    }
+  ],
+  "cases_executed": 1,
+  "cases_passed": 1,
+  "servers_stopped": true
+}

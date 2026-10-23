@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-22",
+  "baseline": "53a93f8a716fa1a244ce47d9a65995ebca4622db",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "178e26c353f0414da1a1a0c42ba8ec0584831dd1416068a3767da8613888d0f5"
+    },
+    {
+      "path": "backend/app/__init__.py",
+      "sha256": "571e3b8bc40d79724db94cecb6a5ae53a782584e71b5a63492037e1a6fddfe01"
+    },
+    {
+      "path": "contracts/openapi.json",
+      "sha256": "eb2521ba9b40bca725332f4f7413b483554c223e85ff23be140f6730bcbaced6"
+    },
+    {
+      "path": "docs/MODEL_LAYER_7D.md",
+      "sha256": "718a58bd13658d79ee215e70692e7a0fba59aa5da8558bb75b289b986c7cd3a2"
+    },
+    {
+      "path": "phase-status.json",
+      "sha256": "6d0009fc96caf70338bd9253e40170081b8ee5a0909c31252f7b2af5bdeecd75"
+    },
+    {
+      "path": "reports/FASE_7D_AUDITORIA_RELEASE.json",
+      "sha256": "5370c362c33cff2c149ec3009920613520ca712a51303b76c75778765b4c46cd"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL.json",
+      "sha256": "7854afe181568e34a8515ddcc2a56c2121ecb2a5456649fc4dcc16cf210c05f0"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792718254096390500.json",
+      "sha256": "c3b36d19983d8c3b27c98898f58784b9655778a8c9fc4c61bd88191c10fc510b"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792718271519195700.json",
+      "sha256": "26ee6271b9e3e4e926ea8318aef0f48f3707ab7dec0d3a4afa4be68f6c3e56d8"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792718280296539700.json",
+      "sha256": "3b61c963dead294698530e5564cbd4e6677dcae22981db20580f370ca6ea1aa2"
+    },
+    {
+      "path": "reports/FASE_7D_GEMINI_REAL_HISTORY_1792718287606995800.json",
+      "sha256": "787de921b87b70473347feb2efc5f1db09d6b64dae8f1dd307240f6e39100b0e"
+    },
+    {
+      "path": "reports/FASE_7D_RELATORIO_GEMINI_MODEL_ADAPTER.md",
+      "sha256": "84736f51976099ec8de94be6baef74f1da68e11badf435e7bf4f01c6b58a2513"
+    },
+    {
+      "path": "reports/FASE_7D_TESTES_RELEASE.txt",
+      "sha256": "247dadbc941a7b2ab646f7be96e0eef303d79b11f6e365de7555ba84dc4f265b"
+    },
+    {
+      "path": "reports/FASE_7D_TESTES_RELEASE.xml",
+      "sha256": "9834225e498d9d8102c48eb9b32673ef1399baf8a0014c7bd4248847da36fad8"
+    }
+  ]
+}

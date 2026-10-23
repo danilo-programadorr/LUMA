@@ -1,6 +1,6 @@
-# LUMA Backend 0.4.0rc1 — candidata do model adapter
+# LUMA Backend 0.4.0 — Fase 7D concluída
 
-Plataforma web responsiva futura, backend Python/FastAPI local. SQLite + SQLAlchemy persistem identidade, controles, ações/aprovações, sessões, candidatos e auditoria. **Knowledge HTTP funciona; o adaptador Gemini está implementado e testado sem rede, mas sua validação real está BLOCKED_NEEDS_CREDENTIAL. Nenhum agente ou executor externo foi integrado.** Cérebro Meu Gestor permanece separado e intacto.
+Plataforma web responsiva futura, backend Python/FastAPI local. SQLite + SQLAlchemy persistem identidade, controles, ações/aprovações, sessões, candidatos e auditoria. **Knowledge HTTP funciona; o adaptador Gemini foi validado localmente e em oito cenários reais com gemini-3.8-flash. Nenhum agente ou executor externo foi integrado.** Cérebro Meu Gestor permanece separado e intacto.
 
 ## Instalar, migrar e iniciar no Windows
 
