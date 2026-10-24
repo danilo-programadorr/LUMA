@@ -1,0 +1,74 @@
+{
+  "phase": "7F",
+  "date": "2026-10-24",
+  "verifier": "Codex",
+  "status": "BLOCKED_LOCAL_POSTGRES_PREREQUISITE",
+  "gate": "7F-A",
+  "baseline_commit": "62b2afa074966c6a7c3886a2d2d4730cbce23442",
+  "backend_version": "0.5.0",
+  "implementation_started": false,
+  "branch": "codex/fase-7f-remote-control-local-executor",
+  "project": {
+    "id": "gen-lang-client-0178588873",
+    "number": "347540226289",
+    "name": "LUMA",
+    "lifecycle": "ACTIVE",
+    "billing_enabled": true,
+    "default_gcloud_project": null,
+    "default_run_region": null,
+    "enabled_apis": ["generativelanguage.googleapis.com"],
+    "account_identity": "REDACTED",
+    "region_proposed": "southamerica-east1",
+    "region_basis": "Official service location documentation; project quotas and organization policy not validated"
+  },
+  "local_tools": {
+    "gcloud": "589.0.0",
+    "node": "v24.18.0",
+    "npm": "11.10.0",
+    "codex_cli": "0.163.0-alpha.11",
+    "codex_auth": "Logged in using ChatGPT",
+    "codex_real_job_tested": false,
+    "docker_found": false,
+    "postgresql_found": false,
+    "terraform_found": false
+  },
+  "postgres_detection_scope": [
+    "Get-Command docker, psql, postgres, pg_ctl, initdb",
+    "C:/Program Files/PostgreSQL",
+    "C:/Program Files/Docker/Docker/resources/bin/docker.exe",
+    "Windows service names matching postgres or docker"
+  ],
+  "cloud_read_commands": [
+    "gcloud config get-value project",
+    "gcloud config get-value run/region",
+    "gcloud projects describe gen-lang-client-0178588873",
+    "gcloud billing projects describe gen-lang-client-0178588873 --format=json(projectId,billingEnabled)",
+    "gcloud services list --enabled --project=gen-lang-client-0178588873 --format=value(config.name)"
+  ],
+  "cloud_mutations": [],
+  "resources_created": [],
+  "billable_creation_authorized": false,
+  "local_postgres_choice": "AWAITING_OWNER_RESPONSE",
+  "choices": [
+    "Isolated local PostgreSQL under ignored runtime, without global service",
+    "Owner-configured Docker Desktop",
+    "Existing dedicated PostgreSQL test environment"
+  ],
+  "validation": {
+    "baseline_7E_tests": 459,
+    "baseline_7E_audit": "VERIFIED in historical report",
+    "tests_executed_7F": 0,
+    "postgres_real": "NOT_EXECUTED",
+    "cloud": "NOT_EXECUTED",
+    "real_phone": "NOT_EXECUTED",
+    "real_codex": "NOT_EXECUTED",
+    "full_audit_7F": "NOT_EXECUTED"
+  },
+  "limitations": [
+    "CLI login status does not prove an executor job works",
+    "Billing enabled does not authorize resource creation",
+    "Missing local executable is not evidence that no remote PostgreSQL exists",
+    "No PostgreSQL compatibility claim is made from SQLite or mocks",
+    "Phase 7E evidence is historical and was not rerun as Phase 7F"
+  ]
+}
