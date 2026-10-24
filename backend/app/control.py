@@ -37,7 +37,7 @@ def action_scope(action):
 class Control:
     def __init__(self,settings):
         self.settings=settings
-        self.store=Store(settings.database_url)
+        self.store=Store(settings.database_url,settings.database_backend)
         self.bootstrap()
 
     def close(self): self.store.close()

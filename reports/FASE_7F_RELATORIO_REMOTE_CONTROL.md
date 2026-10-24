@@ -59,3 +59,18 @@ serviço global, Docker Desktop configurado pelo proprietário, ou PostgreSQL de
 testes existente. Não solicitar credenciais no chat.
 A regra de parada é a seção 197 da autorização 7F: preservar evidência e não
 contornar gates críticos. Não iniciar 7G.
+
+## Atualização posterior — 2026-10-24, continuação autorizada
+
+O bloqueio PostgreSQL registrado acima foi resolvido. Backup inicial GitHub
+confirmado no commit a2ec0c81f624b62bf3f8d8963188909be763060e.
+PostgreSQL 18.6 isolado foi instalado e validado: 43 testes reais e 459 baseline
+aprovados, zero falhas/skips. Candidata 0.6.0rc1. Estado atual:
+7F-A_POSTGRES_VALIDATED. Consulte FASE_7F_POSTGRES_REAL.json e
+FASE_7F_POSTGRES_COMPATIBILITY.md para evidências, controles e limites.
+A verificação de backup final será registrada no recibo local de entrega e
+confirmada por git ls-remote após o commit, sem auto-referência de hash.
+
+Sem cloud, Docker ou início de 7F-B. PostgreSQL encerrado após os testes.
+A separação CONTROL_PLANE/LOCAL_RUNTIME continua pendente; esta rodada não
+declara a Fase 7F inteira GO nem implementa a etapa seguinte.

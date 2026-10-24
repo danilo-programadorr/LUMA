@@ -56,8 +56,27 @@ def database_path(url):
         raise ValueError('INVALID_DATABASE_LOCATION') from None
 
 
-def engine_for(url):
-    p=database_path(url)
+def validate_database(url, backend='sqlite'):
+    if backend == 'sqlite':
+        return database_path(url)
+    try:
+        u=make_url(url)
+        if (backend != 'postgresql' or u.drivername != 'postgresql+psycopg'
+            or u.host != '127.0.0.1' or not u.port or not 1024 <= u.port <= 65535
+            or u.username != 'luma_test' or not u.password or u.query
+            or not u.database or not __import__('re').fullmatch(r'luma_test(?:_[a-z0-9_]+)?', u.database)):
+            raise ValueError()
+    except Exception:
+        raise ValueError('INVALID_POSTGRES_TEST_CONFIGURATION') from None
+    return None
+
+
+def engine_for(url, backend='sqlite'):
+    p=validate_database(url, backend)
+    if backend == 'postgresql':
+        return create_engine(url, pool_size=5, max_overflow=0, pool_timeout=10,
+            pool_pre_ping=True, hide_parameters=True, isolation_level='READ COMMITTED',
+            connect_args={'connect_timeout':5, 'options':'-c timezone=UTC -c statement_timeout=15000 -c lock_timeout=10000'})
     return create_engine('sqlite:///'+p.as_posix(),connect_args={'timeout':10},pool_pre_ping=True)
 
 
@@ -98,9 +117,10 @@ class Repository:
 
 
 class Store:
-    def __init__(self,url):
-        if not database_path(url).is_file(): raise Fault('MIGRATION_REQUIRED',503)
-        self.engine=engine_for(url)
+    def __init__(self,url,backend='sqlite'):
+        path=validate_database(url,backend)
+        if path is not None and not path.is_file(): raise Fault('MIGRATION_REQUIRED',503)
+        self.engine=engine_for(url,backend)
         try:
             with self.engine.connect() as conn:
                 if set(inspect(conn).get_table_names())!=(set(metadata.tables)|set(trust_metadata.tables)|set(conversation_metadata.tables)|set(execution_metadata.tables)): raise Fault('SCHEMA_MISMATCH',503)

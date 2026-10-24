@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass, field
 from urllib.parse import urlsplit
 from .models import Principal
-from .database import DEFAULT_URL,database_path
+from .database import DEFAULT_URL,validate_database
 
 
 @dataclass(frozen=True)
@@ -16,7 +16,8 @@ class Settings:
     history: bool = False
     packages: tuple[str,...] = ()
     principal: Principal = field(default_factory=Principal)
-    database_url: str = DEFAULT_URL
+    database_url: str = field(default=DEFAULT_URL,repr=False)
+    database_backend: str = 'sqlite'
     admin_confirmation_token: str = field(default="",repr=False)
 
     runtime_token: str = field(default="",repr=False)
@@ -25,7 +26,7 @@ class Settings:
         if self.runtime_token and (not 32<=len(self.runtime_token)<=256 or not self.runtime_token.isascii() or any(c.isspace() for c in self.runtime_token) or self.runtime_token in (self.token,self.knowledge_token,self.admin_confirmation_token)):
             raise ValueError("INVALID_RUNTIME_CONFIGURATION")
         if self.principal.principal_id!='local-owner' or self.principal.principal_type!='HUMAN_OWNER': raise ValueError('INVALID_OWNER_IDENTITY')
-        database_path(self.database_url)
+        validate_database(self.database_url,self.database_backend)
         if self.admin_confirmation_token and (not 32<=len(self.admin_confirmation_token)<=256 or not self.admin_confirmation_token.isascii() or any(c.isspace() for c in self.admin_confirmation_token) or self.admin_confirmation_token in (self.token,self.knowledge_token)):
             raise ValueError("INVALID_CONFIRMATION_CONFIGURATION")
         u=urlsplit(self.knowledge_endpoint)
@@ -49,6 +50,6 @@ class Settings:
                 host=get('HOST','127.0.0.1'),port=int(get('PORT','8770')),
                 timeout=float(get('TIMEOUT','3')),history=history=='true',
                 packages=tuple(x.strip() for x in get('KNOWLEDGE_PACKAGES').split(',') if x.strip()),
-                database_url=get('DATABASE_URL',DEFAULT_URL),admin_confirmation_token=get('ADMIN_CONFIRM_TOKEN'),runtime_token=get('RUNTIME_TOKEN'))
+                database_url=get('DATABASE_URL',DEFAULT_URL),database_backend=get('DATABASE_BACKEND','sqlite'),admin_confirmation_token=get('ADMIN_CONFIRM_TOKEN'),runtime_token=get('RUNTIME_TOKEN'))
         except (ValueError,TypeError):
             raise ValueError('INVALID_LOCAL_CONFIGURATION') from None
