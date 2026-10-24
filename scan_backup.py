@@ -2,6 +2,7 @@
 import json,os,re,subprocess
 from pathlib import Path
 patterns={
+ 'dpapi_blob':rb'01000000d08c9ddf0115d1118c7a00c04fc297eb[0-9a-fA-F]{64,}',
  'private_key':rb'-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----',
  'google_key':rb'AIza[0-9A-Za-z_-]{30,}',
  'github_token':rb'(?:gh[pousr]_[0-9A-Za-z]{25,}|github_pat_[A-Za-z0-9_]{40,})',

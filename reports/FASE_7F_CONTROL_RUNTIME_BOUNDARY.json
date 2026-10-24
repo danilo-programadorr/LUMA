@@ -1,0 +1,69 @@
+{
+  "status": "PASSED",
+  "state": "7F-A2_CONTROL_RUNTIME_SPLIT_VALIDATED",
+  "backend_version": "0.6.0rc1",
+  "initial_commit": "274625090afb3c9749ffe26c9f82e33eaf728dc6",
+  "date": "2026-10-24",
+  "verifier": "Codex",
+  "control_plane_boot_without_gemini": "PASSED",
+  "control_plane_boot_without_adk": "PASSED",
+  "control_plane_boot_without_knowledge": "PASSED",
+  "control_plane_boot_without_codex": "PASSED",
+  "runtime_without_owner_authority": "PASSED",
+  "runtime_without_execution_authority": "PASSED",
+  "runtime_without_cloud_db_credentials": "PASSED",
+  "runtime_rejects_authority_credentials": "PASSED",
+  "protocol_version": "1",
+  "protocol_roundtrip": "PASSED",
+  "protocol_version_rejection": "PASSED",
+  "duplicate_result": "PASSED_INCLUDING_POSTGRES_CONCURRENCY_AND_SERVICE_RESTART",
+  "forged_owner": "DENIED",
+  "forged_project": "DENIED",
+  "forged_device": "DENIED_WITHOUT_VICTIM_STATE_CHANGE",
+  "risk_downgrade": "IGNORED_CANONICAL_HIGH",
+  "kill_switch_revalidation": "PASSED",
+  "revocation_revalidation": "PASSED",
+  "cancelled_and_expired_result": "DENIED",
+  "postgres_real": {
+    "status": "PASSED",
+    "version": "18.6",
+    "tests": 47,
+    "bind": "127.0.0.1",
+    "port": 55432,
+    "stopped_after_tests": true
+  },
+  "audit_chain": "VERIFIED",
+  "integrity_audit": "VERIFIED",
+  "baseline_tests": 502,
+  "new_tests": 68,
+  "total_tests": 570,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "local_tests": 523,
+  "boundary_tests": 64,
+  "adk_real_local_with_synthetic_model": true,
+  "gemini_real_tested": false,
+  "codex_real_tested": false,
+  "openai_api_key_used": false,
+  "cloud_resources_created": [],
+  "phase_7f_fully_approved": false,
+  "next_gate": "7F-B — LUMA Web + Owner Authentication",
+  "next_gate_started": false,
+  "evidence": {
+    "FASE_7F_A2_FINAL_TESTES.xml": {
+      "tests": 523,
+      "failures": 0,
+      "skipped": 0
+    },
+    "FASE_7F_A2_BOUNDARY_FINAL_TESTES.xml": {
+      "tests": 64,
+      "failures": 0,
+      "skipped": 0
+    },
+    "FASE_7F_A2_POSTGRES_TESTES.xml": {
+      "tests": 47,
+      "failures": 0,
+      "skipped": 0
+    }
+  }
+}

@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic import Field
 from .models import Contract
 from .errors import Fault
-from .adk_bridge import MAX_AGENT_HOPS,MAX_AGENT_INVOCATIONS
+from .agent_limits import MAX_AGENT_HOPS,MAX_AGENT_INVOCATIONS
 
 ROLES={'luma':'Gestora Geral / Orquestradora','product':'Produto, priorização, UX e requisitos','development':'Arquitetura e engenharia',
        'codex':'Planejamento de execução técnica; nunca invocar CLI','qa':'Testes, regressão e critérios de aceite; não aprovar produção',

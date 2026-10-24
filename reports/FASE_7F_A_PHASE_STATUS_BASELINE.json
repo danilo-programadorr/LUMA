@@ -1,0 +1,21 @@
+{
+  "phase": "7F",
+  "subgate": "7F-A_POSTGRES_VALIDATED",
+  "status": "IN_PROGRESS_NOT_GO",
+  "date": "2026-10-24",
+  "backend_version": "0.6.0rc1",
+  "phase_fully_approved": false,
+  "baseline_commit": "a2ec0c81f624b62bf3f8d8963188909be763060e",
+  "branch": "codex/fase-7f-remote-control-local-executor",
+  "tests_passed": 502,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "postgres_real_tests": 43,
+  "audit_report": "reports/FASE_7F_AUDITORIA.json",
+  "report": "reports/FASE_7F_POSTGRES_REAL.json",
+  "historical_baseline": "reports/FASE_7E_PHASE_STATUS_BASELINE.json",
+  "cloud_resources_created": [],
+  "servers_left_running": false,
+  "next_gate": "Complete CONTROL_PLANE/LOCAL_RUNTIME separation before 7F-B; requires owner continuation",
+  "next_phase_authorized": false
+}

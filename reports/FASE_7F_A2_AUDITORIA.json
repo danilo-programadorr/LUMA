@@ -1,0 +1,59 @@
+{
+  "adk_runtime_versions": {
+    "google-adk": "2.12.0",
+    "google-genai": "2.32.0"
+  },
+  "date": "2026-10-24",
+  "verifier": "Codex",
+  "status": "VERIFIED",
+  "sdk_versions": {
+    "google-genai": "2.32.0",
+    "google-generativeai": null,
+    "google-adk": null
+  },
+  "source_commit": "9fe7fd3a69a537f9e67953b7028e64c676a48547",
+  "brain_unchanged_hash_counts": {
+    "FASE_6_HASHES_ENTREGA.json": 37,
+    "FASE_5F_HASHES_ENTREGA.json": 166,
+    "source_files": 763
+  },
+  "runtime_and_contract_files_scanned": 313,
+  "baseline_7a": "cb06235a3e7b53d097d4851d7cae34130e3c5b38",
+  "migrations_versioned": true,
+  "runtime_ignored": true,
+  "git_local_only": false,
+  "production_verified": false,
+  "finance_repository": {
+    "access": "read-only git metadata; no before-baseline claimed",
+    "head": "9fe7fd3a69a537f9e67953b7028e64c676a48547",
+    "working_tree_clean": true
+  },
+  "errors": [],
+  "phase": "7F-A2",
+  "authorized_adaptations": [
+    "exact 7F branch",
+    "exact owner-configured origin URL",
+    "all four historical migrations compared with preflight baseline"
+  ],
+  "runtime_authority_import_check": "PASSED",
+  "evidence_runs": {
+    "FASE_7F_A2_FINAL_TESTES.xml": {
+      "tests": 523,
+      "failures": 0,
+      "skipped": 0
+    },
+    "FASE_7F_A2_BOUNDARY_FINAL_TESTES.xml": {
+      "tests": 64,
+      "failures": 0,
+      "skipped": 0
+    },
+    "FASE_7F_A2_POSTGRES_TESTES.xml": {
+      "tests": 47,
+      "failures": 0,
+      "skipped": 0
+    }
+  },
+  "unique_tests": 570,
+  "public_or_cloud_operation_tested": false,
+  "boundary_evidence": "Clean-process tests and local ADK with synthetic model; no Gemini network or Codex execution"
+}

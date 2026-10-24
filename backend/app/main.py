@@ -10,7 +10,6 @@ from .errors import Fault
 from .models import KnowledgeRequest,KnowledgeContext,Contract,ident
 from .trust import Control
 from .admin import install
-from .knowledge import KnowledgeClient,KnowledgeService
 from .audit import emit
 
 
@@ -30,13 +29,22 @@ def failure(request,error):
 
 
 def create_app(settings=None,client=None,model_provider=None,model_settings=None,*,execution_sandbox=False):
+    from backend.modes import mode
+    selected=mode()
+    if selected=='CONTROL_PLANE':
+        from backend.control_plane_app import create_control_plane
+        return create_control_plane(settings)
+    if selected=='LOCAL_RUNTIME':
+        raise ValueError('USE_RUNTIME_ENTRYPOINT')
+    from .knowledge import KnowledgeClient,KnowledgeService
     settings=settings or Settings.from_env()
     from .model_config import ModelSettings
     from .model_provider import GeminiModelProvider
     from .conversation import ConversationService,install_conversation
     model_settings=model_settings or ModelSettings.from_env(settings)
     model_settings.check_separation(settings)
-    provider=model_provider or GeminiModelProvider(model_settings)
+    from backend.local_dev_transport import EnvelopeModelProvider
+    provider=EnvelopeModelProvider(model_provider or GeminiModelProvider(model_settings))
     control=Control(settings)
     control.model_api_key=model_settings.api_key
     projects=policy=control
