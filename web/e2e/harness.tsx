@@ -1,0 +1,15 @@
+import { createRoot } from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AuthProvider } from '../src/auth/AuthProvider';
+import { LumaProvider } from '../src/components/luma/luma-provider';
+import { TooltipProvider } from '../src/components/ui/tooltip';
+import { routers } from '../src/router';
+import type { AuthClient } from '../src/auth/client';
+import '../src/index.css';
+if (import.meta.env.MODE !== 'test') throw new Error('TEST_HARNESS_DISABLED');
+let listener=(signed:boolean)=>{ void signed; };
+let signed=false;
+const client:AuthClient={observe:fn=>{listener=fn;fn(signed);return()=>{};},login:async()=>{signed=true;listener(true);},logout:async()=>{signed=false;listener(false);},token:async()=>{if(!signed)throw new Error('SIGNED_OUT');return 'synthetic-browser-fixture';},reauthenticate:async()=>{}};
+const requested=new URLSearchParams(location.search).get('route') || '/';
+history.replaceState(null,'',requested);
+createRoot(document.getElementById('root')!).render(<AuthProvider testClient={client}><TooltipProvider><LumaProvider><RouterProvider router={createBrowserRouter(routers)}/></LumaProvider></TooltipProvider></AuthProvider>);

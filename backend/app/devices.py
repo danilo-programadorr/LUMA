@@ -10,6 +10,7 @@ class DeviceRegistry:
     def __init__(self,execution):self.execution=execution;self.store=execution.store
     def public(self,row):return {k:v for k,v in row.items() if k!='credential_digest'}
     def register(self,p,data,key,correlation):
+        if getattr(self.execution.control.settings,'devices_enabled',False):raise Fault('CRYPTOGRAPHIC_ENROLLMENT_REQUIRED',403)
         self.execution.control.safe(data)
         with self.store.transaction() as repo:
             self.execution.owner(repo,p)
@@ -23,6 +24,7 @@ class DeviceRegistry:
             return {**self.public(row),'device_credential':secret}
     def authenticate(self,repo,device_id,credential):
         row=repo.get('execution_devices',device_id)
+        if row and row.get('auth_scheme')=='Ed25519':raise Fault('DEVICE_SIGNATURE_REQUIRED',401)
         if not row or not isinstance(credential,str) or not 32<=len(credential)<=256 or not secrets.compare_digest(row['credential_digest'],hashlib.sha256(credential.encode()).hexdigest()):raise Fault('DEVICE_UNAUTHORIZED',401)
         if row['revoked_at'] or row['status']=='REVOKED':raise Fault('BLOCKED_DEVICE_REVOKED',403)
         if not row['enabled']:raise Fault('DEVICE_DISABLED',403)
@@ -38,6 +40,7 @@ class DeviceRegistry:
         with self.store.transaction() as repo:
             row=repo.get('execution_devices',device_id)
             if not row:raise Fault('NOT_FOUND',404)
+            if row.get('auth_scheme')=='Ed25519':raise Fault('DEVICE_OWNER_ROUTE_REQUIRED',403)
             self.execution.owner(repo,p,row['project_id'])
             if row['owner_principal_id']!=p.principal_id:raise Fault('OBJECT_SCOPE',403)
             row.update(status='REVOKED',enabled=False,revoked_at=self.execution.clock().isoformat());repo.put('execution_devices',device_id,row)
@@ -49,4 +52,5 @@ class DeviceRegistry:
         if row['revoked_at']:raise Fault('BLOCKED_DEVICE_REVOKED',403)
         if not row['enabled']:raise Fault('DEVICE_DISABLED',403)
         if action['tool_id'] not in row['capabilities']:raise Fault('DEVICE_CAPABILITY_DENIED',403)
+        if action['tool_id']=='codex-executor' and (not row.get('codex_ready') or not row.get('codex_seen_at') or (self.execution.clock()-date(row['codex_seen_at'])).total_seconds()>45):return False
         return action['tool_id'] in row.get('reported_capabilities',[]) and row['status']=='ONLINE' and row['current_job_count']==0 and row['last_seen_at'] is not None and (self.execution.clock()-date(row['last_seen_at'])).total_seconds()<=60

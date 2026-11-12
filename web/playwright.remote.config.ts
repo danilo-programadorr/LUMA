@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'./e2e',testMatch:'*.spec.mjs',workers:1,timeout:60000,reporter:[['list'],['json',{outputFile:'../reports/FASE_7F_D_B_BROWSER_TESTES.json'}]],use:{baseURL:'http://127.0.0.1:5175',headless:true,channel:'msedge'},webServer:{command:'pnpm exec vite --mode test --host 127.0.0.1 --port 5175 --strictPort',url:'http://127.0.0.1:5175/e2e/harness.html',reuseExistingServer:false}});

@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 import json
 """Durable authority and queue. No model decision is executable authority."""
 import re
@@ -40,6 +41,10 @@ class ExecutionService:
     def definition(self,repo,action):
         tool=repo.get('tools',action['tool_id'])
         if not tool:raise Fault('UNKNOWN_TOOL',404)
+        if action['tool_id']=='codex-executor':
+            if not hasattr(self,'codex'):raise Fault('CODEX_DISABLED',403)
+            self.codex.validate_action(repo,action)
+            return tool,'LOW' if action['operation']=='READ_ONLY' else 'MEDIUM'
         if action['tool_id']=='sandbox-test':
             if not self.sandbox:raise Fault('TEST_TOOL_DISABLED',403)
             risks={'record':'LOW','review':'MEDIUM','sensitive':'HIGH','critical':'CRITICAL'}
@@ -49,9 +54,10 @@ class ExecutionService:
             if action['operation'] not in tool['capabilities']:raise Fault('UNKNOWN_OPERATION',400)
             risk=tool.get('risk_level','HIGH')
         return tool,risk
-    def candidate(self,p,body,key,correlation,*,agent_id=None):
+    def candidate(self,p,body,key,correlation,*,agent_id=None,_repo=None):
         action=CanonicalActionEnvelope.model_validate_json(json.dumps(body)).model_dump(mode="json")
         self.control.safe(action)
+        if action['tool_id']=='codex-executor' and _repo is None:raise Fault('CODEX_REMOTE_TASK_REQUIRED',403)
         def inspect(value):
             if isinstance(value,dict):
                 if set(value)&{'approved','authorized','owner','execute_now','grant','capabilities','risk_level','project_id'}:raise Fault('PRIVILEGE_ESCALATION',403)
@@ -59,7 +65,7 @@ class ExecutionService:
             elif isinstance(value,list):
                 for child in value:inspect(child)
         inspect(action['parameters'])
-        with self.store.transaction() as repo:
+        with (nullcontext(_repo) if _repo is not None else self.store.transaction()) as repo:
             if agent_id:
                 actual=self.control._principal(repo,p.principal_id)
                 if actual.principal_type!='SERVICE_RUNTIME' or not self.control.granted(repo,actual,'runtime.actions.propose',action['project_id']):raise Fault('CAPABILITY_DENIED',403)
@@ -74,12 +80,14 @@ class ExecutionService:
                     status='WAITING_AUTHORIZATION',created_at=self.clock().isoformat(),correlation_id=correlation)
                 repo.add('actions',aid,row);self.event(repo,'ACTION_PROPOSED',row);return row
             return self.idempotent(repo,p,key,'candidate',action,create)
-    def authorize(self,p,aid,request,key,correlation,confirmed=False):
+    def authorize(self,p,aid,request,key,correlation,confirmed=False,_repo=None):
         spec=AuthorizationRequest.model_validate_json(json.dumps(request)).model_dump(mode="json")
-        with self.store.transaction() as repo:
+        with (nullcontext(_repo) if _repo is not None else self.store.transaction()) as repo:
             action=self.owned(repo,'actions',aid,p)
+            if action.get('remote_task_id') and _repo is None:raise Fault('REMOTE_APPROVAL_REQUIRED',403)
             self.control._admin(repo,p,'admin.approvals.manage',action['project_id'])
             def create():
+                if action['envelope']['tool_id']=='codex-executor' and (spec['mode']!='ONE_SHOT' or spec['max_executions']!=1):raise Fault('CODEX_ONE_SHOT_REQUIRED',403)
                 if action['status']!='WAITING_AUTHORIZATION' or 'envelope' not in action:raise Fault('ACTION_NOT_AUTHORIZABLE',409)
                 start,end=date(spec['valid_from']),date(spec['expires_at']);time=self.clock()
                 if end<=time or start>=end or end-start>timedelta(days=30):raise Fault('INVALID_EXPIRATION')
@@ -128,10 +136,10 @@ class ExecutionService:
         if auth['executions_used']+auth['executions_reserved']-(1 if reserved else 0)>=auth['max_executions']:raise Fault('AUTHORIZATION_EXHAUSTED',403)
         for principal,cap in ((owner,'admin.actions.manage'),(owner,'admin.approvals.manage'),(executor,'executor.jobs.execute')):
             if not self.control.granted(repo,principal,cap,auth['project_id'],auth['tool_id']):raise Fault('CAPABILITY_DENIED',403)
-    def job(self,p,request,key,correlation):
+    def job(self,p,request,key,correlation,_repo=None):
         spec=JobRequest.model_validate_json(json.dumps(request)).model_dump(mode="json")
         self.control.safe(spec['action'])
-        with self.store.transaction() as repo:
+        with (nullcontext(_repo) if _repo is not None else self.store.transaction()) as repo:
             auth=self.owned(repo,'execution_authorizations',spec['authorization_id'],p)
             def create():
                 time=self.clock();scheduled=date(spec['scheduled_for']) if spec['scheduled_for'] else time
@@ -148,15 +156,15 @@ class ExecutionService:
                     execution_deadline=auth['expires_at'],created_at=time.isoformat(),updated_at=time.isoformat(),started_at=None,finished_at=None,result_code=None,external_operation_id=None,correlation_id=correlation)
                 repo.add('jobs',jid,row);self.event(repo,'JOB_CREATED',row);return row
             return self.idempotent(repo,p,key,'job',spec,create)
-    def revoke(self,p,authid,key,correlation):
-        with self.store.transaction() as repo:
+    def revoke(self,p,authid,key,correlation,_repo=None):
+        with (nullcontext(_repo) if _repo is not None else self.store.transaction()) as repo:
             auth=self.owned(repo,'execution_authorizations',authid,p)
             def apply():
                 auth.update(status='REVOKED',revoked_at=self.clock().isoformat());repo.put('execution_authorizations',authid,auth);self.event(repo,'AUTHORIZATION_REVOKED',auth)
                 return auth
             return self.idempotent(repo,p,key,'revoke:'+authid,{},apply)
-    def cancel(self,p,jid,key,correlation):
-        with self.store.transaction() as repo:
+    def cancel(self,p,jid,key,correlation,_repo=None):
+        with (nullcontext(_repo) if _repo is not None else self.store.transaction()) as repo:
             job=self.owned(repo,'jobs',jid,p)
             def apply():
                 if job['status']=='RUNNING' or job['status'] in TERMINAL:raise Fault('JOB_TRANSITION_DENIED',409)
@@ -200,6 +208,7 @@ class ExecutionService:
                 if job['action']['execution_target']=='LOCAL_DEVICE':
                     if job['action']['target_device_id']!=device_id:continue
                 elif device_id:continue
+                if job['action']['tool_id']=='codex-executor':continue
                 if job['status']=='LEASED' and date(job['lease_until'])<=self.clock():job.update(status='READY',lease_owner=None,lease_until=None)
                 if job['status']!='READY':continue
                 auth=repo.get('execution_authorizations',job['authorization_id'])

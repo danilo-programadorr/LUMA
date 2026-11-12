@@ -1,0 +1,1 @@
+export function safeSourceUrl(url:string):string|undefined {try {const u=new URL(url);if(['http:','https:'].includes(u.protocol)&&!u.username&&!u.password)return u.href;}catch{/* invalid */}return undefined;}

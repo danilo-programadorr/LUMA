@@ -1,0 +1,228 @@
+{
+  "device_protocol_version": "1",
+  "schemas": {
+    "EnrollmentStart": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f]+$",
+          "title": "Display Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "EnrollmentStart",
+      "type": "object"
+    },
+    "EnrollmentComplete": {
+      "additionalProperties": false,
+      "properties": {
+        "challenge_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Challenge Id",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 128,
+          "minLength": 40,
+          "title": "Code",
+          "type": "string"
+        },
+        "public_key": {
+          "maxLength": 44,
+          "minLength": 44,
+          "title": "Public Key",
+          "type": "string"
+        },
+        "signature": {
+          "maxLength": 88,
+          "minLength": 88,
+          "title": "Signature",
+          "type": "string"
+        },
+        "platform": {
+          "const": "WINDOWS",
+          "default": "WINDOWS",
+          "title": "Platform",
+          "type": "string"
+        },
+        "device_protocol_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Device Protocol Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "challenge_id",
+        "code",
+        "public_key",
+        "signature"
+      ],
+      "title": "EnrollmentComplete",
+      "type": "object"
+    },
+    "SignedDeviceRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "device_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "device_protocol_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Device Protocol Version",
+          "type": "string"
+        },
+        "timestamp": {
+          "exclusiveMinimum": 0,
+          "title": "Timestamp",
+          "type": "integer"
+        },
+        "sequence": {
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "nonce": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Nonce",
+          "type": "string"
+        },
+        "payload_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Payload Hash",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        },
+        "signature": {
+          "maxLength": 88,
+          "minLength": 88,
+          "title": "Signature",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device_id",
+        "timestamp",
+        "sequence",
+        "nonce",
+        "payload_hash",
+        "payload",
+        "signature"
+      ],
+      "title": "SignedDeviceRequest",
+      "type": "object"
+    },
+    "Heartbeat": {
+      "additionalProperties": false,
+      "properties": {
+        "runtime_version": {
+          "pattern": "^[0-9a-z.-]{1,30}$",
+          "title": "Runtime Version",
+          "type": "string"
+        },
+        "capabilities": {
+          "items": {
+            "enum": [
+              "RUNTIME_INTELLIGENCE",
+              "DEVICE_HEARTBEAT",
+              "OUTBOUND_POLLING"
+            ],
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "health": {
+          "default": "OK",
+          "enum": [
+            "OK",
+            "ERROR"
+          ],
+          "title": "Health",
+          "type": "string"
+        },
+        "current_load": {
+          "default": 0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Current Load",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "runtime_version",
+        "capabilities"
+      ],
+      "title": "Heartbeat",
+      "type": "object"
+    },
+    "Poll": {
+      "additionalProperties": false,
+      "properties": {},
+      "title": "Poll",
+      "type": "object"
+    },
+    "Result": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "lease_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Lease Id",
+          "type": "string"
+        },
+        "outcome": {
+          "default": "SYNTHETIC_OK",
+          "enum": [
+            "SYNTHETIC_OK",
+            "RELEASE"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "lease_id"
+      ],
+      "title": "Result",
+      "type": "object"
+    }
+  },
+  "capabilities": [
+    "RUNTIME_INTELLIGENCE",
+    "DEVICE_HEARTBEAT",
+    "OUTBOUND_POLLING"
+  ],
+  "future_disabled": [
+    "WEB_RESEARCH",
+    "CODEX_EXECUTOR",
+    "FILESYSTEM",
+    "BROWSER",
+    "DESKTOP"
+  ],
+  "signature_algorithm": "Ed25519",
+  "canonicalization": "JSON sort_keys=True separators=(comma,colon) ensure_ascii=True allow_nan=False, ASCII encoding; strict schema prevents noninteger protocol numbers",
+  "clock_skew_seconds": 180,
+  "heartbeat_online_seconds": 45,
+  "lease_seconds": 30,
+  "enrollment_ttl_seconds": 300
+}

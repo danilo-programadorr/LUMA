@@ -179,3 +179,32 @@ Pedidos de acao usam LUMA_PROPOSAL + SECURITY_REVIEW. TaskRequest pode conter ac
 ### Historico do gate DIRECT_TOOL (superado pelo fechamento 0.5.0)
 
 Rejeicao de Security e resultado de policy, nao erro interno. HTTP 200 pode conter POLICY_DENIED ou NEEDS_CLARIFICATION, sem ActionRequest/autorizacao/job. Falhas tecnicas continuam FAILED. O teste real dirigido corrente e `.\.venv\Scripts\python.exe -m backend.validate_adk --case direct_tool`; a suite completa exige PASSED desse caso com o mesmo hash de candidata. O legitimate_proposal real aprovado na candidata f83e4df permanece preservado em reports/FASE_7E_POLICY_LEGITIMATE_BASELINE.json; a suite completa posterior o verifica novamente. Sem promocao ou 7F.
+
+
+## 7F-B Web + Owner identity (local candidate)
+
+See [Owner auth](docs/LUMA_OWNER_AUTH.md), [Web](docs/LUMA_WEB_ARCHITECTURE.md), and [real Identity Platform evidence](reports/FASE_7F_B_IDENTITY_PLATFORM_REAL.json). The original configuration plan is historical.
+
+From the official workspace, run `pnpm --dir web install --frozen-lockfile` and `pnpm --dir web dev` (127.0.0.1:5173). Use `web/.env.local` for public SDK config only after the real-auth gate. API defaults to127.0.0.1:8770.
+
+Control Plane: set `LUMA_MODE=CONTROL_PLANE`, `LUMA_OWNER_AUTH_MODE=IDENTITY_PLATFORM`, `LUMA_IDENTITY_PROJECT` to the approved project and the authorized local database URL; run `.\.venv\Scripts\python.exe -m backend.migrate upgrade --owner`, then `.\.venv\Scripts\python.exe -m backend`. Legacy `LOCAL_TOKEN` remains explicitly local. No production `TEST` auth mode; unit/E2E adapters are code-injected only in test environment.
+
+For the authorized initial Owner binding, run `.\.venv\Scripts\python.exe -m backend.owner_bootstrap` in a private interactive terminal. Enter that one-time code only in the authenticated Web bootstrap form. Never copy it to a report. Logout uses SDK signOut and preserves the binding. Reauthentication uses auth_time. The Owner confirmed real Google login, binding, logout and session restoration. Technical closure status is recorded in phase-status.json and reports/FASE_7F_B_IDENTITY_PLATFORM_REAL.json.
+
+No7F-B commit or push; no7F-C, deployment, real executor or Codex is started.
+
+
+## 7F-D-A — fechamento técnico local (29/10/2026)
+
+Estado atual e limites em [fechamento consolidado](reports/FASE_7F_D_A_CLOSURE.md) e phase-status.json. Google Search e URL Context concluíram os casos reais prioritários; sugestões Google e navegação foram confirmadas pelo Owner. Há 956 testes únicos consolidados (baseline 748 preservada). A identidade de pesquisa permanece ACTIVE e foi validada em processos novos sem novo enrollment. Uma das três chamadas adicionais autorizadas permanece sem uso.
+
+Os textos anteriores são históricos. Backend/Web continuam candidates locais. Offline tem testes locais; reboot físico não foi realizado. Nenhum avanço para Private Library, Remote Tasks, voz, Codex real, cloud, commit, push ou deploy é implicado pelo fechamento técnico. O próximo caminho depende da escolha do Owner prevista no roteiro.
+
+
+## 7F-D-A2 — biblioteca privada local (30/10/2026)
+
+A fase foi escolhida pelo Owner após o fechamento acima. Implementação local validada com1.043 testes únicos; a primeira importação/autorização real ainda está pendente. [Guia de aceitação](docs/FASE_7F_D_A2_ACEITACAO.md) e [relatório](reports/FASE_7F_D_A2_RELATORIO.json).
+
+Em Conhecimento: cadastro real, autorização específica do PC, busca lexical com trechos e página/linha, arquivamento e suspensão. PDF com texto/TXT/MD são importados explicitamente pelo launcher local. Sem upload pelo navegador, OCR, embeddings, resumos por IA ou envio ao Gemini. Documentos/índice cifrados no PC; título/hash/contagens e pergunta persistem no cadastro/fila, trechos apenas transitórios.
+
+PostgreSQL Owner schema8, após backup validado estruturalmente. Tipos/lint/build PASS; warning de bundle grande permanece. Sem nova API/cloud, chamadas pagas, commit/push/deploy ou próxima fase.

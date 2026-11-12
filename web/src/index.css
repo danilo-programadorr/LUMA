@@ -1,0 +1,393 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   LUMA — CENTRO DE COMANDO
+   Design system · tokens, surfaces, HUD chrome, motion
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* ── Base ─────────────────────────────────────────────── */
+    --void: 210 80% 4%;
+    --background: 208 81% 6%;
+    --foreground: 203 100% 96%;
+
+    /* ── Surfaces ─────────────────────────────────────────── */
+    --surface: 205 74% 12%;
+    --surface-raised: 205 73% 10%;
+    --surface-high: 203 70% 14%;
+
+    --card: 205 74% 12%;
+    --card-foreground: 203 100% 96%;
+    --popover: 205 73% 10%;
+    --popover-foreground: 203 100% 96%;
+
+    /* ── Brand ────────────────────────────────────────────── */
+    --primary: 186 100% 50%;
+    --primary-foreground: 210 80% 4%;
+    --primary-glow: 183 100% 59%;
+
+    --accent: 210 100% 54%;
+    --accent-foreground: 203 100% 96%;
+
+    --secondary: 203 70% 14%;
+    --secondary-foreground: 203 100% 96%;
+
+    --muted: 205 73% 10%;
+    --muted-foreground: 203 33% 66%;
+    --subtle: 201 24% 43%;
+
+    /* ── Status ───────────────────────────────────────────── */
+    --success: 162 100% 45%;
+    --success-bright: 161 86% 57%;
+    --success-foreground: 210 80% 4%;
+    --warning: 40 100% 58%;
+    --warning-bright: 40 100% 67%;
+    --warning-foreground: 210 80% 4%;
+    --danger: 349 100% 63%;
+    --danger-bright: 350 100% 66%;
+    --danger-foreground: 203 100% 96%;
+    --info: 200 100% 50%;
+    --violet: 258 100% 68%;
+    --violet-bright: 264 100% 71%;
+
+    --destructive: 349 100% 63%;
+    --destructive-foreground: 203 100% 96%;
+
+    /* ── Form ─────────────────────────────────────────────── */
+    --border: 199 58% 20%;
+    --input: 199 48% 16%;
+    --ring: 186 100% 50%;
+
+    /* ── HUD raw colors (alpha capable) ───────────────────── */
+    --hud-line: rgba(0, 190, 255, 0.22);
+    --hud-line-soft: rgba(0, 160, 220, 0.1);
+    --hud-line-strong: rgba(0, 229, 255, 0.75);
+    --hud-glow: rgba(0, 229, 255, 0.18);
+    --hud-glow-strong: rgba(0, 229, 255, 0.42);
+    --hud-surface: rgba(4, 24, 38, 0.82);
+    --hud-surface-raised: rgba(7, 29, 45, 0.88);
+    --hud-grid: rgba(0, 168, 255, 0.055);
+    --hud-grid-strong: rgba(0, 168, 255, 0.085);
+    --hud-inset: rgba(0, 229, 255, 0.06);
+
+    /* ── Layout ───────────────────────────────────────────── */
+    --frame-height: 88px;
+    --rail-width: 356px;
+    --sidebar-width: 248px;
+
+    /* ── Radius ───────────────────────────────────────────── */
+    --radius: 0.7rem;
+
+    /* ── Motion ───────────────────────────────────────────── */
+    --ease-hud: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 150ms;
+    --dur: 220ms;
+    --dur-slow: 300ms;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100dvh;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    background-image:
+      radial-gradient(920px 620px at 48% -12%, hsl(200 100% 50% / 0.15), transparent 62%),
+      radial-gradient(760px 540px at 104% 104%, hsl(258 100% 68% / 0.07), transparent 62%),
+      radial-gradient(680px 520px at -6% 92%, hsl(186 100% 50% / 0.06), transparent 60%);
+    background-attachment: fixed;
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
+    color: hsl(var(--foreground));
+  }
+
+  :focus-visible {
+    outline: 1px solid hsl(var(--ring) / 0.65);
+    outline-offset: 2px;
+  }
+
+  /* ── Scrollbar ──────────────────────────────────────────── */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.28) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--void) / 0.7);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.45), hsl(var(--accent) / 0.35));
+    border: 2px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, hsl(var(--primary-glow) / 0.8), hsl(var(--primary) / 0.6));
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+/* ==========================================================================
+   Keyframes
+   ========================================================================== */
+
+@keyframes luma-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.92; }
+  50% { transform: scale(1.035); opacity: 1; }
+}
+
+@keyframes luma-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes luma-orbit-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes luma-ring {
+  0% { transform: scale(0.78); opacity: 0.55; }
+  80% { opacity: 0.05; }
+  100% { transform: scale(1.65); opacity: 0; }
+}
+
+@keyframes luma-sweep {
+  0% { transform: translateY(-120%); opacity: 0; }
+  12% { opacity: 0.7; }
+  88% { opacity: 0.7; }
+  100% { transform: translateY(320%); opacity: 0; }
+}
+
+@keyframes luma-shimmer {
+  0% { background-position: -160% 0; }
+  100% { background-position: 260% 0; }
+}
+
+@keyframes luma-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes luma-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes luma-slide-right {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes luma-scale-in {
+  from { opacity: 0; transform: scale(0.965); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes luma-pulse-dot {
+  0% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+  70% { box-shadow: 0 0 0 7px transparent; opacity: 0.85; }
+  100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
+}
+
+@keyframes luma-wave {
+  0%, 100% { transform: scaleY(0.22); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes luma-float {
+  0%, 100% { transform: translateY(-3px); }
+  50% { transform: translateY(3px); }
+}
+
+@keyframes luma-blink {
+  0%, 46% { opacity: 1; }
+  50%, 96% { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+
+@keyframes luma-dash {
+  from { stroke-dashoffset: 420; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes luma-bar {
+  from { transform: scaleY(0.4); opacity: 0.5; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes luma-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Components / utilities
+   ========================================================================== */
+
+@layer components {
+  .hud-panel {
+    position: relative;
+    background: var(--hud-surface);
+    border: 1px solid var(--hud-line);
+    border-radius: var(--radius);
+    box-shadow:
+      0 24px 52px -34px rgba(0, 0, 0, 0.95),
+      inset 0 1px 0 var(--hud-inset);
+    backdrop-filter: blur(14px);
+    transition:
+      border-color var(--dur) var(--ease-hud),
+      box-shadow var(--dur) var(--ease-hud),
+      transform var(--dur) var(--ease-hud),
+      background-color var(--dur) var(--ease-hud);
+  }
+
+  .hud-panel-interactive:hover {
+    border-color: var(--hud-line-strong);
+    background-color: var(--hud-surface-raised);
+    box-shadow:
+      0 0 0 1px var(--hud-glow),
+      0 0 38px -14px var(--hud-glow-strong),
+      0 26px 54px -34px rgba(0, 0, 0, 0.95),
+      inset 0 1px 0 var(--hud-inset);
+    transform: translateY(-1px);
+  }
+
+  .hud-panel-interactive:active {
+    transform: translateY(0);
+  }
+
+  .hud-rail {
+    background: linear-gradient(180deg, hsl(var(--void) / 0.55), hsl(var(--void) / 0.2));
+    border-color: var(--hud-line-soft);
+  }
+
+  .hud-label {
+    font-family: "Rajdhani", "Inter", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  .hud-title {
+    font-family: "Rajdhani", "Inter", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .hud-numeric {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .hud-grid-layer {
+    background-image:
+      linear-gradient(var(--hud-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+
+  .hud-dots-layer {
+    background-image: radial-gradient(var(--hud-grid-strong) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .hud-notch {
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  }
+
+  .hud-fade-edges {
+    mask-image: linear-gradient(180deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  }
+
+  .hud-shimmer {
+    background-image: linear-gradient(
+      100deg,
+      transparent 20%,
+      hsl(var(--primary) / 0.14) 42%,
+      hsl(var(--primary-glow) / 0.24) 50%,
+      hsl(var(--primary) / 0.14) 58%,
+      transparent 80%
+    );
+    background-size: 220% 100%;
+    animation: luma-shimmer 2.6s linear infinite;
+  }
+
+  .hud-scroll-fade {
+    background: linear-gradient(180deg, hsl(var(--void) / 0.85), transparent);
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 18px var(--hud-glow-strong), 0 0 42px hsl(var(--primary) / 0.22);
+  }
+
+  .text-glow-soft {
+    text-shadow: 0 0 14px var(--hud-glow);
+  }
+
+  .stagger {
+    animation: luma-fade-up 0.5s var(--ease-hud) both;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .drag-none {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+

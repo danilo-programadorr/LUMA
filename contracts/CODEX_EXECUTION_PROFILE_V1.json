@@ -1,0 +1,139 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "profile_version": {
+      "const": "CODEX_EXECUTION_PROFILE_V1",
+      "default": "CODEX_EXECUTION_PROFILE_V1",
+      "title": "Profile Version",
+      "type": "string"
+    },
+    "workspace_id": {
+      "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "mapping_version": {
+      "maximum": 1000000,
+      "minimum": 1,
+      "title": "Mapping Version",
+      "type": "integer"
+    },
+    "mapping_fingerprint": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Mapping Fingerprint",
+      "type": "string"
+    },
+    "snapshot_hash": {
+      "default": "0000000000000000000000000000000000000000000000000000000000000000",
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Snapshot Hash",
+      "type": "string"
+    },
+    "task_prompt": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "title": "Task Prompt",
+      "type": "string"
+    },
+    "execution_mode": {
+      "enum": [
+        "READ_ONLY",
+        "WORKSPACE_WRITE"
+      ],
+      "title": "Execution Mode",
+      "type": "string"
+    },
+    "read_paths": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Read Paths",
+      "type": "array"
+    },
+    "allowed_paths": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 5,
+      "title": "Allowed Paths",
+      "type": "array"
+    },
+    "denied_paths": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Denied Paths",
+      "type": "array"
+    },
+    "network_policy": {
+      "const": "MODEL_ONLY_TASK_OFFLINE",
+      "default": "MODEL_ONLY_TASK_OFFLINE",
+      "title": "Network Policy",
+      "type": "string"
+    },
+    "git_policy": {
+      "const": "NO_GIT_WRITE",
+      "default": "NO_GIT_WRITE",
+      "title": "Git Policy",
+      "type": "string"
+    },
+    "validation_command": {
+      "const": "PYTHON_UNITTEST",
+      "default": "PYTHON_UNITTEST",
+      "title": "Validation Command",
+      "type": "string"
+    },
+    "max_duration": {
+      "default": 120,
+      "maximum": 300,
+      "minimum": 10,
+      "title": "Max Duration",
+      "type": "integer"
+    },
+    "max_changed_files": {
+      "default": 3,
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Max Changed Files",
+      "type": "integer"
+    },
+    "max_changed_bytes": {
+      "default": 8192,
+      "maximum": 32768,
+      "minimum": 1,
+      "title": "Max Changed Bytes",
+      "type": "integer"
+    },
+    "max_output_bytes": {
+      "default": 16384,
+      "maximum": 32768,
+      "minimum": 1024,
+      "title": "Max Output Bytes",
+      "type": "integer"
+    },
+    "binary_sha256": {
+      "default": "0000000000000000000000000000000000000000000000000000000000000000",
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Binary Sha256",
+      "type": "string"
+    },
+    "model": {
+      "default": "",
+      "maxLength": 80,
+      "pattern": "^[a-zA-Z0-9._-]*$",
+      "title": "Model",
+      "type": "string"
+    }
+  },
+  "required": [
+    "workspace_id",
+    "mapping_version",
+    "mapping_fingerprint",
+    "task_prompt",
+    "execution_mode"
+  ],
+  "title": "ExecutionProfile",
+  "type": "object"
+}

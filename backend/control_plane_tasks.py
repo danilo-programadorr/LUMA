@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 """Canonical task gateway. Runtime output is untrusted data, never authority."""
 import json
 from datetime import timedelta
@@ -22,9 +23,10 @@ class RuntimeTaskService:
         if not row or row['owner_principal_id']!=owner or row['project_id']!=project:raise Fault('DEVICE_SCOPE_MISMATCH',403)
         if row['revoked_at'] or not row['enabled']:raise Fault('DEVICE_REVOKED',403)
         return row
-    def create(self,owner,*,project_id,session_id,device_id,message,key,correlation,scope=None):
+    def create(self,owner,*,project_id,session_id,device_id,message,key,correlation,scope=None,_repo=None,ttl_seconds=300):
+        if not 30<=ttl_seconds<=300:raise Fault('INVALID_EXPIRATION',400)
         scope=scope or Scope()
-        with self.store.transaction() as r:
+        with (nullcontext(_repo) if _repo is not None else self.store.transaction()) as r:
             owner=self.execution.owner(r,owner,project_id)
             runtime=self.control._principal(r,'luma-runtime')
             runtime,human,session=self.control.runtime_session(r,runtime,session_id,'runtime.model.generate')
@@ -33,11 +35,11 @@ class RuntimeTaskService:
             self.control._check(r,runtime,project_id,'knowledge','knowledge.read')
             self.device(r,device_id,owner.principal_id,project_id)
             self.control.safe({'message':message,'scope':scope.model_dump(mode='json')})
-            payload=dict(project_id=project_id,session_id=session_id,device_id=device_id,message=message,scope=scope.model_dump(mode='json'))
+            payload=dict(project_id=project_id,session_id=session_id,device_id=device_id,message=message,scope=scope.model_dump(mode='json'),ttl_seconds=ttl_seconds)
             def insert():
                 time=self.clock();tid=ident()
                 envelope=RemoteTaskEnvelope(task_id=tid,project_id=project_id,session_id=session_id,target_device_id=device_id,
-                    correlation_id=correlation,created_at=time,expires_at=time+timedelta(minutes=5),
+                    correlation_id=correlation,created_at=time,expires_at=time+timedelta(seconds=ttl_seconds),
                     user_message=message,idempotency_key=key,tool_registry_version=self.registry(r),scope=scope,
                     context_ref=ContextEnvelope(proposal_catalog=proposal_catalog(self.control,r,runtime,project_id,'luma')))
                 row=dict(task_id=tid,principal_id=owner.principal_id,project_id=project_id,session_id=session_id,runtime_id=runtime.principal_id,
@@ -49,6 +51,9 @@ class RuntimeTaskService:
             current=r.get('agent_tasks',row['task_id'])
             return RemoteTaskEnvelope.model_validate_json(json.dumps(current['envelope']))
     def check(self,r,row,runtime,device):
+        if row.get('owner_binding_fingerprint'):
+            from .device_service import DeviceService
+            DeviceService(self.control,self.execution).binding(r,{'owner_binding_fingerprint':row['owner_binding_fingerprint']})
         if runtime.principal_type!='SERVICE_RUNTIME' or runtime.principal_id!=row['runtime_id']:raise Fault('RUNTIME_IDENTITY_DENIED',403)
         actual,human,session=self.control.runtime_session(r,runtime,row['session_id'],'runtime.model.generate')
         if human.principal_id!=row['principal_id'] or session['project_id']!=row['project_id']:raise Fault('SESSION_SCOPE',403)
@@ -59,8 +64,8 @@ class RuntimeTaskService:
         if row['status'] in ('CANCELLED','EXPIRED','POLICY_DENIED','FAILED'):raise Fault('TASK_TERMINAL',409)
         if date(row['envelope']['expires_at'])<=self.clock():raise Fault('TASK_EXPIRED',409)
         return actual,human
-    def claim(self,runtime,tid,device):
-        with self.store.transaction() as r:
+    def claim(self,runtime,tid,device,_repo=None):
+        with (nullcontext(_repo) if _repo is not None else self.store.transaction()) as r:
             row=r.get('agent_tasks',tid)
             if not row or 'envelope' not in row:raise Fault('TASK_NOT_FOUND',404)
             self.check(r,row,runtime,device)
@@ -113,6 +118,11 @@ class RuntimeTaskService:
                     action['workspace_id']=item.workspace_id
                     action['proposal_hash']=digest(action['envelope'])
                     if result.security_review=='REJECT':raise Fault('POLICY_DENIED',403)
+                    if row.get('task_protocol')=='REMOTE_TASK_V1':
+                        from .remote_tasks import RemoteTasks
+                        snapshot=RemoteTasks(self.execution).snapshot(action)
+                        action['remote_task_id']=row['task_id']
+                        row.update(action_request_id=action['action_id'],snapshot=snapshot,proposal_hash=digest(snapshot),effective_risk=action['risk_level'])
                     r.add('actions',action['action_id'],action)
                     self.event(r,row,'PROPOSAL_ACCEPTED');self.event(r,row,'ACTION_REQUEST_CREATED')
                 state='WAITING_AUTHORIZATION' if action else 'NEEDS_CLARIFICATION' if result.needs_clarification else 'FAILED' if result.result_type=='ERROR' else 'COMPLETED'

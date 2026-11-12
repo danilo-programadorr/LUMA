@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({testDir:'./e2e',testMatch:'production.test.mjs',workers:1,reporter:[['list'],['json',{outputFile:'../reports/FASE_7F_B_PRODUCTION_SMOKE.json'}]],use:{baseURL:'http://127.0.0.1:5173',channel:'msedge',headless:true},webServer:{command:'pnpm exec vite preview --host 127.0.0.1 --port 5173 --strictPort',url:'http://127.0.0.1:5173',reuseExistingServer:false}});

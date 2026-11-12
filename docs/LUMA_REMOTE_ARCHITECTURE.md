@@ -69,3 +69,8 @@ As rotas de task remota ainda não são públicas. A interface interna do gatewa
 e o transporte in-process são testáveis por JSON, e FutureRemoteRuntimeTransport
 recusa uso. O registry version deve vir do Control Plane; "unbound" no runtime
 sem assignment não é autorização para executar ferramenta alguma.
+
+
+## 7F-B local identity boundary
+
+Web lives in web/; CONTROL_PLANE verifies Google identity and permanent single Owner UID binding using optional schema0005. LOCAL_RUNTIME is unchanged and holds no Owner/DB authority. See LUMA_OWNER_AUTH.md and LUMA_AUTH_TRUST_BOUNDARY.md. Real Identity Platform and login remain behind an explicit Owner gate; no cloud deployment.

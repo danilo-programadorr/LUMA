@@ -1,0 +1,24 @@
+import React from 'react';
+import {render,screen,fireEvent,waitFor,cleanup,within,act} from '@testing-library/react';
+import {afterEach,it,expect,vi} from 'vitest';
+import {MemoryRouter} from 'react-router-dom';
+import {AuthContext} from '../auth/context';
+import {ApiError,type ControlPlaneClient} from '../auth/client';
+import {RemoteTasksPanel} from './RemoteTasksPanel';
+afterEach(()=>{cleanup();vi.useRealTimers();});
+const task={task_id:'a'.repeat(32),project_id:'meu-gestor',task_type:'ACTION_ORIENTED',input:'<script>unsafe()</script>',status:'WAITING_AUTHORIZATION',expires_at:'2026-11-04T20:00:00Z',proposal_hash:'b'.repeat(64),effective_risk:'LOW',action_request_id:'c'.repeat(32),proposal:{envelope:{tool_id:'sandbox-test',operation:'record',target_device_id:'d'.repeat(32),parameters:{}},risk:'LOW'},timeline:[]};
+function setup(rows:unknown[]=[task]){
+ const call=vi.fn(async(path:string)=>path==='/v1/remote-task-devices'?[]:rows);
+ render(<MemoryRouter><AuthContext.Provider value={{state:'AUTHENTICATED',owner:null,deviceApi:{call} as unknown as ControlPlaneClient,login:async()=>{},logout:async()=>{},bootstrap:async()=>{},refresh:async()=>{},reauthenticate:async()=>{}}}><RemoteTasksPanel approvals/></AuthContext.Provider></MemoryRouter>);return call;
+}
+it('loads real pending proposals and renders input safely',async()=>{setup();await screen.findByText(task.input);expect(document.querySelector('script')).toBeNull();expect(screen.getByText(/Ferramenta: sandbox-test/)).toBeTruthy();});
+it('approves the exact displayed digest and refetches canonical state',async()=>{const call=setup();await screen.findByText(task.input);fireEvent.click(screen.getByRole('button',{name:'Aprovar proposta'}));await waitFor(()=>expect(call).toHaveBeenCalledWith('/v1/tasks/'+task.task_id+'/decision',expect.objectContaining({decision:'APPROVE',proposal_hash:task.proposal_hash})));});
+it('shows honest empty state without fake approvals',async()=>{setup([]);await screen.findByText('Nenhuma aprovação registrada.');expect(screen.queryByText('Aprovar proposta')).toBeNull();});
+import {safeRedirect} from '../auth/context';
+it('preserves only valid internal task and approval deep links',()=>{expect(safeRedirect('/tasks/'+task.task_id)).toBe('/tasks/'+task.task_id);expect(safeRedirect('/approvals/'+task.task_id)).toBe('/approvals/'+task.task_id);expect(safeRedirect('https://evil.invalid/tasks/'+task.task_id)).toBe('/');expect(safeRedirect('/tasks/../settings')).toBe('/');});
+
+it('shows recent-auth rejection inside the proposal that was clicked',async()=>{const call=setup();await screen.findByText(task.input);call.mockImplementation(async(path:string)=>{if(path.endsWith('/decision'))throw new ApiError(403,'RECENT_AUTH_REQUIRED');return path==='/v1/remote-task-devices'?[]:[task];});fireEvent.click(screen.getByRole('button',{name:'Aprovar proposta'}));const card=screen.getByText(task.input).closest('article')!;await within(card).findByRole('alert');expect(within(card).getByRole('button',{name:'Confirmar identidade para esta proposta'})).toBeTruthy();});
+it('removes a previous decision error when canonical state becomes completed',async()=>{const call=setup();await screen.findByText(task.input);let decided=false;call.mockImplementation(async(path:string)=>{if(path.endsWith('/decision')){decided=true;throw new ApiError(0);}return path==='/v1/remote-task-devices'?[]:[{...task,status:decided?'COMPLETED':'WAITING_AUTHORIZATION'}];});fireEvent.click(screen.getByRole('button',{name:'Aprovar proposta'}));await screen.findByText('COMPLETED');expect(screen.queryByRole('alert')).toBeNull();expect(screen.queryByRole('button',{name:'Confirmar identidade para esta proposta'})).toBeNull();});
+
+it('uses the committed task response even if the following list refresh fails',async()=>{const call=setup();await screen.findByText(task.input);let committed=false;call.mockImplementation(async(path:string)=>{if(path.endsWith('/decision')){committed=true;return {...task,status:'WAITING_FOR_DEVICE',decision:'APPROVE'} as never;}if(committed)throw new ApiError(0);return path==='/v1/remote-task-devices'?[]:[task];});fireEvent.click(screen.getByRole('button',{name:'Aprovar proposta'}));await screen.findByText('WAITING_FOR_DEVICE');expect(screen.queryByRole('alert')).toBeNull();expect(screen.getByRole('button',{name:'Revogar autorização'})).toBeTruthy();});
+it('does not overlap automatic task-list refreshes',async()=>{vi.useFakeTimers();const call=setup();await act(async()=>{await Promise.resolve();});call.mockImplementation(async(path:string)=>path==='/v1/remote-task-devices'?[]:await new Promise<never>(()=>{}));await act(async()=>{vi.advanceTimersByTime(5000);await Promise.resolve();});const before=call.mock.calls.filter(([p])=>p==='/v1/remote-approvals').length;await act(async()=>{vi.advanceTimersByTime(15000);await Promise.resolve();});expect(call.mock.calls.filter(([p])=>p==='/v1/remote-approvals')).toHaveLength(before);});

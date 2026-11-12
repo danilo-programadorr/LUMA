@@ -1,0 +1,232 @@
+{
+  "version": "CODEX_DEVICE_EXTENSION_V1",
+  "additive_to": "DEVICE_PROTOCOL_V1",
+  "authentication": "Existing signed device request; exact method/path/body/nonce/sequence; no new device identity",
+  "endpoints": {
+    "discovery": [
+      "manifest"
+    ],
+    "heartbeat": [
+      "binary_sha256",
+      "workspace_ids"
+    ],
+    "poll": [],
+    "check": [
+      "job_id",
+      "lease_id"
+    ],
+    "progress": [
+      "job_id",
+      "lease_id",
+      "phase",
+      "execution_kind"
+    ],
+    "result": [
+      "job_id",
+      "lease_id",
+      "result"
+    ]
+  },
+  "schemas": {
+    "manifest": {
+      "additionalProperties": false,
+      "properties": {
+        "binary_sha256": {
+          "default": "0000000000000000000000000000000000000000000000000000000000000000",
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Binary Sha256",
+          "type": "string"
+        },
+        "model": {
+          "default": "",
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9._-]*$",
+          "title": "Model",
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "target_device_id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "title": "Target Device Id",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f]+$",
+          "title": "Display Name",
+          "type": "string"
+        },
+        "mapping_version": {
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Mapping Version",
+          "type": "integer"
+        },
+        "mapping_fingerprint": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Mapping Fingerprint",
+          "type": "string"
+        },
+        "snapshot_hash": {
+          "default": "0000000000000000000000000000000000000000000000000000000000000000",
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Snapshot Hash",
+          "type": "string"
+        },
+        "allowed_execution_modes": {
+          "items": {
+            "enum": [
+              "READ_ONLY",
+              "WORKSPACE_WRITE"
+            ],
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Allowed Execution Modes",
+          "type": "array"
+        },
+        "enabled": {
+          "default": false,
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "project_id",
+        "target_device_id",
+        "display_name",
+        "mapping_version",
+        "mapping_fingerprint",
+        "allowed_execution_modes"
+      ],
+      "title": "WorkspaceManifest",
+      "type": "object"
+    },
+    "result": {
+      "additionalProperties": false,
+      "properties": {
+        "execution_kind": {
+          "default": "CODEX_REAL",
+          "enum": [
+            "CODEX_REAL",
+            "SIMULATED_TEST"
+          ],
+          "title": "Execution Kind",
+          "type": "string"
+        },
+        "execution_id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "title": "Execution Id",
+          "type": "string"
+        },
+        "job_id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "workspace_id": {
+          "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "SUCCEEDED",
+            "FAILED",
+            "CANCELLED",
+            "RECONCILIATION_REQUIRED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 80,
+          "pattern": "^[A-Z0-9_]+$",
+          "title": "Code",
+          "type": "string"
+        },
+        "binary_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Binary Sha256",
+          "type": "string"
+        },
+        "profile_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Profile Hash",
+          "type": "string"
+        },
+        "exit_code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exit Code"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "changed_files": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "title": "Changed Files",
+          "type": "array"
+        },
+        "changed_bytes": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Changed Bytes",
+          "type": "integer"
+        },
+        "validation_pass": {
+          "default": false,
+          "title": "Validation Pass",
+          "type": "boolean"
+        },
+        "summary": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Summary",
+          "type": "string"
+        },
+        "usage": {
+          "additionalProperties": true,
+          "title": "Usage",
+          "type": "object"
+        }
+      },
+      "required": [
+        "execution_id",
+        "job_id",
+        "workspace_id",
+        "status",
+        "code",
+        "binary_sha256",
+        "profile_hash",
+        "duration_ms"
+      ],
+      "title": "ExecutionResult",
+      "type": "object"
+    }
+  }
+}

@@ -1,0 +1,542 @@
+{
+  "protocol_version": "1",
+  "transport": "Device Protocol v1 signed path domain; no Owner bearer",
+  "namespace": "/v1/library-runtime/",
+  "local_only": true,
+  "private_content_persisted_centrally": false,
+  "schemas": {
+    "SourceMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "device_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f]+$",
+          "title": "Title",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "extension": {
+          "enum": [
+            ".pdf",
+            ".txt",
+            ".md"
+          ],
+          "title": "Extension",
+          "type": "string"
+        },
+        "byte_count": {
+          "maximum": 8388608,
+          "minimum": 1,
+          "title": "Byte Count",
+          "type": "integer"
+        },
+        "page_count": {
+          "maximum": 500,
+          "minimum": 0,
+          "title": "Page Count",
+          "type": "integer"
+        },
+        "chunk_count": {
+          "maximum": 4000,
+          "minimum": 1,
+          "title": "Chunk Count",
+          "type": "integer"
+        },
+        "origin": {
+          "const": "LOCAL_USER_FILE",
+          "default": "LOCAL_USER_FILE",
+          "title": "Origin",
+          "type": "string"
+        },
+        "index_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Index Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "project_id",
+        "device_id",
+        "title",
+        "content_hash",
+        "extension",
+        "byte_count",
+        "page_count",
+        "chunk_count"
+      ],
+      "title": "SourceMetadata",
+      "type": "object"
+    },
+    "PrivateExcerpt": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_hash": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Hash",
+          "type": "string"
+        },
+        "chunk_id": {
+          "pattern": "^[a-f0-9]{24}$",
+          "title": "Chunk Id",
+          "type": "string"
+        },
+        "excerpt": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "line_start": {
+          "minimum": 1,
+          "title": "Line Start",
+          "type": "integer"
+        },
+        "line_end": {
+          "minimum": 1,
+          "title": "Line End",
+          "type": "integer"
+        },
+        "score": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_hash",
+        "chunk_id",
+        "excerpt",
+        "line_start",
+        "line_end",
+        "score"
+      ],
+      "title": "PrivateExcerpt",
+      "type": "object"
+    },
+    "LibraryGrant": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "title": "LibraryGrant",
+      "type": "object"
+    },
+    "LibraryHeartbeat": {
+      "additionalProperties": false,
+      "properties": {
+        "protocol_version": {
+          "const": "1",
+          "default": "1",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "capability": {
+          "const": "PRIVATE_LIBRARY",
+          "default": "PRIVATE_LIBRARY",
+          "title": "Capability",
+          "type": "string"
+        }
+      },
+      "title": "LibraryHeartbeat",
+      "type": "object"
+    },
+    "LibraryCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "query_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query Id"
+        },
+        "lease_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{32}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lease Id"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "LibraryCheck",
+      "type": "object"
+    },
+    "LibraryRegister": {
+      "$defs": {
+        "SourceMetadata": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "pattern": "^[a-f0-9]{32}$",
+              "title": "Source Id",
+              "type": "string"
+            },
+            "project_id": {
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "title": "Project Id",
+              "type": "string"
+            },
+            "device_id": {
+              "pattern": "^[a-f0-9]{32}$",
+              "title": "Device Id",
+              "type": "string"
+            },
+            "title": {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[^\\x00-\\x1f]+$",
+              "title": "Title",
+              "type": "string"
+            },
+            "content_hash": {
+              "pattern": "^[a-f0-9]{64}$",
+              "title": "Content Hash",
+              "type": "string"
+            },
+            "extension": {
+              "enum": [
+                ".pdf",
+                ".txt",
+                ".md"
+              ],
+              "title": "Extension",
+              "type": "string"
+            },
+            "byte_count": {
+              "maximum": 8388608,
+              "minimum": 1,
+              "title": "Byte Count",
+              "type": "integer"
+            },
+            "page_count": {
+              "maximum": 500,
+              "minimum": 0,
+              "title": "Page Count",
+              "type": "integer"
+            },
+            "chunk_count": {
+              "maximum": 4000,
+              "minimum": 1,
+              "title": "Chunk Count",
+              "type": "integer"
+            },
+            "origin": {
+              "const": "LOCAL_USER_FILE",
+              "default": "LOCAL_USER_FILE",
+              "title": "Origin",
+              "type": "string"
+            },
+            "index_version": {
+              "const": "1",
+              "default": "1",
+              "title": "Index Version",
+              "type": "string"
+            }
+          },
+          "required": [
+            "source_id",
+            "project_id",
+            "device_id",
+            "title",
+            "content_hash",
+            "extension",
+            "byte_count",
+            "page_count",
+            "chunk_count"
+          ],
+          "title": "SourceMetadata",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceMetadata"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "LibraryRegister",
+      "type": "object"
+    },
+    "LibraryQueryCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "target_device_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Target Device Id",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 1200,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Source Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "project_id",
+        "target_device_id",
+        "query",
+        "idempotency_key"
+      ],
+      "title": "LibraryQueryCreate",
+      "type": "object"
+    },
+    "LibraryDelivery": {
+      "$defs": {
+        "PrivateExcerpt": {
+          "additionalProperties": false,
+          "properties": {
+            "source_id": {
+              "pattern": "^[a-f0-9]{32}$",
+              "title": "Source Id",
+              "type": "string"
+            },
+            "source_hash": {
+              "pattern": "^[a-f0-9]{64}$",
+              "title": "Source Hash",
+              "type": "string"
+            },
+            "chunk_id": {
+              "pattern": "^[a-f0-9]{24}$",
+              "title": "Chunk Id",
+              "type": "string"
+            },
+            "excerpt": {
+              "maxLength": 1000,
+              "minLength": 1,
+              "title": "Excerpt",
+              "type": "string"
+            },
+            "page": {
+              "anyOf": [
+                {
+                  "maximum": 500,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Page"
+            },
+            "line_start": {
+              "minimum": 1,
+              "title": "Line Start",
+              "type": "integer"
+            },
+            "line_end": {
+              "minimum": 1,
+              "title": "Line End",
+              "type": "integer"
+            },
+            "score": {
+              "maximum": 10000,
+              "minimum": 0,
+              "title": "Score",
+              "type": "number"
+            }
+          },
+          "required": [
+            "source_id",
+            "source_hash",
+            "chunk_id",
+            "excerpt",
+            "line_start",
+            "line_end",
+            "score"
+          ],
+          "title": "PrivateExcerpt",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "query_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Query Id",
+          "type": "string"
+        },
+        "lease_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Lease Id",
+          "type": "string"
+        },
+        "matches": {
+          "items": {
+            "$ref": "#/$defs/PrivateExcerpt"
+          },
+          "maxItems": 5,
+          "title": "Matches",
+          "type": "array"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "LIBRARY_STORAGE_INTEGRITY",
+                "LIBRARY_SOURCE_UNAVAILABLE",
+                "LIBRARY_QUERY_INVALID",
+                "LIBRARY_LOCAL_FAILURE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        }
+      },
+      "required": [
+        "query_id",
+        "lease_id"
+      ],
+      "title": "LibraryDelivery",
+      "type": "object"
+    },
+    "LibraryWork": {
+      "additionalProperties": false,
+      "properties": {
+        "query_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Query Id",
+          "type": "string"
+        },
+        "project_id": {
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "target_device_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Target Device Id",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 1200,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "source_ids": {
+          "items": {
+            "pattern": "^[a-f0-9]{32}$",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "expires_at": {
+          "minimum": 1,
+          "title": "Expires At",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query_id",
+        "project_id",
+        "target_device_id",
+        "query",
+        "source_ids",
+        "expires_at"
+      ],
+      "title": "LibraryWork",
+      "type": "object"
+    }
+  }
+}

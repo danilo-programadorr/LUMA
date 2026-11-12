@@ -9,7 +9,7 @@ from .migrations.v0003_conversation import upgrade as conversation_upgrade
 from .migrations.v0004_execution import upgrade
 
 
-def migrate(url,backend='sqlite'):
+def migrate(url,backend='sqlite', *, owner=False, devices=False, research=False, library=False, codex=False):
     path=validate_database(url,backend)
     if path is not None: path.parent.mkdir(parents=True,exist_ok=True)
     engine=engine_for(url,backend)
@@ -24,7 +24,23 @@ def migrate(url,backend='sqlite'):
                 if not inspect(connection).get_table_names(): initial(connection)
                 if connection.execute(select(version.c.version)).scalar_one()==1: trust_upgrade(connection)
                 if connection.execute(select(version.c.version)).scalar_one()==2: conversation_upgrade(connection)
-                changed=upgrade(connection)
+                current=connection.execute(select(version.c.version)).scalar_one()
+                changed=upgrade(connection) if current not in (5,6,7,8,9) else False
+                if (owner or devices or research or library or codex) and current not in (6,7,8,9):
+                    from .migrations.v0005_owner import upgrade as owner_upgrade
+                    changed=owner_upgrade(connection) or changed
+                if (devices or research or library or codex) and current not in (7,8,9):
+                    from .migrations.v0006_device_identity import upgrade as device_upgrade
+                    changed=device_upgrade(connection) or changed
+                if (research or library or codex) and connection.execute(select(version.c.version)).scalar_one() in (6,7):
+                    from .migrations.v0007_research import upgrade as research_upgrade
+                    changed=research_upgrade(connection) or changed
+                if (library or codex) and connection.execute(select(version.c.version)).scalar_one() != 9:
+                    from .migrations.v0008_private_library import upgrade as library_upgrade
+                    changed=library_upgrade(connection) or changed
+                if codex:
+                    from .migrations.v0009_codex import upgrade as codex_upgrade
+                    changed=codex_upgrade(connection) or changed
                 connection.commit()
                 return changed
             except Exception:
@@ -36,8 +52,13 @@ def migrate(url,backend='sqlite'):
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('command',choices=['upgrade'])
-    parser.parse_args()
-    changed=migrate(os.environ.get('LUMA_DATABASE_URL',DEFAULT_URL),os.environ.get('LUMA_DATABASE_BACKEND','sqlite'))
-    print('Migration 0004 applied' if changed else 'Schema 0004 already current')
+    parser.add_argument('--owner',action='store_true')
+    parser.add_argument('--devices',action='store_true')
+    parser.add_argument('--research',action='store_true')
+    parser.add_argument('--library',action='store_true')
+    parser.add_argument('--codex',action='store_true')
+    args=parser.parse_args()
+    changed=migrate(os.environ.get('LUMA_DATABASE_URL',DEFAULT_URL),os.environ.get('LUMA_DATABASE_BACKEND','sqlite'),owner=args.owner,devices=args.devices,research=args.research,library=args.library,codex=args.codex)
+    print('Migration applied' if changed else 'Schema already current')
 
 if __name__=='__main__': main()

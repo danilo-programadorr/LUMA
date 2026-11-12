@@ -1,0 +1,14 @@
+import * as mock from '@/mocks/page-data';
+import { DEMO } from './mode';
+export const runtimeRows: typeof mock.runtimeRows = DEMO ? mock.runtimeRows : mock.runtimeRows.map(x => ({ ...x, value:'Indisponível', hint:'Não conectado', tone:'slate' as const }));
+export const processes: typeof mock.processes = DEMO ? mock.processes : [];
+export const collectionRows: typeof mock.collectionRows = DEMO ? mock.collectionRows : [];
+export const heartbeats: typeof mock.heartbeats = DEMO ? mock.heartbeats : [];
+export const queue: typeof mock.queue = DEMO ? mock.queue : [];
+export const categories: typeof mock.categories = DEMO ? mock.categories : [];
+export const collections: typeof mock.collections = DEMO ? mock.collections : [];
+export const quotaRows: typeof mock.quotaRows = DEMO ? mock.quotaRows : [];
+export const mockReplies: typeof mock.mockReplies = DEMO ? mock.mockReplies : [];
+export const appearanceOptions: typeof mock.appearanceOptions = DEMO ? mock.appearanceOptions : mock.appearanceOptions;
+export const densityOptions: typeof mock.densityOptions = DEMO ? mock.densityOptions : mock.densityOptions;
+export const notificationRows: typeof mock.notificationRows = DEMO ? mock.notificationRows : mock.notificationRows;

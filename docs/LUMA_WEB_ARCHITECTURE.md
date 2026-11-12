@@ -1,0 +1,13 @@
+# LUMA Web architecture
+
+2026-10-25 — local 7F-B candidate, Web 0.1.0-rc.1. Source: D:\projetos\luma-ui, read-only validated React/Vite/TypeScript UI. Official frontend lives in web/ and has no runtime dependency on that source directory. reports/FASE_7F_B_UI_SOURCE.json records source hashes and its prior validation. Existing visual components, orb, navigation, responsive layout, sidebar, rail and animations are preserved.
+
+AuthClient wraps the official Firebase SDK; AuthProvider owns INITIALIZING, SIGNED_OUT, AUTHENTICATING, AUTHENTICATED, FORBIDDEN, SESSION_EXPIRED and ERROR. ControlPlaneClient centralizes bearer injection, one forced refresh on401, correlation id and network classification. Route guards protect all internal routes; only allowlisted paths are accepted as login return targets. The Owner label is rendered only after backend /me confirms binding. Profile is deliberately generic; no untrusted HTML or avatar is rendered. Existing route error boundary handles errors.
+
+Mocks remain in src/mocks. Components consume src/data, which defaults to PILOT with empty activity, offline devices/agents, planned tools and no telemetry. VITE_DATA_MODE=DEMO explicitly displays a persistent demonstration banner. Voice and PC execution stay disabled. Chat/approvals/device integration are not connected. The original visual fixtures remain available in explicit DEMO mode.
+
+Local web: pnpm --dir web install --frozen-lockfile; pnpm --dir web dev. Default 127.0.0.1:5173. API default 127.0.0.1:8770, configurable via VITE_API_BASE_URL. web/.env.example contains only empty/public config keys. Fill .env.local only after real auth gate. Never place OAuth client secrets, service-account keys or Owner tokens in Web.
+
+Checks: pnpm --dir web typecheck; pnpm --dir web lint; pnpm --dir web test; pnpm --dir web build; pnpm --dir web exec playwright test. E2E uses Edge headless and a synthetic auth adapter restricted to MODE=test; its separate e2e/harness.html is not a production build entry. Production index has no test login. Tests emulate desktop/mobile viewports, not physical devices/Safari.
+
+Vite dev/preview serve nosniff, no-referrer, frame DENY, permissions disabling microphone/camera/geolocation and CSP. Preview/build serving CSP has no unsafe-eval or unsafe-inline scripts. Development only permits inline scripts for Vite's React preamble; inline styles are required by the approved animation library. External Google Fonts remain with fallbacks. Any future hosting must install these HTTP headers itself; static files alone do not install response headers. Bundle-size warning is recorded, not hidden.

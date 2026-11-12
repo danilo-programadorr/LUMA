@@ -1,0 +1,139 @@
+{
+  "enabled": false,
+  "session": {
+    "additionalProperties": false,
+    "properties": {
+      "provider": {
+        "enum": [
+          "GEMINI_LIVE",
+          "OPENAI_REALTIME",
+          "OPENAI_GPT_LIVE"
+        ],
+        "title": "Provider",
+        "type": "string"
+      },
+      "locale": {
+        "const": "pt-BR",
+        "default": "pt-BR",
+        "title": "Locale",
+        "type": "string"
+      },
+      "session_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Session Id",
+        "type": "string"
+      },
+      "enabled": {
+        "const": false,
+        "default": false,
+        "title": "Enabled",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "provider",
+      "session_id"
+    ],
+    "title": "VoiceSessionIntent",
+    "type": "object"
+  },
+  "collaboration": {
+    "$defs": {
+      "AgentContribution": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_id": {
+            "enum": [
+              "luma",
+              "development",
+              "security",
+              "data",
+              "product",
+              "qa",
+              "growth",
+              "content",
+              "codex"
+            ],
+            "title": "Agent Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "MESSAGE",
+              "EVIDENCE",
+              "PROPOSAL",
+              "OBJECTION",
+              "CONCLUSION"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "content": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "authority": {
+            "const": "ADVISORY_ONLY",
+            "default": "ADVISORY_ONLY",
+            "title": "Authority",
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id",
+          "kind",
+          "content"
+        ],
+        "title": "AgentContribution",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "mode": {
+        "enum": [
+          "PARALLEL",
+          "SEQUENTIAL"
+        ],
+        "title": "Mode",
+        "type": "string"
+      },
+      "contributions": {
+        "items": {
+          "$ref": "#/$defs/AgentContribution"
+        },
+        "maxItems": 18,
+        "title": "Contributions",
+        "type": "array"
+      },
+      "consolidator": {
+        "const": "LUMA_ADK",
+        "default": "LUMA_ADK",
+        "title": "Consolidator",
+        "type": "string"
+      },
+      "approval_authority": {
+        "const": "NONE",
+        "default": "NONE",
+        "title": "Approval Authority",
+        "type": "string"
+      }
+    },
+    "required": [
+      "mode"
+    ],
+    "title": "CollaborationPlan",
+    "type": "object"
+  }
+}

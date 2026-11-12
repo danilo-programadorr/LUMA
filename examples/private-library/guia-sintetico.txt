@@ -1,0 +1,6 @@
+GUIA SINTÉTICO DA BIBLIOTECA LUMA
+Este arquivo é apenas uma demonstração, sem dados pessoais ou regras reais do projeto.
+O projeto fictício Aurora revisa seu inventário toda segunda-feira.
+O responsável fictício pela revisão do inventário é a equipe Azul.
+O relatório fictício de inventário deve ser guardado por trinta dias.
+Estas informações de exemplo não concedem permissões nem autorizam ações.

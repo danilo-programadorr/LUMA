@@ -80,16 +80,28 @@ def engine_for(url, backend='sqlite'):
     return create_engine('sqlite:///'+p.as_posix(),connect_args={'timeout':10},pool_pre_ping=True)
 
 
+def table_for(name):
+    if name in TABLES:return TABLES[name]
+    from backend.codex.schema import TABLES as CODEX_TABLES
+    if name in CODEX_TABLES:return CODEX_TABLES[name]
+    from backend.device_schema import DEVICE_TABLES
+    if name in DEVICE_TABLES:return DEVICE_TABLES[name]
+    from backend.research.schema import TABLES as RESEARCH_TABLES
+    if name in RESEARCH_TABLES:return RESEARCH_TABLES[name]
+    from backend.private_library.schema import TABLES as LIBRARY_TABLES
+    return LIBRARY_TABLES[name]
+
+
 class Repository:
     def __init__(self,connection): self.connection=connection
     def get(self,table,key):
         if table=='grants':
-            row=self.connection.execute(select(TABLES[table]).where(TABLES[table].c.id==key)).mappings().first()
+            row=self.connection.execute(select(table_for(table)).where(table_for(table).c.id==key)).mappings().first()
             return {**dict(row),'grant_id':row['id']} if row else None
-        row=self.connection.execute(select(TABLES[table].c.data).where(TABLES[table].c.id==key)).first()
+        row=self.connection.execute(select(table_for(table).c.data).where(table_for(table).c.id==key)).first()
         return dict(row[0]) if row else None
     def rows(self,table,principal_id=None,projects=None,limit=None,offset=0):
-        target=TABLES[table]
+        target=table_for(table)
         query=select(target if table=='grants' else target.c.data).order_by(target.c.created_at,target.c.id)
         if principal_id is not None: query=query.where(or_(target.c.principal_id.is_(None),target.c.principal_id==principal_id))
         if projects is not None: query=query.where(or_(target.c.project_id.is_(None),target.c.project_id.in_(projects)))
@@ -98,20 +110,20 @@ class Repository:
         return [dict(row[0]) for row in self.connection.execute(query)]
     def add(self,table,key,data):
         if table=='grants':
-            self.connection.execute(insert(TABLES[table]).values(id=key,**{k:v for k,v in data.items() if k in TABLES[table].c and k!='id'}))
+            self.connection.execute(insert(table_for(table)).values(id=key,**{k:v for k,v in data.items() if k in table_for(table).c and k!='id'}))
             return
         from .models import now
         stamp=now().isoformat()
-        self.connection.execute(insert(TABLES[table]).values(id=key,principal_id=data.get('principal_id'),project_id=data.get('project_id'),
+        self.connection.execute(insert(table_for(table)).values(id=key,principal_id=data.get('principal_id'),project_id=data.get('project_id'),
             status=data.get('status'),created_at=data.get('created_at',stamp),updated_at=stamp,data=data))
     def put(self,table,key,data):
         if table=='grants':
-            result=self.connection.execute(update(TABLES[table]).where(TABLES[table].c.id==key).values(**{k:v for k,v in data.items() if k in TABLES[table].c and k!='id'}))
+            result=self.connection.execute(update(table_for(table)).where(table_for(table).c.id==key).values(**{k:v for k,v in data.items() if k in table_for(table).c and k!='id'}))
             if result.rowcount!=1: raise Fault('NOT_FOUND',404)
             return
         if table in ('audit_events','idempotency'): raise Fault('APPEND_ONLY',403)
         from .models import now
-        result=self.connection.execute(update(TABLES[table]).where(TABLES[table].c.id==key).values(
+        result=self.connection.execute(update(table_for(table)).where(table_for(table).c.id==key).values(
             principal_id=data.get('principal_id'),project_id=data.get('project_id'),status=data.get('status'),updated_at=now().isoformat(),data=data))
         if result.rowcount!=1: raise Fault('NOT_FOUND',404)
 
@@ -123,8 +135,23 @@ class Store:
         self.engine=engine_for(url,backend)
         try:
             with self.engine.connect() as conn:
-                if set(inspect(conn).get_table_names())!=(set(metadata.tables)|set(trust_metadata.tables)|set(conversation_metadata.tables)|set(execution_metadata.tables)): raise Fault('SCHEMA_MISMATCH',503)
-                if conn.execute(select(version.c.version).where(version.c.id==1)).scalar_one()!=4: raise Fault('SCHEMA_MISMATCH',503)
+                from backend.owner_schema import owner_metadata
+                revision=conn.execute(select(version.c.version).where(version.c.id==1)).scalar_one()
+                expected=set(metadata.tables)|set(trust_metadata.tables)|set(conversation_metadata.tables)|set(execution_metadata.tables)
+                if revision in (5,6,7,8,9):expected|=set(owner_metadata.tables)
+                if revision in (6,7,8,9):
+                    from backend.device_schema import device_metadata
+                    expected|=set(device_metadata.tables)
+                if revision in (7,8,9):
+                    from backend.research.schema import metadata as research_metadata
+                    expected|=set(research_metadata.tables)
+                if revision in (8,9):
+                    from backend.private_library.schema import metadata as library_metadata
+                    expected|=set(library_metadata.tables)
+                if revision==9:
+                    from backend.codex.schema import metadata as codex_metadata
+                    expected|=set(codex_metadata.tables)
+                if revision not in (4,5,6,7,8,9) or set(inspect(conn).get_table_names())!=expected:raise Fault('SCHEMA_MISMATCH',503)
         except Fault:
             self.engine.dispose()
             raise
@@ -142,7 +169,7 @@ class Store:
         try:
             with self.engine.begin() as conn:
                 # A portable UPDATE takes a database row write lock before any policy reads.
-                locked=conn.execute(update(version).where(version.c.id==1,version.c.version==4).values(epoch=version.c.epoch+1))
+                locked=conn.execute(update(version).where(version.c.id==1,version.c.version.in_((4,5,6,7,8,9))).values(epoch=version.c.epoch+1))
                 if locked.rowcount!=1: raise Fault('SCHEMA_MISMATCH',503)
                 yield Repository(conn)
         except SQLAlchemyError: raise Fault('DATABASE_UNAVAILABLE',503) from None

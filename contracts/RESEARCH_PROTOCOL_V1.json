@@ -1,0 +1,734 @@
+{
+  "version": "1",
+  "request": {
+    "$defs": {
+      "Route": {
+        "additionalProperties": false,
+        "properties": {
+          "route": {
+            "enum": [
+              "WEB_FIRST",
+              "WEB_REQUIRED",
+              "PROJECT_FIRST",
+              "HYBRID_WEB_PROJECT",
+              "NO_RETRIEVAL",
+              "PRIVATE_LIBRARY_FUTURE"
+            ],
+            "title": "Route",
+            "type": "string"
+          },
+          "freshness_required": {
+            "default": false,
+            "title": "Freshness Required",
+            "type": "boolean"
+          },
+          "freshness_horizon": {
+            "default": "UNKNOWN",
+            "enum": [
+              "REALTIME",
+              "DAY",
+              "WEEK",
+              "MONTH",
+              "CURRENT_VERSION",
+              "EVERGREEN",
+              "UNKNOWN"
+            ],
+            "title": "Freshness Horizon",
+            "type": "string"
+          },
+          "mode": {
+            "default": "GENERAL_WEB",
+            "title": "Mode",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 100,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "route",
+          "reason"
+        ],
+        "title": "Route",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "protocol_version": {
+        "const": "1",
+        "default": "1",
+        "title": "Protocol Version",
+        "type": "string"
+      },
+      "research_id": {
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Research Id",
+        "type": "string"
+      },
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "title": "Project Id",
+        "type": "string"
+      },
+      "query": {
+        "maxLength": 1200,
+        "minLength": 1,
+        "title": "Query",
+        "type": "string"
+      },
+      "public_query": {
+        "anyOf": [
+          {
+            "maxLength": 500,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Public Query"
+      },
+      "urls": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 3,
+        "title": "Urls",
+        "type": "array"
+      },
+      "route": {
+        "$ref": "#/$defs/Route"
+      },
+      "target_device_id": {
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Target Device Id",
+        "type": "string"
+      },
+      "requested_at": {
+        "title": "Requested At",
+        "type": "integer"
+      },
+      "expires_at": {
+        "title": "Expires At",
+        "type": "integer"
+      },
+      "max_sources": {
+        "default": 6,
+        "maximum": 8,
+        "minimum": 1,
+        "title": "Max Sources",
+        "type": "integer"
+      },
+      "max_depth": {
+        "default": "STANDARD",
+        "enum": [
+          "QUICK",
+          "STANDARD",
+          "DEEP"
+        ],
+        "title": "Max Depth",
+        "type": "string"
+      },
+      "egress_class": {
+        "const": "PUBLIC_GENERIC_ONLY",
+        "default": "PUBLIC_GENERIC_ONLY",
+        "title": "Egress Class",
+        "type": "string"
+      }
+    },
+    "required": [
+      "research_id",
+      "project_id",
+      "query",
+      "route",
+      "target_device_id",
+      "requested_at",
+      "expires_at"
+    ],
+    "title": "ResearchRequest",
+    "type": "object"
+  },
+  "result": {
+    "$defs": {
+      "Citation": {
+        "additionalProperties": false,
+        "properties": {
+          "citation_id": {
+            "maxLength": 64,
+            "title": "Citation Id",
+            "type": "string"
+          },
+          "source_id": {
+            "maxLength": 64,
+            "title": "Source Id",
+            "type": "string"
+          },
+          "start_index": {
+            "maximum": 6000,
+            "minimum": 0,
+            "title": "Start Index",
+            "type": "integer"
+          },
+          "end_index": {
+            "maximum": 6000,
+            "minimum": 1,
+            "title": "End Index",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "citation_id",
+          "source_id",
+          "start_index",
+          "end_index"
+        ],
+        "title": "Citation",
+        "type": "object"
+      },
+      "GoogleDisplayArtifact": {
+        "additionalProperties": false,
+        "properties": {
+          "provider": {
+            "const": "gemini_google_search",
+            "default": "gemini_google_search",
+            "title": "Provider",
+            "type": "string"
+          },
+          "provenance": {
+            "const": "AUTHENTICATED_GOOGLE_PROVIDER",
+            "default": "AUTHENTICATED_GOOGLE_PROVIDER",
+            "title": "Provenance",
+            "type": "string"
+          },
+          "retention": {
+            "const": "TRANSIENT_NON_PERSISTABLE_NON_REUSABLE",
+            "default": "TRANSIENT_NON_PERSISTABLE_NON_REUSABLE",
+            "title": "Retention",
+            "type": "string"
+          },
+          "search_suggestions_html": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Search Suggestions Html",
+            "type": "array"
+          },
+          "presentation": {
+            "default": "SANDBOXED_FRAME",
+            "enum": [
+              "SANDBOXED_FRAME",
+              "ISOLATED_WINDOW"
+            ],
+            "title": "Presentation",
+            "type": "string"
+          }
+        },
+        "required": [
+          "search_suggestions_html"
+        ],
+        "title": "GoogleDisplayArtifact",
+        "type": "object"
+      },
+      "Source": {
+        "additionalProperties": false,
+        "properties": {
+          "source_id": {
+            "maxLength": 64,
+            "title": "Source Id",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 300,
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "maxLength": 2048,
+            "title": "Url",
+            "type": "string"
+          },
+          "canonical_url": {
+            "maxLength": 2048,
+            "title": "Canonical Url",
+            "type": "string"
+          },
+          "domain": {
+            "maxLength": 253,
+            "title": "Domain",
+            "type": "string"
+          },
+          "origin": {
+            "default": "WEB",
+            "enum": [
+              "WEB",
+              "PROJECT",
+              "PRIVATE_LIBRARY_FUTURE"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "publisher": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Publisher"
+          },
+          "source_type": {
+            "default": "UNKNOWN",
+            "maxLength": 30,
+            "title": "Source Type",
+            "type": "string"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Published At"
+          },
+          "event_at": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Event At"
+          },
+          "retrieved_at": {
+            "title": "Retrieved At",
+            "type": "integer"
+          },
+          "quality_tier": {
+            "default": 0,
+            "maximum": 3,
+            "minimum": 0,
+            "title": "Quality Tier",
+            "type": "integer"
+          },
+          "freshness": {
+            "default": "UNKNOWN",
+            "enum": [
+              "RETRIEVED_NOW",
+              "UNKNOWN"
+            ],
+            "title": "Freshness",
+            "type": "string"
+          },
+          "provider": {
+            "maxLength": 60,
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "title",
+          "url",
+          "canonical_url",
+          "domain",
+          "retrieved_at",
+          "provider"
+        ],
+        "title": "Source",
+        "type": "object"
+      },
+      "Usage": {
+        "additionalProperties": false,
+        "properties": {
+          "model_calls": {
+            "default": 0,
+            "maximum": 2,
+            "minimum": 0,
+            "title": "Model Calls",
+            "type": "integer"
+          },
+          "search_queries": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Search Queries"
+          },
+          "url_context_urls": {
+            "default": 0,
+            "maximum": 3,
+            "minimum": 0,
+            "title": "Url Context Urls",
+            "type": "integer"
+          },
+          "input_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Input Tokens"
+          },
+          "output_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Output Tokens"
+          },
+          "thought_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Thought Tokens"
+          },
+          "tool_use_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tool Use Tokens"
+          },
+          "total_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total Tokens"
+          },
+          "cached_tokens": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cached Tokens"
+          },
+          "latency_ms": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Latency Ms",
+            "type": "integer"
+          },
+          "incremental_cost_usd": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Incremental Cost Usd"
+          }
+        },
+        "title": "Usage",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "protocol_version": {
+        "const": "1",
+        "default": "1",
+        "title": "Protocol Version",
+        "type": "string"
+      },
+      "research_id": {
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Research Id",
+        "type": "string"
+      },
+      "status": {
+        "enum": [
+          "COMPLETED",
+          "FAILED"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "answer": {
+        "default": "",
+        "maxLength": 6000,
+        "title": "Answer",
+        "type": "string"
+      },
+      "project_answer": {
+        "default": "",
+        "maxLength": 4000,
+        "title": "Project Answer",
+        "type": "string"
+      },
+      "sources": {
+        "items": {
+          "$ref": "#/$defs/Source"
+        },
+        "maxItems": 8,
+        "title": "Sources",
+        "type": "array"
+      },
+      "citations": {
+        "items": {
+          "$ref": "#/$defs/Citation"
+        },
+        "maxItems": 24,
+        "title": "Citations",
+        "type": "array"
+      },
+      "project_evidence": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 8,
+        "title": "Project Evidence",
+        "type": "array"
+      },
+      "freshness_status": {
+        "default": "UNAVAILABLE",
+        "enum": [
+          "EVIDENCED",
+          "UNAVAILABLE",
+          "NOT_REQUIRED"
+        ],
+        "title": "Freshness Status",
+        "type": "string"
+      },
+      "agreement_status": {
+        "default": "UNKNOWN",
+        "enum": [
+          "UNKNOWN",
+          "CONFLICTING"
+        ],
+        "title": "Agreement Status",
+        "type": "string"
+      },
+      "conflicting_sources": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 8,
+        "title": "Conflicting Sources",
+        "type": "array"
+      },
+      "uncertainty_note": {
+        "default": "Sources may not be independent; retrieval is not exhaustive.",
+        "maxLength": 500,
+        "title": "Uncertainty Note",
+        "type": "string"
+      },
+      "provider": {
+        "default": "none",
+        "maxLength": 60,
+        "title": "Provider",
+        "type": "string"
+      },
+      "model": {
+        "default": "none",
+        "maxLength": 80,
+        "title": "Model",
+        "type": "string"
+      },
+      "usage": {
+        "$ref": "#/$defs/Usage"
+      },
+      "completed_at": {
+        "title": "Completed At",
+        "type": "integer"
+      },
+      "error_code": {
+        "anyOf": [
+          {
+            "maxLength": 80,
+            "pattern": "^[A-Z_]+$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Error Code"
+      },
+      "search_suggestions": {
+        "items": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "maxItems": 0,
+        "title": "Search Suggestions",
+        "type": "array"
+      },
+      "provider_display_artifact": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GoogleDisplayArtifact"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "research_id",
+      "status",
+      "completed_at"
+    ],
+    "title": "ResearchResult",
+    "type": "object"
+  },
+  "create": {
+    "additionalProperties": false,
+    "properties": {
+      "project_id": {
+        "maxLength": 64,
+        "minLength": 1,
+        "pattern": "^[a-z0-9-]+$",
+        "title": "Project Id",
+        "type": "string"
+      },
+      "query": {
+        "maxLength": 1200,
+        "minLength": 1,
+        "title": "Query",
+        "type": "string"
+      },
+      "target_device_id": {
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Target Device Id",
+        "type": "string"
+      },
+      "idempotency_key": {
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Idempotency Key",
+        "type": "string"
+      },
+      "mode": {
+        "default": "AUTO",
+        "enum": [
+          "AUTO",
+          "GENERAL_WEB",
+          "OFFICIAL_FIRST",
+          "SCIENTIFIC",
+          "TECHNICAL",
+          "NEWS",
+          "PROJECT_HYBRID"
+        ],
+        "title": "Mode",
+        "type": "string"
+      },
+      "depth": {
+        "default": "STANDARD",
+        "enum": [
+          "QUICK",
+          "STANDARD",
+          "DEEP"
+        ],
+        "title": "Depth",
+        "type": "string"
+      },
+      "allow_web": {
+        "default": true,
+        "title": "Allow Web",
+        "type": "boolean"
+      },
+      "public_query": {
+        "anyOf": [
+          {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Public Query"
+      },
+      "urls": {
+        "items": {
+          "type": "string"
+        },
+        "maxItems": 3,
+        "title": "Urls",
+        "type": "array"
+      }
+    },
+    "required": [
+      "project_id",
+      "query",
+      "target_device_id",
+      "idempotency_key"
+    ],
+    "title": "ResearchCreate",
+    "type": "object"
+  }
+}
